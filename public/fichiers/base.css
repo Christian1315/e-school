@@ -68,8 +68,9 @@ h1,h2,h3,h4,h5,h6 {
     border-radius: 0 60% 0 0;
     z-index: 2;
     pointer-events: none;
-    background-color: #f5b113;
+    background-color: #f6f6f6;
     border-top: #1b5a38 solid 10px;
+    box-shadow: #0000 50px -5px 15px -5px;
 }
 
 .relative {
@@ -82,4 +83,8 @@ h1,h2,h3,h4,h5,h6 {
 
 .section{
     margin-block: 100px!important;
+}
+
+.video-iframe{
+    border: solid 5px #f6f6f6;
 }

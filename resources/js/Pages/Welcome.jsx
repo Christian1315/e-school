@@ -125,7 +125,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         Adipisci, obcaecati numquam repudiandae consequatur tenetur nihil doloremque quidem iste ex repellendus quam, qui laborum eaque. Modi doloremque atque officiis aliquam facilis quos deleniti repellat quidem deserunt, et voluptatem laudantium!</p>
                 </div>
                 <div className="col-md-6">
-                    <img class="-skew-3 ..." src={slide1} />
+                    <iframe class="aspect-video " src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
                 </div>
             </div>
         </>

@@ -25,7 +25,7 @@ export default function ResetPassword({ token, email }) {
         <GuestLayout>
             <Head title="Reset Password" />
 
-            <form onSubmit={submit}>
+            <form uk-scrollspy="cls:uk-animation-slide-bottom" onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 

@@ -1,10 +1,10 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import Swal from 'sweetalert2'
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -16,16 +16,43 @@ export default function Login({ status, canResetPassword }) {
     const submit = (e) => {
         e.preventDefault();
 
+        Swal.fire({
+            title: 'Connexion en cours...',
+            text: 'Veuillez patienter pendant que nous vérifions vos informations.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
         post(route('login'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Connexion réussie',
+                    text: 'Vous avez été connecté(e) avec succès.',
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Connexion échouée',
+                    text: 'Veuillez vérifier vos informations et réessayer.',
+                });
+                console.log(e);
+            },
             onFinish: () => reset('password'),
         });
     };
+
 
     return (
         <GuestLayout>
             <Head title="Connexion" />
 
-            <div className="relative inline-block w-full max-w-md mx-auto ">
+            <div uk-scrollspy="cls:uk-animation-slide-bottom" className="relative inline-block w-full max-w-md mx-auto ">
                 {/* Fond jaune décalé */}
                 <div
                     className="absolute bg-yellow-400"
@@ -87,15 +114,22 @@ export default function Login({ status, canResetPassword }) {
                                         setData('remember', e.target.checked)
                                     }
                                 />
-                                <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                                <span className="border ms-2 text-sm text-gray-600 dark:text-gray-400">
                                     Remember me
                                 </span>
                             </label>
 
+                            <Link
+                                href={route('register')}
+                                className="border rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                            >
+                                Pas inscrit ?
+                            </Link>
+
                             {canResetPassword && (
                                 <Link
                                     href={route('password.request')}
-                                    className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                                    className="border rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                                 >
                                     Forgot your password?
                                 </Link>
@@ -104,12 +138,7 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div className="mt-4 flex items-center justify-end">
-
-                            {/* <PrimaryButton className="ms-4" disabled={processing}>
-                                <i class="bi bi-check2-circle"></i> Log in
-                            </PrimaryButton> */}
-
-                            <button className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i class="bi bi-check2-circle"></i> Se connecter</button>
+                            <button disabled={processing} className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> {processing?'Connexion ...':' Se connecter'}</button>
                         </div>
                     </form>
                 </div>

@@ -25,7 +25,7 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <div className="relative inline-block w-full max-w-md mx-auto ">
+            <div uk-scrollspy="cls:uk-animation-slide-bottom" className="relative inline-block w-full max-w-md mx-auto ">
                 {/* Fond jaune décalé */}
                 <div
                     className="absolute bg-yellow-400"
@@ -132,7 +132,7 @@ export default function Register() {
                             {/* <PrimaryButton className="ms-4" disabled={processing}>
                                 Register
                             </PrimaryButton> */}
-                            <button className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i class="bi bi-check2-circle"></i> Enregistrer</button>
+                            <button disabled className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i class="bi bi-check2-circle"></i> Enregistrer</button>
                         </div>
                     </form>
                 </div>

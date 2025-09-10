@@ -2,14 +2,49 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
 
+    const { post } = useForm();
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const logout = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Déconnexion en cours...',
+            // text: 'Veuillez patienter pendant que nous vérifions vos informations.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+        post(route('logout'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Déconnexion réussie',
+                    text: 'Vous avez été déconnecté(e) avec succès.',
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur de déconnexion',
+                    text: 'Une erreur est survenue lors de la déconnexion. Veuillez réessayer.',
+                });
+                console.log(e);
+            },
+        });
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -66,13 +101,19 @@ export default function AuthenticatedLayout({ header, children }) {
                                         >
                                             Profile
                                         </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
+                                        <form onSubmit={logout}>
+                                            <button className="btn btn-sm w-100 bg-danger space-x-1 text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> Déconnexion</button>
+                                            {/* 
+                                            <Dropdown.Link
+                                                // href="#"
+                                                // method="post"
+                                                as="button"
+                                            // onClick={() => logout()}
+                                            >
+
+                                                Log Out
+                                            </Dropdown.Link> */}
+                                        </form>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>

@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import '@coreui/coreui/dist/css/coreui.min.css'
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -20,6 +21,10 @@ createInertiaApp({
         root.render(<App {...props} />);
     },
     progress: {
-        color: '#1b5a38',
+        color: '#cd3c23',
+        // Ajoutez la propriété 'size' pour augmenter la hauteur de la barre de progression
+        size: 50, // La valeur est en pixels (px), augmentez selon vos besoins
+
+        showSpinner: false,
     },
 });

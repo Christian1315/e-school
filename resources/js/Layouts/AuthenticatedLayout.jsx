@@ -6,7 +6,7 @@ import { Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 
-export default function AuthenticatedLayout({ header, children }) {
+export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
     const user = usePage().props.auth.user;
 
     const { post } = useForm();
@@ -47,25 +47,25 @@ export default function AuthenticatedLayout({ header, children }) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="fixed top-0 left-0 w-full z-50 min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                                    <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            {/* <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
                                     Dashboard
                                 </NavLink>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
@@ -103,16 +103,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </Dropdown.Link>
                                         <form onSubmit={logout}>
                                             <button className="btn btn-sm w-100 bg-danger space-x-1 text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> Déconnexion</button>
-                                            {/* 
-                                            <Dropdown.Link
-                                                // href="#"
-                                                // method="post"
-                                                as="button"
-                                            // onClick={() => logout()}
-                                            >
-
-                                                Log Out
-                                            </Dropdown.Link> */}
                                         </form>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -173,7 +163,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
-                            Dashboard
+                            Dashboard gogo
                         </ResponsiveNavLink>
                     </div>
 
@@ -211,7 +201,16 @@ export default function AuthenticatedLayout({ header, children }) {
                 </header>
             )}
 
-            <main>{children}</main>
+            {/*  */}
+            <div className="row">
+                <div className={SidebarMenu ? "col-md-3" : "col-md-0"}>
+                    {SidebarMenu}
+                </div>
+
+                <div className={SidebarMenu ? "col-md-9" : "col-md-12"}>
+                    {children}
+                </div>
+            </div>
         </div>
     );
 }

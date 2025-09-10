@@ -61,7 +61,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     </Link>
                                 </>
                             ) : (
-                                <Link className="btn btn-sm rounded-md shadow-sm border bg-warning-opacity bg-hover">
+                                <Link href="/dashboard" className="btn btn-sm rounded-md shadow-sm border bg-warning-opacity bg-hover">
                                     <i className="bi bi-house-up"></i> Tableau de board
                                 </Link>
                             )}
@@ -86,7 +86,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </Link>
                             </>
                         ) : (
-                            <Link className="btn btn-sm rounded-md shadow-sm border bg-warning-opacity bg-hover">
+                            <Link href="/dashboard" className="btn btn-sm rounded-md shadow-sm border bg-warning-opacity bg-hover">
                                 <i className="bi bi-house-up"></i> Tableau de board
                             </Link>
                         )}
@@ -495,9 +495,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
             </div>
 
             {/* <!-- footer --> */}
-            <div class="row section bg-light shadow-sm p-3  px-0 mx-0" id='footer'>
+            <div class="row section bg-light shadow-sm p-3  px-0 mx-0 align-center" id='footer'>
                 <div className="col-md-12">
-                    <p style={{ fontSize: "12px" }} className="text-center">@Copyright <strong class="badge bg-light text-success border">{new Date().getFullYear()}</strong> | Tous droits réservés | Réalisé par <strong class="badge bg-light text-success border">Code4Christ</strong> </p>
+                    <p style={{ fontSize: "12px" }} className="text-center">@Copyright <strong class="badge bg-light text-success border">{new Date().getFullYear()}</strong> | Tous droits réservés</p>
                 </div>
             </div>
         </>

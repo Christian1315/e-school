@@ -12,16 +12,34 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilCloudDownload, cilLayers, cilPuzzle, cilSpeedometer } from '@coreui/icons'
+import { cilCloudDownload, cilLayers, cilPuzzle, cilSpeedometer,cilSchool } from '@coreui/icons'
 
-export default Sidebar = () => {
+export default function SidebarMenu() {
     return (
-        <CSidebar className="border-end">
-            <CSidebarHeader className="border-bottom">
-                <CSidebarBrand>CoreUI</CSidebarBrand>
-            </CSidebarHeader>
+        <CSidebar className="border-end" style={{ height: "100%", position: 'fixed', overflowY: 'scroll' }}>
             <CSidebarNav>
-                <CNavTitle>Nav Title</CNavTitle>
+                {/* Les Ecoles */}
+                <CNavGroup
+                    toggler={
+                        <>
+                            <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
+                        </>
+                    }
+                >
+                    <CNavItem href="#">
+                        <span className="nav-icon ">
+                            <span className="nav-icon-bullet text-danger"></span>
+                        </span>
+                        Nav dropdown item
+                    </CNavItem>
+                    <CNavItem href="#">
+                        <span className="nav-icon">
+                            <span className="nav-icon-bullet"></span>
+                        </span>{' '}
+                        Nav dropdown item
+                    </CNavItem>
+                </CNavGroup>
+
                 <CNavItem href="#">
                     <CIcon customClassName="nav-icon" icon={cilSpeedometer} /> Nav item
                 </CNavItem>

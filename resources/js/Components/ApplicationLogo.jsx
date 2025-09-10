@@ -5,7 +5,7 @@ export default function ApplicationLogo(props) {
     return (
         <>
             <div className="text-center">
-                <img src={logo} alt="" srcSet="" className="img-fluid" style={{width:"150px"}} />
+                <img src={logo} alt="" srcSet="" className="img-fluid" style={{width:"100px"}} />
             </div>
         </>
     );

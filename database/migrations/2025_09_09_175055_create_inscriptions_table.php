@@ -25,6 +25,18 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->string("numero_educ_master")->nullable();
             $table->string("dossier_transfert")->nullable();
             $table->decimal('frais_inscription', 10, 2)->nullable();

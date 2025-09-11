@@ -25,6 +25,18 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->decimal('montant', 10, 2)->nullable();
             $table->string("paiement_receit")->nullable();
             $table->softDeletes();

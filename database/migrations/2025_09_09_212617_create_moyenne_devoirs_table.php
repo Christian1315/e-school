@@ -37,6 +37,18 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->decimal('moyenne', 10, 2)->nullable();
 
             $table->softDeletes();

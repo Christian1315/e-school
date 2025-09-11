@@ -12,12 +12,12 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilCloudDownload, cilLayers, cilPuzzle, cilSpeedometer,cilSchool } from '@coreui/icons'
+import { cilCloudDownload, cilLayers, cilPuzzle, cilSpeedometer, cilSchool } from '@coreui/icons'
 
 export default function SidebarMenu() {
     return (
-        <CSidebar className="border-end" style={{ height: "100%", position: 'fixed', overflowY: 'scroll' }}>
-            <CSidebarNav>
+        <CSidebar className="border-end mx-0" style={{ height: "100%", position: 'fixed', overflowY: 'scroll' }}>
+            <CSidebarNav className='w-100'>
                 {/* Les Ecoles */}
                 <CNavGroup
                     toggler={
@@ -74,9 +74,6 @@ export default function SidebarMenu() {
                     <CIcon customClassName="nav-icon" icon={cilLayers} /> Try CoreUI PRO
                 </CNavItem>
             </CSidebarNav>
-            <CSidebarHeader className="border-top">
-                <CSidebarToggler />
-            </CSidebarHeader>
         </CSidebar>
     )
 }

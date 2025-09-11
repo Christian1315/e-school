@@ -7,6 +7,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,15 +31,27 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        try {
+            DB::beginTransaction();
+            $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            if ($request->user()->isDirty('email')) {
+                $request->user()->email_verified_at = null;
+            }
+
+            $request->user()->save();
+
+            DB::commit();
+            return Redirect::route('profile.edit');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Proposition 2: Afficher l'erreur pour le debug
+            Log::error('Erreur lors de la modification du profil: ' . $e->getMessage());
+
+            Log::debug("Erreure lors de la modification du profile!");
+            return Redirect::route('profile.edit')->with(["error" => $e->getMessage()]);
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit');
     }
 
     /**
@@ -45,19 +59,36 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        try {
+            
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ], [
+                'password.required' => 'Le mot de passe est obligatoire.',
+                'password.current_password' => 'Le mot de passe saisi ne correspond pas à votre mot de passe actuel.',
+            ]);
 
-        $user = $request->user();
+            DB::beginTransaction();
+            $user = $request->user();
 
-        Auth::logout();
+            Auth::logout();
 
-        $user->delete();
+            $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+
+            DB::commit();
+            return Redirect::to('/login');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure de validation!", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure de suppression! " . $e->getMessage());
+            return back()->withErrors(["exception"=>$e->getMessage()]);
+        }
     }
 }

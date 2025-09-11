@@ -2,9 +2,11 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import CIcon from '@coreui/icons-react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { cilAccountLogout, cilUserX, cilBellExclamation } from '@coreui/icons'
 
 export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
     const user = usePage().props.auth.user;
@@ -66,10 +68,16 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                     Dashboard
                                 </NavLink>
                             </div> */}
+
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            <div className="flex shrink-0 items-center">
+                                <span className="badge bg-light rounded"> <CIcon className='text-dark' icon={cilBellExclamation} /> </span>
+                                <strong className='text-danger' style={{ position: "absolute", marginRight: "-10" }} >3</strong>
+                            </div>
                             <div className="relative ms-3">
+
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -99,11 +107,15 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                         <Dropdown.Link
                                             href={route('profile.edit')}
                                         >
-                                            Profile
+                                            <CIcon icon={cilUserX} />  Profile
                                         </Dropdown.Link>
-                                        <form onSubmit={logout}>
-                                            <button className="btn btn-sm w-100 bg-danger space-x-1 text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> Déconnexion</button>
-                                        </form>
+
+                                        <Dropdown.Link
+                                            href="#"
+                                            onClick={logout}
+                                        >
+                                            <CIcon icon={cilAccountLogout} />  Déconnexion
+                                        </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
@@ -163,7 +175,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
-                            Dashboard gogo
+                            Tableau de board
                         </ResponsiveNavLink>
                     </div>
 
@@ -186,20 +198,20 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                 href={route('logout')}
                                 as="button"
                             >
-                                Log Out
+                                Déconnexion
                             </ResponsiveNavLink>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {header && (
+            {/* {header && (
                 <header className="bg-white shadow dark:bg-gray-800">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {header}
                     </div>
                 </header>
-            )}
+            )} */}
 
             {/*  */}
             <div className="row">
@@ -207,8 +219,22 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                     {SidebarMenu}
                 </div>
 
-                <div className={SidebarMenu ? "col-md-9" : "col-md-12"}>
-                    {children}
+                <div className={SidebarMenu ? "col-md-9" : "col-md-12"} style={{ overflowX: "scroll!important" }}>
+                    <div className={`h-[600px] overflow-y-auto`}>
+                        {children}
+
+                        {/* <!-- footer --> */}
+                        <div className="py-12">
+                            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                                <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                                    <div className="pt-3 text-gray-900 dark:text-gray-100">
+                                        <p style={{ fontSize: "12px" }} className="text-center">@Copyright <strong className="badge bg-light text-success border">{new Date().getFullYear()}</strong> | Tous droits réservés </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <br />
+                    </div>
                 </div>
             </div>
         </div>

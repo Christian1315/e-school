@@ -6,6 +6,9 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+import { CIcon } from '@coreui/icons-react';
+import { cilUserFollow, cilTrash } from '@coreui/icons'
+import Swal from 'sweetalert2';
 
 export default function DeleteUserForm({ className = '' }) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
@@ -16,6 +19,7 @@ export default function DeleteUserForm({ className = '' }) {
         setData,
         delete: destroy,
         processing,
+        post,
         reset,
         errors,
         clearErrors,
@@ -30,10 +34,38 @@ export default function DeleteUserForm({ className = '' }) {
     const deleteUser = (e) => {
         e.preventDefault();
 
+        Swal.fire({
+            title: 'Opération en cours ...',
+            text: 'Veuillez patienter quelque instant',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+
         destroy(route('profile.destroy'), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
-            onError: () => passwordInput.current.focus(),
+            onSuccess: () => {
+                closeModal();
+                Swal.fire({
+                    icon: 'error',
+                    title: "Opération éffectuée avec succès",
+                    text: "Compte supprimé avec succès!",
+                });
+
+                // deconnexion
+                post("logout")
+            },
+            onError: (errors) => {
+                console.log(errors)
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${errors.exception?? 'Une erreure est survenue au cours de la suppression du compte! Réessayer.'}`,
+                });
+                passwordInput.current.focus();
+            },
             onFinish: () => reset(),
         });
     };
@@ -49,32 +81,32 @@ export default function DeleteUserForm({ className = '' }) {
         <section className={`space-y-6 ${className}`}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Delete Account
+                    <CIcon className='text-danger' icon={cilUserFollow} /> Suppression de compte
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
+                    Une fois votre compte supprimé, toutes ses ressources et données
+                    seront définitivement supprimées. Avant de supprimer votre compte,
+                    veuillez télécharger toutes les données ou informations que vous souhaitez
+                    conserver.
                 </p>
             </header>
 
             <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
+                <CIcon icon={cilTrash} /> Supprimer le compte
             </DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Are you sure you want to delete your account?
+                        Êtes-vous sûr de vouloir supprimer votre compte ?
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                        Une fois votre compte supprimé, toutes ses ressources et
+                        données seront définitivement supprimées. Veuillez saisir votre
+                        mot de passe pour confirmer que vous souhaitez supprimer définitivement
+                        votre compte.
                     </p>
 
                     <div className="mt-6">
@@ -106,11 +138,11 @@ export default function DeleteUserForm({ className = '' }) {
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeModal}>
-                            Cancel
+                            Abandonner
                         </SecondaryButton>
 
                         <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                            <CIcon icon={cilTrash} />  Supprimer
                         </DangerButton>
                     </div>
                 </form>

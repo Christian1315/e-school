@@ -27,6 +27,7 @@
         "@coreui/icons": "^3.0.1",
         "@coreui/icons-react": "^2.3.0",
         "@coreui/react": "^5.8.0",
+        "datatables.net-dt": "^2.3.4",
         "sweetalert2": "^11.23.0"
     }
 }

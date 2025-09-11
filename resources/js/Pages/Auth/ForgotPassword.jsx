@@ -3,6 +3,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -12,7 +13,34 @@ export default function ForgotPassword({ status }) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('password.email'));
+        Swal.fire({
+            icon: 'info',
+            title: "Opération en cours ....",
+            text: "Veuillez patienter pendant que nous vérifions vos informations.",
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();;
+            }
+        })
+
+        post(route('password.email'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: "Opération réussie avec succès!",
+                    text: "Demande de reinitialisation éffectuée avec succès! Un lien vous a été envoyé via mail.",
+                })
+            },
+            onError: (errors) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: "Opération échouée!",
+                    text: `${errors.exception ?? 'Erreure survenue lors de la demande de réinitialisation du mot de passe!'}`,
+                })
+            }
+        });
     };
 
     return (
@@ -34,14 +62,13 @@ export default function ForgotPassword({ status }) {
                     }}
                 ></div>
 
-
                 {/* Contenu au-dessus (le formulaire) */}
                 <div className="relative z-10 bg-white rounded-xl shadow-lg p-6">
 
                     <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                        Forgot your password? No problem. Just let us know your email
-                        address and we will email you a password reset link that will
-                        allow you to choose a new one.
+                        Vous avez oublié votre mot de passe ? Pas de problème. Indiquez-nous simplement votre adresse e-mail
+                        et nous vous enverrons un lien pour réinitialiser votre mot de passe, qui vous permettra
+                        d'en choisir un nouveau.
                     </div>
 
                     {status && (
@@ -56,12 +83,13 @@ export default function ForgotPassword({ status }) {
                             name="email"
                             value={data.email}
                             className="mt-1 block w-full"
+                            placeholder="joe@gmail.com"
                             isFocused={true}
                             onChange={(e) => setData('email', e.target.value)}
                         />
 
                         <InputError message={errors.email} className="mt-2" />
-
+                        <br />
                         <Link
                             href={route('register')}
                             className="border mt-3 rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"

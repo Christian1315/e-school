@@ -1,9 +1,19 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get("/mail", function () {
+    Mail::raw('Ceci est un test', function ($message) {
+        $message->to('gogochristian009@gmail.com')->subject('Test mail Laravel');
+    });
+
+    return "mail envoyé";
+});
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -24,4 +34,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

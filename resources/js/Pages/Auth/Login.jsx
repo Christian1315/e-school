@@ -69,11 +69,6 @@ export default function Login({ status, canResetPassword }) {
 
                 {/* Contenu au-dessus (le formulaire) */}
                 <div className="relative z-10 bg-white rounded-xl shadow-lg p-6">
-                    {status && (
-                        <div className="mb-4 text-sm font-medium text-green-600">
-                            {status}
-                        </div>
-                    )}
 
                     <form onSubmit={submit}>
                         <div>
@@ -131,7 +126,7 @@ export default function Login({ status, canResetPassword }) {
                                     href={route('password.request')}
                                     className="border rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                                 >
-                                    Forgot your password?
+                                    Password oublié?
                                 </Link>
                             )}
 

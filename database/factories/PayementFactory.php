@@ -17,7 +17,8 @@ class PayementFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "montant"=>fake()->randomFloat(2,20000,200000),
+            "paiement_receit"=>fake()->imageUrl(),
         ];
     }
 }

@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('users_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained('users')

@@ -17,7 +17,8 @@ class TrimestreFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "libelle" => fake()->randomElement(["1 Trimestre", "2 Trimestre", "3 Trimestre"]),
+            "description" => fake()->text(),
         ];
     }
 }

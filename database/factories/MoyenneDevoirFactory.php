@@ -17,7 +17,7 @@ class MoyenneDevoirFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "moyenne" => fake()->randomFloat(2, 1, 20),
         ];
     }
 }

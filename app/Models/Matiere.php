@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +32,7 @@ class Matiere extends Model
         "school_id"      => "integer",
         "created_by"     => "integer",
         "updated_by"     => "integer",
-        
+
         "libelle" => "string",
         "coefficient" => "decimal:2"
     ];
@@ -43,6 +44,40 @@ class Matiere extends Model
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    /**
+     * Interrogations
+     */
+
+    public function interrogations(): HasMany
+    {
+        return $this->hasMany(Interrogation::class);
+    }
+
+    /**
+     * Devoirs
+     */
+
+    public function devoirs(): HasMany
+    {
+        return $this->hasMany(Devoir::class);
+    }
+
+    /**
+     * Moyenne interrogation 
+     */
+    function moyenneInterro(): HasMany
+    {
+        return $this->hasMany(MoyenneInterrogation::class);
+    }
+
+    /**
+     * Moyenne devoirs 
+     */
+    function moyenneDevoir(): HasMany
+    {
+        return $this->hasMany(MoyenneDevoir::class);
     }
 
     /**

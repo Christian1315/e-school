@@ -17,7 +17,14 @@ class InterrogationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            // "school_id"=>fake()->numberBetween(1,10),
+            // "apprenant_id"=>fake()->numberBetween(1,10),
+            // "trimestre_id"=>fake()->numberBetween(1,10),
+            // "matiere_id"=>fake()->numberBetween(1,10),
+            // "created_by"=>fake()->numberBetween(1,10),
+            // "updated_by"=>fake()->numberBetween(1,10),
+
+            "note"=>fake()->randomFloat(2,1,20)
         ];
     }
 }

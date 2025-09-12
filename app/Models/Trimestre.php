@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,7 +43,6 @@ class Trimestre extends Model
     /**
      * Ecole
      */
-
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
@@ -65,9 +65,40 @@ class Trimestre extends Model
     }
 
     /**
+     * Interrogations 
+     */
+    function interrogations(): HasMany
+    {
+        return $this->hasMany(Interrogation::class);
+    }
+
+    /**
+     * Devoirs 
+     */
+    function devoirs(): HasMany
+    {
+        return $this->hasMany(Devoir::class);
+    }
+
+    /**
+     * Moyenne interrogation 
+     */
+    function moyenneInterro(): HasMany
+    {
+        return $this->hasMany(MoyenneInterrogation::class);
+    }
+
+    /**
+     * Moyenne devoirs 
+     */
+    function moyenneDevoir(): HasMany
+    {
+        return $this->hasMany(MoyenneDevoir::class);
+    }
+
+    /**
      * Boot
      */
-
     static protected function boot()
     {
         parent::boot();

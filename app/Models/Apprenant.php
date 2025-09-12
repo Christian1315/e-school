@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -110,6 +111,47 @@ class Apprenant extends Model
         }
 
         return $photoPath;
+    }
+
+
+    /**
+     * Interrogations 
+     */
+    function interrogations(): HasMany
+    {
+        return $this->hasMany(Interrogation::class);
+    }
+
+    /**
+     * Devoirs 
+     */
+    function devoirs(): HasMany
+    {
+        return $this->hasMany(Devoir::class);
+    }
+
+    /**
+     * Moyenne interrogation 
+     */
+    function moyenneInterro(): HasMany
+    {
+        return $this->hasMany(MoyenneInterrogation::class);
+    }
+
+    /**
+     * Inscriptions
+     */
+    function inscriptions(): HasMany
+    {
+        return $this->hasMany(Inscription::class);
+    }
+
+    /**
+     * Payements
+     */
+    function payements(): HasMany
+    {
+        return $this->hasMany(Payement::class);
     }
 
     /**

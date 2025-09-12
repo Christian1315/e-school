@@ -17,7 +17,10 @@ class ClasseFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "libelle" => fake()->randomElement(["6 ième", "5 ième", "4 ième", "3 ième", "2 nde", " 1 ère", "Tle"]),
+            // "school_id" => fake()->numberBetween(1, 10),
+            // "created_by" => fake()->numberBetween(1, 10),
+            // "updated_by" => fake()->numberBetween(1, 10)
         ];
     }
 }

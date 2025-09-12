@@ -17,7 +17,8 @@ class MatiereFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "libelle" => fake()->randomElement("Math", "PCT", "Philosophie", "Anglais", "Français"),
+            "coefficient" => fake()->numberBetween("2", "3", "4", "5"),
         ];
     }
 }

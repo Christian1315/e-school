@@ -24,7 +24,7 @@ class InscriptionFactory extends Factory
 
             "numero_educ_master" => "EDU-" . fake()->numberBetween(1000, 9999),
             "dossier_transfert" => fake()->imageUrl(),
-            "frais_inscription" => fake()->randomFloat(20000, 200000)
+            "frais_inscription" => fake()->randomFloat(2,20000, 200000)
         ];
     }
 }

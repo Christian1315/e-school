@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolController;
 // use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +29,12 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Schools
+Route::resource("school", SchoolController::class);
+
+// Apprenants
+Route::resource("apprenant", ApprenantController::class);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

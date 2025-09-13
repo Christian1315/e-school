@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Notification extends Model
+class CustomNotification extends Model
 {
     /** @use HasFactory<\Database\Factories\NotificationFactory> */
     use HasFactory, SoftDeletes;
 
+    protected $table = 'custum_notifications'; // 🔑 important !
     /**
      * fillbale
      */
@@ -59,7 +60,7 @@ class Notification extends Model
 
     public function sender(): BelongsTo
     {
-        return $this->belongsTo(User::class,"sender_id");
+        return $this->belongsTo(User::class, "sender_id");
     }
 
     /**
@@ -68,7 +69,7 @@ class Notification extends Model
 
     public function receiver(): BelongsTo
     {
-        return $this->belongsTo(User::class,"receiver_id");
+        return $this->belongsTo(User::class, "receiver_id");
     }
 
     /**

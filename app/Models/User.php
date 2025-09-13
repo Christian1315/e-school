@@ -22,7 +22,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'firstname',
+        'lastname',
         'email',
         'password',
     ];
@@ -71,7 +72,7 @@ class User extends Authenticatable
      */
     function notificationsReceived(): HasMany
     {
-        return $this->hasMany(Notification::class, "receiver_id");
+        return $this->hasMany(CustomNotification::class, "receiver_id");
     }
 
     /**
@@ -79,6 +80,6 @@ class User extends Authenticatable
      */
     function notificationsSended(): HasMany
     {
-        return $this->hasMany(Notification::class, "sender_id");
+        return $this->hasMany(CustomNotification::class, "sender_id");
     }
 }

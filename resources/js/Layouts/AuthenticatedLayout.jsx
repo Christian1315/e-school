@@ -8,8 +8,109 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { cilAccountLogout, cilUserX, cilBellExclamation } from '@coreui/icons'
 
+import { useEffect } from 'react';
+import DataTable from 'datatables.net-dt';
+
+import 'datatables.net-buttons-dt'; // styles des boutons
+
+// Plugins boutons
+import 'datatables.net-buttons/js/buttons.html5';
+import 'datatables.net-buttons/js/buttons.print';
+import 'datatables.net-buttons/js/buttons.colVis';
+
+// dépendances Excel / PDF
+import jszip from 'jszip';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+// JSZip est utilisé par Excel
+window.JSZip = jszip;
+
+// pdfmake a besoin des polices
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
+
+import 'datatables.net-responsive';
+import 'datatables.net-responsive-dt';
+
 export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
+    useEffect(() => {
+        const table = new DataTable('#myTable', {
+            pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
+            responsive: true,
+            // dom: 'Bfrtip',
+            dom: `
+                <'d-flex justify-content-between mb-2'
+                    <'dt-search'f>
+                    <'dt-buttons'B>
+                >
+                <'table-responsive'tr>
+                <'d-flex justify-content-between mt-2'
+                    i
+                    p
+                >
+                `,
+            buttons: [
+                {
+                    extend: 'copy',
+                    className: 'btn btn-sm btn-primary',
+                    text: '<i class="fas fa-copy"></i> Copier'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn btn-sm btn-success',
+                    text: '<i class="fas fa-file-excel"></i> Excel'
+                },
+                {
+                    extend: 'pdf',
+                    className: 'btn btn-sm btn-danger',
+                    text: '<i class="fas fa-file-pdf"></i> PDF'
+                },
+                {
+                    extend: 'print',
+                    className: 'btn btn-sm btn-warning',
+                    text: '<i class="fas fa-print"></i> Imprimer'
+                }
+            ],
+            language: {
+                decimal: ",",
+                thousands: " ",
+                emptyTable: "Aucune donnée disponible",
+                info: "Affichage de _START_ à _END_ sur _TOTAL_ lignes",
+                infoEmpty: "Affichage de 0 à 0 sur 0 lignes",
+                infoFiltered: "(filtré de _MAX_ lignes au total)",
+                lengthMenu: "Afficher _MENU_ lignes",
+                loadingRecords: "Chargement...",
+                processing: "Traitement...",
+                search: "Rechercher :",
+                zeroRecords: "Aucun enregistrement trouvé",
+                paginate: {
+                    first: "Premier",
+                    last: "Dernier",
+                    next: "Suivant",
+                    previous: "Précédent"
+                },
+                aria: {
+                    sortAscending: ": activer pour trier par ordre croissant",
+                    sortDescending: ": activer pour trier par ordre décroissant"
+                },
+                buttons: {
+                    copy: "Copier",
+                    excel: "Exporter Excel",
+                    pdf: "Exporter PDF",
+                    print: "Imprimer",
+                    colvis: "Visibilité colonnes"
+                }
+            }
+        });
+
+        return () => table.destroy();
+    }, []);
+
+
     const user = usePage().props.auth.user;
+    const school = usePage().props.auth.school;
+    const receivedNotificationsNbr = usePage().props.auth.receivedNotificationsNbr;
 
     const { post } = useForm();
 
@@ -54,27 +155,45 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="items-center">
+                            <div className="items-center flex">
                                 <Link href="/">
                                     <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
                                 </Link>
-                            </div>
 
-                            {/* <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasExample"
                                 >
-                                    Dashboard
+                                    <button className="space-x-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400">
+                                        <svg
+                                            className="h-6 w-6"
+                                            stroke="currentColor"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                className='inline-flex'
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M4 6h16M4 12h16M4 18h16"
+                                            />
+                                            <path
+                                                className='inline-flex'
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M6 18L18 6M6 6l12 12"
+                                            />
+                                        </svg>
+                                    </button>
                                 </NavLink>
-                            </div> */}
-
+                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="flex shrink-0 items-center">
                                 <span className="badge bg-light rounded"> <CIcon className='text-dark' icon={cilBellExclamation} /> </span>
-                                <strong className='text-danger' style={{ position: "absolute", marginRight: "-10" }} >3</strong>
+                                <strong className='text-danger' style={{ position: "absolute", marginRight: "-10" }} >{receivedNotificationsNbr < 9 ? `0 ${receivedNotificationsNbr}` : receivedNotificationsNbr}</strong>
                             </div>
                             <div className="relative ms-3">
 
@@ -85,7 +204,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                                 type="button"
                                                 className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
-                                                {user.name}
+                                                {user.firstname}  - {user.lastname}
 
                                                 <svg
                                                     className="-me-0.5 ms-2 h-4 w-4"
@@ -182,7 +301,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
                         <div className="px-4">
                             <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                                {user.name}
+                                {user.firstname}  - {user.lastname}
                             </div>
                             <div className="text-sm font-medium text-gray-500">
                                 {user.email}
@@ -205,21 +324,18 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                 </div>
             </nav>
 
-            {/* {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
+            {header && (
+                <header className="bg-white shadow-sm dark:bg-gray-800">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {header}
                     </div>
                 </header>
-            )} */}
+            )}
 
             {/*  */}
             <div className="row">
-                <div className={SidebarMenu ? "col-md-3" : "col-md-0"}>
-                    {SidebarMenu}
-                </div>
-
-                <div className={SidebarMenu ? "col-md-9" : "col-md-12"} style={{ overflowX: "scroll!important" }}>
+                {SidebarMenu}
+                <div className="col-md-12" style={{ overflowX: "scroll!important" }}>
                     <div className={`h-[600px] overflow-y-auto`}>
                         {children}
 
@@ -233,7 +349,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                 </div>
                             </div>
                         </div>
-                         <br />
+                        <br />
                     </div>
                 </div>
             </div>

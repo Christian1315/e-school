@@ -31,7 +31,7 @@ p {
         font-size: 20px !important;
     }
 
-    .section-title img{
+    .section-title img {
         width: 30px !important;
         height: 30px !important;
     }
@@ -112,7 +112,7 @@ p {
 .video-frame {
     border-top: solid 10px #1b5a38;
     border-right: solid 10px #cd3c23;
-    margin-block: 20px!important;
+    margin-block: 20px !important;
 }
 
 #collToAction {
@@ -138,4 +138,17 @@ p {
 
 figcaption img {
     border: solid 3px #cd3c23;
+}
+
+/* Pagination */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    @apply bg-gray-100 text-gray-700 border border-gray-300 rounded px-3 py-1 mx-1;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    @apply bg-blue-600 text-white;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    @apply bg-blue-500 text-white;
 }

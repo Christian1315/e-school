@@ -13,7 +13,7 @@ export default function Dashboard() {
             SidebarMenu={<SidebarMenu />}
         >
             <Head title="Dashboard" />
-
+            
         </AuthenticatedLayout>
     );
 }

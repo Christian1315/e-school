@@ -33,7 +33,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                // 'school' => $request->user() ? $request->user()->school : null,
+                'school' => $request->user() ? $request->user()->school : null,
+                'receivedNotificationsNbr' => $request->user() ? $request->user()->notificationsReceived->count() : 0,
+                // 'received_notifications' => $request->user() ? $request->user()->notificationsReceived->count() : 0,
             ],
         ];
     }

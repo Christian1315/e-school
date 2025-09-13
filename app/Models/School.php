@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class School extends Model
 {
     /** @use HasFactory<\Database\Factories\SchoolFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * fillbale
@@ -93,7 +93,7 @@ class School extends Model
      */
     function notifications(): HasMany
     {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(CustomNotification::class);
     }
 
     /**

@@ -76,7 +76,7 @@ class Apprenant extends Model
      */
     public function classe(): BelongsTo
     {
-        return $this->belongsTo(Classe::class, "parent_id");
+        return $this->belongsTo(Classe::class, "classe_id");
     }
 
     /**

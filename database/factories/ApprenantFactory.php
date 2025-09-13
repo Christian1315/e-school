@@ -27,7 +27,7 @@ class ApprenantFactory extends Factory
             "phone" => fake()->phoneNumber(),
             "date_naissance" => fake()->date(),
             "lieu_naissance" => fake()->city(),
-            "sexe" => fake()->randomElement(["maxculin", "feminin"]),
+            "sexe" => fake()->randomElement(["Masculin", "Féminin"]),
             "photo" => fake()->imageUrl(640, 480, 'people'),
             // "created_by" => fake()->numberBetween(1, 10),
             // "updated_by" => fake()->numberBetween(1, 10),

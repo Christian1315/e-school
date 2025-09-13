@@ -60,7 +60,7 @@ class ProfileController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         try {
-            
+
             $request->validate([
                 'password' => ['required', 'current_password'],
             ], [
@@ -88,7 +88,7 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::debug("Erreure de suppression! " . $e->getMessage());
-            return back()->withErrors(["exception"=>$e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 }

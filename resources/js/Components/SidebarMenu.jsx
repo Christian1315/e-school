@@ -12,68 +12,74 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilCloudDownload, cilLayers, cilPuzzle, cilSpeedometer, cilSchool } from '@coreui/icons'
+import { cilSchool,cilSmilePlus } from '@coreui/icons'
+import { Link } from '@inertiajs/react'
+import ApplicationLogo from './ApplicationLogo'
 
 export default function SidebarMenu() {
     return (
-        <CSidebar className="border-end mx-0" style={{ height: "100%", position: 'fixed', overflowY: 'scroll' }}>
-            <CSidebarNav className='w-100'>
-                {/* Les Ecoles */}
-                <CNavGroup
-                    toggler={
-                        <>
-                            <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
-                        </>
-                    }
-                >
-                    <CNavItem href="#">
-                        <span className="nav-icon ">
-                            <span className="nav-icon-bullet text-danger"></span>
-                        </span>
-                        Nav dropdown item
-                    </CNavItem>
-                    <CNavItem href="#">
-                        <span className="nav-icon">
-                            <span className="nav-icon-bullet"></span>
-                        </span>{' '}
-                        Nav dropdown item
-                    </CNavItem>
-                </CNavGroup>
+        <>
+            <div className="offcanvas offcanvas-start" style={{ width: '300px' }} tabIndex="-1" id="offcanvasMenu" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header shadow-sm">
+                    <div className="items-center">
+                        <Link href="/">
+                            <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
+                        </Link>
+                    </div>
+                    <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <CSidebar style={{ height: "100vh", overflowY: 'auto' }}>
+                        <CSidebarNav>
+                            {/* ecoles */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
+                                    </>
+                                }
+                            >
+                                <CNavItem component={Link} href={route('school.index')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des écoles
+                                </CNavItem>
 
-                <CNavItem href="#">
-                    <CIcon customClassName="nav-icon" icon={cilSpeedometer} /> Nav item
-                </CNavItem>
-                <CNavItem href="#">
-                    <CIcon customClassName="nav-icon" icon={cilSpeedometer} /> With badge{' '}
-                    <CBadge color="primary ms-auto">NEW</CBadge>
-                </CNavItem>
-                <CNavGroup
-                    toggler={
-                        <>
-                            <CIcon customClassName="nav-icon" icon={cilPuzzle} /> Nav dropdown
-                        </>
-                    }
-                >
-                    <CNavItem href="#">
-                        <span className="nav-icon">
-                            <span className="nav-icon-bullet"></span>
-                        </span>{' '}
-                        Nav dropdown item
-                    </CNavItem>
-                    <CNavItem href="#">
-                        <span className="nav-icon">
-                            <span className="nav-icon-bullet"></span>
-                        </span>{' '}
-                        Nav dropdown item
-                    </CNavItem>
-                </CNavGroup>
-                <CNavItem href="https://coreui.io">
-                    <CIcon customClassName="nav-icon" icon={cilCloudDownload} /> Download CoreUI
-                </CNavItem>
-                <CNavItem href="https://coreui.io/pro/">
-                    <CIcon customClassName="nav-icon" icon={cilLayers} /> Try CoreUI PRO
-                </CNavItem>
-            </CSidebarNav>
-        </CSidebar>
+                                <CNavItem component={Link} href={route('school.create')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter une école
+                                </CNavItem>
+                            </CNavGroup>
+
+                            {/* apprenants */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilSmilePlus} /> Les Apprenants
+                                    </>
+                                }
+                            >
+                                <CNavItem component={Link} href={route('apprenant.index')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des apprenants
+                                </CNavItem>
+
+                                <CNavItem component={Link} href={route('apprenant.create')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter un apprenant
+                                </CNavItem>
+                            </CNavGroup>
+                        </CSidebarNav>
+                    </CSidebar>
+                </div>
+            </div>
+        </>
     )
 }

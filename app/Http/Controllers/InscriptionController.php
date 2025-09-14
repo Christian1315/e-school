@@ -61,9 +61,6 @@ class InscriptionController extends Controller
     {
         $inscription->load(["school", "apprenant.parent.detail","apprenant.classe"]);
 
-        // return $inscription->load(["school", "apprenant.parent.detail","apprenant.classe"]);
-        // dd($inscription->load(["school", "apprenant"]), $reste);
-
         set_time_limit(0);
         $pdf = Pdf::loadView("pdfs.souscriptions.receit", [
             "inscription" => $inscription,

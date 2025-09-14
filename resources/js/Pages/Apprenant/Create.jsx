@@ -6,9 +6,10 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend,cilArrowCircleLeft,cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import Swal from 'sweetalert2';
 
-export default function Create() {
+export default function Create({ parents, classes, schools }) {
     const {
         data,
         setData,
@@ -17,16 +18,56 @@ export default function Create() {
         post,
         reset,
         processing,
-        recentlySuccessful,
+        progress
     } = useForm({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
+        parent_id: "",
+        school_id: "",
+        classe_id: "",
+        firstname: "",
+        lastname: "",
+        adresse: "",
+        email: "",
+        phone: "",
+        date_naissance: "",
+        lieu_naissance: "",
+        sexe: "",
+        photo: "",
     });
 
-    const submit = () => {
+    const submit = (e) => {
+        // alert("gogog")
+        e.preventDefault();
 
-    }
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        post(route('apprenant.store'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: 'Apprenant crée avec succès',
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+            // onFinish: () => reset('password'),
+        });
+    };
 
     return (
         <AuthenticatedLayout
@@ -52,76 +93,180 @@ export default function Create() {
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <div>
-                                            <InputLabel htmlFor="raison_sociale" value="Raison Sociale" />
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="parent_id" value="Parent" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <TextInput
-                                                id="raison_sociale"
-                                                className="mt-1 block w-full"
-                                                value={data.lastname}
-                                                onChange={(e) => setData('raison_sociale', e.target.value)}
+                                            <select
+                                                name="parent_id"
+                                                id="parent_id"
                                                 required
-                                                isFocused
-                                                autoComplete="raison_sociale"
-                                            />
+                                                className='form-control mt-1 block w-full'
+                                                onChange={(e) => setData('parent_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez un parent</option>
+                                                {parents.map((parent) => (
+                                                    <option key={parent.id} value={parent.id}>
+                                                        {parent.lastname} - {parent.firstname}
+                                                    </option>
+                                                ))}
+                                            </select>
 
-                                            <InputError className="mt-2" message={errors.raison_sociale} />
+                                            <InputError className="mt-2" message={errors.parent_id} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="adresse" value="Adresse" />
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+
+                                            <select
+                                                name="school_id"
+                                                id="school_id"
+                                                required
+                                                className='form-control mt-1 block w-full'
+                                                onChange={(e) => setData('school_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez une école</option>
+                                                {schools.map((school) => (
+                                                    <option key={school.id} value={school.id}>
+                                                        {school.raison_sociale}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            <InputError className="mt-2" message={errors.school_id} />
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="classe_id" value="Classe concernée" >  <span className="text-danger">*</span> </InputLabel>
+
+                                            <select
+                                                name="classe_id"
+                                                id="classe_id"
+                                                required
+                                                className='form-control mt-1 block w-full'
+                                                onChange={(e) => setData('classe_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez une classe</option>
+                                                {classes.map((classe) => (
+                                                    <option key={classe.id} value={classe.id}>
+                                                        {classe.libelle}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            <InputError className="mt-2" message={errors.classe_id} />
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="firstname" value="Nom" ><span className="text-danger">*</span></InputLabel>
+
                                             <TextInput
-                                                id="adresse"
+                                                id="firstname"
+                                                type="text"
                                                 className="mt-1 block w-full"
                                                 value={data.firstname}
+                                                required
+                                                placeholder="John"
+                                                onChange={(e) => setData('firstname', e.target.value)}
+                                                autoComplete="firstname"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.firstname} />
+                                        </div>
+
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="date_naissance" value="Date de naissance" />
+
+                                            <TextInput
+                                                id="date_naissance"
+                                                type="date"
+                                                className="mt-1 block w-full"
+                                                placeholder="01/03/2025"
+                                                required
+                                                value={data.date_naissance}
+                                                onChange={(e) => setData('date_naissance', e.target.value)}
+                                                autoComplete="date_naissance"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.date_naissance} />
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="lieu_naissance" value="Lieu de naissance" ><span className="text-danger">*</span></InputLabel>
+
+                                            <TextInput
+                                                id="lieu_naissance"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                value={data.lieu_naissance}
+                                                placeholder="Cotonou | Apkapka"
+                                                required
+                                                onChange={(e) => setData('lieu_naissance', e.target.value)}
+                                                autoComplete="lieu_naissance"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.lieu_naissance} />
+                                        </div>
+
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="lastname" value="Prénom" > <span className="text-danger">*</span></InputLabel>
+                                            <TextInput
+                                                id="lastname"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                placeholder="Do"
+                                                value={data.lastname}
+                                                onChange={(e) => setData('lastname', e.target.value)}
+                                                required
+                                                autoComplete="lastname"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.lastname} />
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="adresse" value="Adresse" > <span className="text-danger">*</span></InputLabel>
+                                            <TextInput
+                                                id="adresse"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                placeholder="Do"
+                                                value={data.adresse}
                                                 onChange={(e) => setData('adresse', e.target.value)}
                                                 required
-                                                isFocused
                                                 autoComplete="adresse"
                                             />
 
                                             <InputError className="mt-2" message={errors.adresse} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="ifu" value="IFU" />
-
-                                            <TextInput
-                                                id="ifu"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('ifu', e.target.value)}
-                                                required
-                                                autoComplete="ifu"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.ifu} />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div>
-                                            <InputLabel htmlFor="email" value="Email" />
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="email" value="Email" > <span className="text-danger">*</span></InputLabel>
                                             <TextInput
                                                 id="email"
                                                 type="email"
                                                 className="mt-1 block w-full"
+                                                placeholder="jpe@gmail.com"
                                                 value={data.email}
                                                 onChange={(e) => setData('email', e.target.value)}
                                                 required
-                                                autoComplete="username"
+                                                autoComplete="email"
                                             />
 
                                             <InputError className="mt-2" message={errors.email} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="phone" value="Telephone" />
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="phone" value="Telephone" ><span className="text-danger">*</span></InputLabel>
                                             <TextInput
                                                 id="phone"
                                                 type="text"
                                                 className="mt-1 block w-full"
-                                                value={data.email}
+                                                placeholder="+22956854397"
+                                                value={data.phone}
                                                 onChange={(e) => setData('phone', e.target.value)}
                                                 required
                                                 autoComplete="phone"
@@ -130,23 +275,51 @@ export default function Create() {
                                             <InputError className="mt-2" message={errors.phone} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="rccm" value="RCCM" />
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="sexe" value="Le sexe" ><span className="text-danger">*</span></InputLabel>
 
-                                            <TextInput
-                                                id="rccm"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('rccm', e.target.value)}
+                                            <select
+                                                name="sexe"
+                                                id="sexe"
+                                                className='form-control mt-1 block w-full'
                                                 required
-                                                autoComplete="rccm"
-                                            />
+                                                value={data.sexe}
+                                                onChange={(e) => setData('sexe', e.target.value)}
+                                            >
+                                                <option value="">-- Choisissez --</option>
+                                                <option value="Masculin">Masculin</option>
+                                                <option value="Féminin">Féminin</option>
+                                            </select>
 
-                                            <InputError className="mt-2" message={errors.rccm} />
+
+                                            <InputError className="mt-2" message={errors.sexe} />
+                                        </div>
+
+                                        <div className="col-12">
+                                            <div className='mb-3'>
+                                                <InputLabel htmlFor="photo" value="Photo de l'apprenant" ><span className="text-danger">*</span></InputLabel>
+
+                                                <TextInput
+                                                    id="photo"
+                                                    type="file"
+                                                    className="mt-1 block w-full"
+                                                    required
+                                                    onChange={(e) => setData('photo', e.target.files[0])}
+                                                    autoComplete="photo"
+                                                />
+
+                                                {progress && (
+                                                    <progress value={progress.percentage} max="100">
+                                                        {progress.percentage}%
+                                                    </progress>
+                                                )}
+
+                                                <InputError className="mt-2" message={errors.logo} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <div className="flex items-center gap-4">
                                     <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>

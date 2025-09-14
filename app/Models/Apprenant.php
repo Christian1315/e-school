@@ -99,9 +99,10 @@ class Apprenant extends Model
      * Upload photo
      */
 
-    function handlePhoto($request)
+    function handlePhoto()
     {
         $photoPath = null;
+        $request = request();
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -164,12 +165,13 @@ class Apprenant extends Model
 
         // creating
         static::creating(function ($model) {
-            $model->update(["created_by" => Auth::id()]);
+            $model->created_by = Auth::id();
+            $model->photo = $model->handlePhoto();
         });
 
         // updating
         static::updating(function ($model) {
-            $model->update(["updated_by" => Auth::id()]);
+            $model->updated_by = Auth::id();
         });
     }
 }

@@ -91,7 +91,7 @@
 
                         <!-- Texte centre -->
                         <td style="width: 50%; text-align: center;">
-                            <h1 class="school-name" style="margin: 0; font-size: 18px;">{{$inscription->school?->raison_sociale}}</h1>
+                            <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$inscription->school?->raison_sociale}}</h1>
                             <h3 style="margin: 2px 0;"></h3>
                             <p class="school-description" style="margin: 0;">{{$inscription->school?->description}}</p>
                             <p class="school-contact" style="margin: 0;">Tel: {{$inscription->school?->phone}}</p>

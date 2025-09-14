@@ -52,9 +52,10 @@ class School extends Model
     /**
      * Upload logo
      */
-    function handleLogo($request)
+    function handleLogo()
     {
         $photoPath = null;
+        $request = request();
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
@@ -145,5 +146,19 @@ class School extends Model
     function moyenneDevoir(): HasMany
     {
         return $this->hasMany(MoyenneDevoir::class);
+    }
+
+    /**
+     * Boot
+     */
+
+    static protected function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->logo = $model->handleLogo();
+            // You can't set $model->numero here yet because the ID is not generated.
+        });
     }
 }

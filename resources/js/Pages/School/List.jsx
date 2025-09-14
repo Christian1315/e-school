@@ -49,8 +49,8 @@ export default function List({ schools }) {
                                         <tr key={school.id}>
                                             <th scope="row">{index + 1}</th>
                                             <td>
-                                                <CIcon customClassName="nav-icon text-success" icon={cilSchool} />
-                                                {/* <img src={school.logo} className='img-fluid img-circle shadow' srcSet="" /> */}
+                                                {/* <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> */}
+                                                <img src={school.logo} className='img-fluid img-circle shadow' srcSet="" />
                                             </td>
                                             <td>{school.raison_sociale}</td>
                                             <td>{school.adresse}</td>

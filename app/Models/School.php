@@ -28,6 +28,9 @@ class School extends Model
         "ifu",
         "rccm",
         "statut",
+
+        "slogan",
+        "description"
     ];
 
     /**

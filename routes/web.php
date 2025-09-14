@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApprenantController;
+use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
 // use Illuminate\Contracts\Mail\Mailer;
@@ -30,13 +31,18 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Schools
-Route::resource("school", SchoolController::class);
-
-// Apprenants
-Route::resource("apprenant", ApprenantController::class);
-
 Route::middleware('auth')->group(function () {
+
+    // Schools
+    Route::resource("school", SchoolController::class);
+
+    // Apprenants
+    Route::resource("apprenant", ApprenantController::class);
+
+    // Inscriptions
+    Route::resource("inscription", InscriptionController::class);
+    Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

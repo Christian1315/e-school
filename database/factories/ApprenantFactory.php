@@ -17,8 +17,8 @@ class ApprenantFactory extends Factory
     public function definition(): array
     {
         return [
-            // "parent_id" => fake()->numberBetween(1, 10),
-            // "school_id" => fake()->numberBetween(1, 10),
+            "parent_id" => fake()->numberBetween(1,10),
+            "school_id" => 1,
             // "classe_id" => fake()->numberBetween(1, 10),
             "firstname" => fake()->firstName(),
             "lastname" => fake()->lastName(),
@@ -29,6 +29,7 @@ class ApprenantFactory extends Factory
             "lieu_naissance" => fake()->city(),
             "sexe" => fake()->randomElement(["Masculin", "Féminin"]),
             "photo" => fake()->imageUrl(640, 480, 'people'),
+
             // "created_by" => fake()->numberBetween(1, 10),
             // "updated_by" => fake()->numberBetween(1, 10),
         ];

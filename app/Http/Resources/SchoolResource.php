@@ -25,6 +25,9 @@ class SchoolResource extends JsonResource
             "ifu" => $this->ifu,
             "rccm" => $this->rccm,
             "statut" => $this->statut,
+
+            "slogan" => $this->slogan,
+            "description" => $this->description,
         ];
     }
 }

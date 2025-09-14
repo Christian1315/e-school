@@ -15,7 +15,8 @@ import InputError from '@/Components/InputError';
 
 export default function List({ apprenants }) {
     const [showModal, setShowModal] = useState(false);
-    const confirmShowModal = () => {
+    const confirmShowModal = (e) => {
+        e.preventDefault();
         setShowModal(true);
     };
     const closeModal = () => {
@@ -24,12 +25,12 @@ export default function List({ apprenants }) {
         clearErrors();
         reset();
     };
-    const { data, passwordInput,errors,processing } = useForm({
+    const { data, passwordInput, errors, processing } = useForm({
         passwordInput: "",
     })
 
-    const generateReceit = ()=>{
-        
+    const generateReceit = () => {
+
     }
 
     return (
@@ -56,11 +57,11 @@ export default function List({ apprenants }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Photo</th>
+                                    <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Parent</th>
                                     <th scope="col">Classe</th>
-                                    <th scope="col">Action</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Adresse</th>
                                     <th scope="col">Phone</th>
@@ -79,38 +80,11 @@ export default function List({ apprenants }) {
                                                 <CIcon customClassName="nav-icon text-success" icon={cilSchool} />
                                                 {/* <img src={apprenant.logo} className='img-fluid img-circle shadow' srcSet="" /> */}
                                             </td>
+                                            <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
                                             <td>{apprenant.classe?.libelle}</td>
-                                            <td>
-                                                <Dropdown>
-                                                    <Dropdown.Trigger>
-                                                        <span className="inline-flex rounded-md">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            >
-                                                                <CIcon icon={cilAlignCenter} /> Gérer
-                                                            </button>
-                                                        </span>
-                                                    </Dropdown.Trigger>
-
-                                                    <Dropdown.Content>
-                                                        <Dropdown.Link
-                                                            onClick={confirmShowModal}
-                                                        >
-                                                            <CIcon icon={cilUserX} />  Generer un reçu
-                                                        </Dropdown.Link>
-
-                                                        <Dropdown.Link
-                                                            href="#"
-                                                        >
-                                                            <CIcon icon={cilUserX} />  Supprimer
-                                                        </Dropdown.Link>
-                                                    </Dropdown.Content>
-                                                </Dropdown>
-                                            </td>
                                             <td>{apprenant.email}</td>
                                             <td>{apprenant.adresse}</td>
                                             <td>{apprenant.phone}</td>

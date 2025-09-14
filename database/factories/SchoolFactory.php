@@ -24,6 +24,9 @@ class SchoolFactory extends Factory
             "phone"=>fake()->phoneNumber(),
 
             "logo"=>fake()->imageUrl(),
+            "slogan"=>"Discipline - Travail - Succès",
+            "description"=>fake()->randomElement(["Enseignement Maternel et Primaire","College d'enseignement Génerale Secondaire"]),
+
             "ifu"=> "IFU-".fake()->word()."xxx",
             "rccm"=>"IFU-".fake()->word()."xxx",
             "statut"=>fake()->boolean(),

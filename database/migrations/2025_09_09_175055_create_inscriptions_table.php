@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('inscriptions', function (Blueprint $table) {
             $table->id();
+            $table->string("numero")->nullable();
             $table->foreignId('school_id')
                 ->nullable()
                 ->constrained('schools')

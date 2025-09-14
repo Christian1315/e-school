@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('logo')->nullable();
+
+            $table->string('slogan')->nullable();
+            $table->string('description')->nullable();
+            
             $table->string('ifu')->nullable();
             $table->string('rccm')->nullable();
             $table->boolean('statut')->default(true);

@@ -17,9 +17,10 @@ class InscriptionFactory extends Factory
     public function definition(): array
     {
         return [
-            // "school_id" => fake()->numberBetween(1, 10),
+            "numero" => fake()->randomElement(["0001","0002","0003","0004"]) ,
+            "school_id" => 1,
             // "apprenant_id" => fake()->numberBetween(1, 10),
-            // "created_by" => fake()->numberBetween(1, 10),
+            "created_by" => 1,
             // "updated_by" => fake()->numberBetween(1, 10),
 
             "numero_educ_master" => "EDU-" . fake()->numberBetween(1000, 9999),

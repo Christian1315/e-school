@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool,cilSmilePlus } from '@coreui/icons'
+import { cilSchool,cilSmilePlus,cilWallet } from '@coreui/icons'
 import { Link } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -74,6 +74,29 @@ export default function SidebarMenu() {
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter un apprenant
+                                </CNavItem>
+                            </CNavGroup>
+
+                            {/* inscriptions */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilWallet} /> Les Inscriptions
+                                    </>
+                                }
+                            >
+                                <CNavItem component={Link} href={route('inscription.index')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des inscriptions
+                                </CNavItem>
+
+                                <CNavItem component={Link} href={route('inscription.create')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter une inscription
                                 </CNavItem>
                             </CNavGroup>
                         </CSidebarNav>

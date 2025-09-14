@@ -17,6 +17,7 @@ class Inscription extends Model
      * fillbale
      */
     protected $fillable = [
+        "numero",
         "school_id",
         "apprenant_id",
         "created_by",
@@ -31,6 +32,7 @@ class Inscription extends Model
      * Casts
      */
     protected $casts = [
+        "numero" => 'string',
         "school_id"      => "integer",
         "apprenant_id"      => "integer",
         "created_by"     => "integer",
@@ -74,6 +76,11 @@ class Inscription extends Model
         return $this->belongsTo(User::class, "updated_by");
     }
 
+    protected function generateNumero()
+    {
+        return "000" . $this->id;
+    }
+
     /**
      * Boot
      */
@@ -82,14 +89,19 @@ class Inscription extends Model
     {
         parent::boot();
 
-        // creating
         static::creating(function ($model) {
-            $model->update(["created_by" => Auth::id()]);
+            $model->created_by = Auth::id();
+            // You can't set $model->numero here yet because the ID is not generated.
         });
 
-        // updating
+        static::created(function ($model) {
+            $model->numero = "000" . $model->id;
+            // Save once, no update inside update loop
+            $model->saveQuietly(); // avoids triggering events again
+        });
+
         static::updating(function ($model) {
-            $model->update(["updated_by" => Auth::id()]);
+            $model->updated_by = Auth::id();
         });
     }
 }

@@ -12,9 +12,12 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import DangerButton from '@/Components/DangerButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
+import Swal from 'sweetalert2';
 
 export default function List({ apprenants }) {
     const [showModal, setShowModal] = useState(false);
+    const [currentApprenant, setCurrentApprenant] = useState(null);
+
     const confirmShowModal = (e) => {
         e.preventDefault();
         setShowModal(true);
@@ -25,11 +28,18 @@ export default function List({ apprenants }) {
         clearErrors();
         reset();
     };
-    const { data, passwordInput, errors, processing } = useForm({
-        passwordInput: "",
-    })
 
-    const generateReceit = () => {
+    const showImg = (apprenant) => {
+        Swal.fire({
+            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
+            text: `Profile de : ${apprenant.parent?.firstname} - ${apprenant.parent?.lastname}`,
+            imageUrl: apprenant.photo,
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: "Photo de profil",
+            confirmButtonColor: '#1b5a38',
+            confirmButtonText: "Merci"
+        });
 
     }
 
@@ -77,8 +87,11 @@ export default function List({ apprenants }) {
                                             <th scope="row">{index + 1}</th>
 
                                             <td>
-                                                <CIcon customClassName="nav-icon text-success" icon={cilSchool} />
-                                                {/* <img src={apprenant.logo} className='img-fluid img-circle shadow' srcSet="" /> */}
+                                                {/* <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> */}
+                                                <img src={apprenant.photo} 
+                                                onClick={()=>showImg(apprenant)}
+                                                className='img-fluid img-circle shadow' srcSet="" 
+                                                style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6',cursor:'pointer' }} />
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>
@@ -99,57 +112,6 @@ export default function List({ apprenants }) {
                     </div>
                 </div>
             </div>
-            <Modal show={showModal} onClose={closeModal}>
-                <form onSubmit={generateReceit} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Êtes-vous sûr de vouloir supprimer votre compte ?
-                    </h2>
-
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Une fois votre compte supprimé, toutes ses ressources et
-                        données seront définitivement supprimées. Veuillez saisir votre
-                        mot de passe pour confirmer que vous souhaitez supprimer définitivement
-                        votre compte.
-                    </p>
-
-                    <div className="mt-6">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
-                        />
-
-                        <TextInput
-                            id="password"
-                            type="password"
-                            name="password"
-                            ref={passwordInput}
-                            value={data.password}
-                            onChange={(e) =>
-                                setData('password', e.target.value)
-                            }
-                            className="mt-1 block w-3/4"
-                            isFocused
-                            placeholder="Password"
-                        />
-
-                        <InputError
-                            message={errors.password}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Abandonner
-                        </SecondaryButton>
-
-                        <DangerButton className="ms-3" disabled={processing}>
-                            <CIcon icon={cilTrash} />  Supprimer
-                        </DangerButton>
-                    </div>
-                </form>
-            </Modal>
         </AuthenticatedLayout>
     );
 }

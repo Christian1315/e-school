@@ -85,7 +85,7 @@
                         <td style="width: 25%; text-align: left;">
                             <img src="{{ public_path('fichiers/images/logo.png') }}"
                                 id="logo"
-                                alt="Logo"
+                                alt="Logo de l'école"
                                 style="max-width: 100px; height: auto;">
                         </td>
 

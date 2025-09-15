@@ -6,150 +6,186 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend,cilArrowCircleLeft,cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import Swal from 'sweetalert2';
 
-export default function Create() {
+export default function Create({ apprenants, schools }) {
+
     const {
         data,
         setData,
         errors,
-        put,
         post,
-        reset,
         processing,
-        recentlySuccessful,
+        progress
     } = useForm({
-        current_password: '',
-        password: '',
-        password_confirmation: '',
+        school_id: "",
+        apprenant_id: "",
+        numero_educ_master: "",
+        frais_inscription: "",
+        dossier_transfert: "",
     });
 
-    const submit = () => {
+    const submit = (e) => {
+        e.preventDefault();
 
-    }
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        post(route('inscription.store'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: 'Inscription créée avec succès',
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+        });
+    };
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des apprenants
+                    <CIcon className='text-success' icon={cilLibraryAdd} /> Nouvelle inscription
                 </h2>
             }
-
             SidebarMenu={<SidebarMenu />}
         >
-            <Head title="Ajouter école" />
+            <Head title="Nouvelle inscription" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
-
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className=" text-center  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des apprenants</Link>
+                            <div className="text-center items-center gap-4">
+                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.index")}>
+                                    <CIcon icon={cilArrowCircleLeft} /> Liste des apprenants
+                                </Link>
                             </div>
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <div>
-                                            <InputLabel htmlFor="raison_sociale" value="Raison Sociale" />
-
-                                            <TextInput
-                                                id="raison_sociale"
-                                                className="mt-1 block w-full"
-                                                value={data.lastname}
-                                                onChange={(e) => setData('raison_sociale', e.target.value)}
+                                        {/* École */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
+                                            <select
+                                                name="school_id"
+                                                id="school_id"
                                                 required
-                                                isFocused
-                                                autoComplete="raison_sociale"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.raison_sociale} />
+                                                className='form-control mt-1 block w-full'
+                                                value={data.school_id}
+                                                onChange={(e) => setData('school_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez une école</option>
+                                                {schools.map((school) => (
+                                                    <option key={school.id} value={school.id}>
+                                                        {school.raison_sociale}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError className="mt-2" message={errors.school_id} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="adresse" value="Adresse" />
+
+                                        {/* Frais */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="frais_inscription" value="Frais d'inscription" ><span className="text-danger">*</span> </InputLabel>
                                             <TextInput
-                                                id="adresse"
+                                                id="frais_inscription"
+                                                type="number"
                                                 className="mt-1 block w-full"
-                                                value={data.firstname}
-                                                onChange={(e) => setData('adresse', e.target.value)}
+                                                placeholder="50000"
+                                                value={data.frais_inscription}
+                                                onChange={(e) => setData('frais_inscription', e.target.value)}
+                                                autoComplete="frais_inscription"
                                                 required
-                                                isFocused
-                                                autoComplete="adresse"
                                             />
-
-                                            <InputError className="mt-2" message={errors.adresse} />
-                                        </div>
-
-                                        <div>
-                                            <InputLabel htmlFor="ifu" value="IFU" />
-
-                                            <TextInput
-                                                id="ifu"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('ifu', e.target.value)}
-                                                required
-                                                autoComplete="ifu"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.ifu} />
+                                            <InputError className="mt-2" message={errors.frais_inscription} />
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        <div>
-                                            <InputLabel htmlFor="email" value="Email" />
-                                            <TextInput
-                                                id="email"
-                                                type="email"
-                                                className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('email', e.target.value)}
+                                        {/* Apprenant */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="apprenant_id" value="Apprenant concerné" > <span className="text-danger">*</span> </InputLabel>
+                                            <select
+                                                name="apprenant_id"
+                                                id="apprenant_id"
                                                 required
-                                                autoComplete="username"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.email} />
+                                                className='form-control mt-1 block w-full'
+                                                value={data.apprenant_id}
+                                                onChange={(e) => setData('apprenant_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez un apprenant</option>
+                                                {apprenants.map((apprenant) => (
+                                                    <option key={apprenant.id} value={apprenant.id}>
+                                                        {apprenant.firstname} - {apprenant.lastname}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError className="mt-2" message={errors.apprenant_id} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="phone" value="Telephone" />
+                                        {/* Numéro Educ Master */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="numero_educ_master" value="Numéro Educ Master" ><span className="text-danger">*</span> </InputLabel>
                                             <TextInput
-                                                id="phone"
+                                                id="numero_educ_master"
                                                 type="text"
                                                 className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('phone', e.target.value)}
-                                                required
-                                                autoComplete="phone"
+                                                placeholder="###RTYU87654"
+                                                value={data.numero_educ_master}
+                                                onChange={(e) => setData('numero_educ_master', e.target.value)}
+                                                autoComplete="numero_educ_master"
                                             />
-
-                                            <InputError className="mt-2" message={errors.phone} />
+                                            <InputError className="mt-2" message={errors.numero_educ_master} />
                                         </div>
 
-                                        <div>
-                                            <InputLabel htmlFor="rccm" value="RCCM" />
-
-                                            <TextInput
-                                                id="rccm"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.email}
-                                                onChange={(e) => setData('rccm', e.target.value)}
-                                                required
-                                                autoComplete="rccm"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.rccm} />
-                                        </div>
                                     </div>
                                 </div>
 
+                                {/* Dossier de transfert */}
+                                <div className="col-12">
+                                    <div className='mb-3'>
+                                        <InputLabel htmlFor="dossier_transfert" value="Dossier de transfert" />
+                                        <TextInput
+                                            id="dossier_transfert"
+                                            type="file"
+                                            className="mt-1 block w-full"
+                                            onChange={(e) => setData('dossier_transfert', e.target.files[0])}
+                                            autoComplete="dossier_transfert"
+                                        />
+                                        {progress && (
+                                            <progress value={progress.percentage} max="100">
+                                                {progress.percentage}%
+                                            </progress>
+                                        )}
+                                        <InputError className="mt-2" message={errors.dossier_transfert} />
+                                    </div>
+                                </div>
+
+                                {/* Bouton */}
                                 <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>
+                                    <PrimaryButton disabled={processing}>
+                                        <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'}
+                                    </PrimaryButton>
                                 </div>
                             </form>
                         </div>

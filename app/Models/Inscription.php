@@ -76,6 +76,25 @@ class Inscription extends Model
         return $this->belongsTo(User::class, "updated_by");
     }
 
+     /**
+     * Upload photo
+     */
+
+    function handlePhoto()
+    {
+        $photoPath = null;
+        $request = request();
+
+        if ($request->hasFile('dossier_transfert')) {
+            $file = $request->file('dossier_transfert');
+            $name = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('dossier_transferts'), $name);
+            $photoPath = asset('dossier_transferts/' . $name);
+        }
+
+        return $photoPath;
+    }
+
     protected function generateNumero()
     {
         return "000" . $this->id;
@@ -91,6 +110,7 @@ class Inscription extends Model
 
         static::creating(function ($model) {
             $model->created_by = Auth::id();
+            $model->dossier_transfert = $model->handlePhoto();
             // You can't set $model->numero here yet because the ID is not generated.
         });
 

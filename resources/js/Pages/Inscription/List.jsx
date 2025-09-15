@@ -82,7 +82,7 @@ export default function List({ inscriptions }) {
                         </p>
                     </div>
                 `,
-                showConfirmButton:false
+                showConfirmButton: false
             })
         });
     }
@@ -126,12 +126,13 @@ export default function List({ inscriptions }) {
                                             <td>{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</td>
                                             <td>{inscription.numero_educ_master}</td>
                                             <td>
-                                                <button
+                                                <a target='__blank'
+                                                    href={inscription.dossier_transfert}
                                                     className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                    onClick={() => showTransfertDossier(inscription)}
+                                                // onClick={() => showTransfertDossier(inscription)}
                                                 >
                                                     <CIcon icon={cilCenterFocus} />
-                                                </button>
+                                                </a>
                                             </td>
                                             <td>
                                                 <Dropdown>

@@ -79,7 +79,6 @@ class Inscription extends Model
      /**
      * Upload photo
      */
-
     function handlePhoto()
     {
         $photoPath = null;

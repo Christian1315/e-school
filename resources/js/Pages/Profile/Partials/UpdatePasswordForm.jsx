@@ -81,7 +81,7 @@ export default function UpdatePasswordForm({ className = '' }) {
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    <CIcon className='text-danger' icon={cilLockLocked} className="mr-2" />
+                    <CIcon className='text-danger mr-2' icon={cilLockLocked} />
                     Modification de mot de passe
                 </h2>
 

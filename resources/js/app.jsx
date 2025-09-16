@@ -1,5 +1,7 @@
 import '../css/app.css';
 import './bootstrap';
+// import './chat.js';
+import "./../../public/fichiers/base.css";
 import '@coreui/coreui/dist/css/coreui.min.css'
 
 import { createInertiaApp } from '@inertiajs/react';

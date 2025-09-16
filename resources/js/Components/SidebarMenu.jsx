@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople,cilApplications } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -35,6 +35,23 @@ export default function SidebarMenu() {
                 <div className="offcanvas-body">
                     <CSidebar style={{ height: "100vh", overflowY: 'auto' }}>
                         <CSidebarNav>
+                            {/* Dashboard */}
+                            <CNavTitle>Gestion</CNavTitle>
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilApplications} /> Tableau de board
+                                    </>
+                                }
+                            >
+                                <Link href={route('dashboard')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Dashboard
+                                </Link>
+                            </CNavGroup>
+
                             <CNavTitle>Gestion</CNavTitle>
 
                             {/* ecoles */}

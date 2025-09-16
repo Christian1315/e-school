@@ -8,6 +8,7 @@ import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
 import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
+import Select from 'react-select'
 
 export default function Create({ schools }) {
 
@@ -89,21 +90,24 @@ export default function Create({ schools }) {
                                         {/* École */}
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
-                                            <select
+                                            <Select
+                                                placeholder="Rechercher une école ..."
                                                 name="school_id"
                                                 id="school_id"
                                                 required
-                                                className='form-control mt-1 block w-full'
-                                                value={data.school_id}
-                                                onChange={(e) => setData('school_id', e.target.value)}
-                                            >
-                                                <option value="">Choisissez une école</option>
-                                                {schools.map((school) => (
-                                                    <option key={school.id} value={school.id}>
-                                                        {school.raison_sociale}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                className="form-control mt-1 block w-full"
+                                                options={schools.map((school) => ({
+                                                    value: school.id,
+                                                    label: `${school.raison_sociale}`,
+                                                }))}
+                                                value={schools
+                                                    .map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))
+                                                    .find((option) => option.value === data.school_id)} // set selected option
+                                                onChange={(option) => setData('school_id', option.value)} // update state with id
+                                            />
                                             <InputError className="mt-2" message={errors.school_id} />
                                         </div>
 

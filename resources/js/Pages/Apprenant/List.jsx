@@ -97,7 +97,7 @@ export default function List({ apprenants }) {
                                             <td>{apprenant.firstname}</td>
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
-                                            <td>{apprenant.classe?.libelle}</td>
+                                            <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
                                             <td>{apprenant.email}</td>
                                             <td>{apprenant.adresse}</td>
                                             <td>{apprenant.phone}</td>

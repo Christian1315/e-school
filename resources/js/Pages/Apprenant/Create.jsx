@@ -8,8 +8,9 @@ import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
 import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
+import Select from 'react-select'
 
-export default function Create({ parents, classes, schools ,series}) {
+export default function Create({ parents, classes, schools, series }) {
     const {
         data,
         setData,
@@ -23,7 +24,7 @@ export default function Create({ parents, classes, schools ,series}) {
         parent_id: "",
         school_id: "",
         classe_id: "",
-        serie_id:"",
+        serie_id: "",
         firstname: "",
         lastname: "",
         adresse: "",
@@ -97,20 +98,24 @@ export default function Create({ parents, classes, schools ,series}) {
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="parent_id" value="Parent" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <select
+                                            <Select
+                                                placeholder="Rechercher un parent..."
                                                 name="parent_id"
                                                 id="parent_id"
                                                 required
-                                                className='form-control mt-1 block w-full'
-                                                onChange={(e) => setData('parent_id', e.target.value)}
-                                            >
-                                                <option value="">Choisissez un parent</option>
-                                                {parents.map((parent) => (
-                                                    <option key={parent.id} value={parent.id}>
-                                                        {parent.lastname} - {parent.firstname}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                className="form-control mt-1 block w-full"
+                                                options={parents.map((parent) => ({
+                                                    value: parent.id,
+                                                    label: `${parent.lastname} - ${parent.firstname}`,
+                                                }))}
+                                                value={parents
+                                                    .map((parent) => ({
+                                                        value: parent.id,
+                                                        label: `${parent.lastname} - ${parent.firstname}`,
+                                                    }))
+                                                    .find((option) => option.value === data.parent_id)} // set selected option
+                                                onChange={(option) => setData('parent_id', option.value)} // update state with id
+                                            />
 
                                             <InputError className="mt-2" message={errors.parent_id} />
                                         </div>
@@ -118,20 +123,24 @@ export default function Create({ parents, classes, schools ,series}) {
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <select
+                                            <Select
+                                                placeholder="Rechercher une école ..."
                                                 name="school_id"
                                                 id="school_id"
                                                 required
-                                                className='form-control mt-1 block w-full'
-                                                onChange={(e) => setData('school_id', e.target.value)}
-                                            >
-                                                <option value="">Choisissez une école</option>
-                                                {schools.map((school) => (
-                                                    <option key={school.id} value={school.id}>
-                                                        {school.raison_sociale}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                className="form-control mt-1 block w-full"
+                                                options={schools.map((school) => ({
+                                                    value: school.id,
+                                                    label: `${school.raison_sociale}`,
+                                                }))}
+                                                value={schools
+                                                    .map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))
+                                                    .find((option) => option.value === data.school_id)} // set selected option
+                                                onChange={(option) => setData('school_id', option.value)} // update state with id
+                                            />
 
                                             <InputError className="mt-2" message={errors.school_id} />
                                         </div>
@@ -139,20 +148,24 @@ export default function Create({ parents, classes, schools ,series}) {
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="classe_id" value="Classe concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <select
-                                                name="classe_id"
-                                                id="classe_id"
+                                            <Select
+                                                placeholder="Rechercher une classe ..."
+                                                name="school_id"
+                                                id="school_id"
                                                 required
-                                                className='form-control mt-1 block w-full'
-                                                onChange={(e) => setData('classe_id', e.target.value)}
-                                            >
-                                                <option value="">Choisissez une classe</option>
-                                                {classes.map((classe) => (
-                                                    <option key={classe.id} value={classe.id}>
-                                                        {classe.libelle}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                className="form-control mt-1 block w-full"
+                                                options={classes.map((classe) => ({
+                                                    value: classe.id,
+                                                    label: `${classe.libelle}`,
+                                                }))}
+                                                value={classes
+                                                    .map((classe) => ({
+                                                        value: classe.id,
+                                                        label: `${classe.libelle}`,
+                                                    }))
+                                                    .find((option) => option.value === data.classe_id)} // set selected option
+                                                onChange={(option) => setData('classe_id', option.value)} // update state with id
+                                            />
 
                                             <InputError className="mt-2" message={errors.classe_id} />
                                         </div>
@@ -160,20 +173,24 @@ export default function Create({ parents, classes, schools ,series}) {
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="serie_id" value="Série concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <select
+                                            <Select
+                                                placeholder="Rechercher une série ..."
                                                 name="serie_id"
                                                 id="serie_id"
                                                 required
-                                                className='form-control mt-1 block w-full'
-                                                onChange={(e) => setData('serie_id', e.target.value)}
-                                            >
-                                                <option value="">Choisissez une série</option>
-                                                {series.map((serie) => (
-                                                    <option key={serie.id} value={serie.id}>
-                                                        {serie.libelle}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                className="form-control mt-1 block w-full"
+                                                options={series.map((serie) => ({
+                                                    value: serie.id,
+                                                    label: `${serie.libelle}`,
+                                                }))}
+                                                value={series
+                                                    .map((serie) => ({
+                                                        value: serie.id,
+                                                        label: `${serie.libelle}`,
+                                                    }))
+                                                    .find((option) => option.value === data.serie_id)} // set selected option
+                                                onChange={(option) => setData('serie_id', option.value)} // update state with id
+                                            />
 
                                             <InputError className="mt-2" message={errors.serie_id} />
                                         </div>
@@ -211,23 +228,6 @@ export default function Create({ parents, classes, schools ,series}) {
                                             />
 
                                             <InputError className="mt-2" message={errors.date_naissance} />
-                                        </div>
-
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="lieu_naissance" value="Lieu de naissance" ><span className="text-danger">*</span></InputLabel>
-
-                                            <TextInput
-                                                id="lieu_naissance"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.lieu_naissance}
-                                                placeholder="Cotonou | Apkapka"
-                                                required
-                                                onChange={(e) => setData('lieu_naissance', e.target.value)}
-                                                autoComplete="lieu_naissance"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.lieu_naissance} />
                                         </div>
 
                                     </div>
@@ -280,7 +280,6 @@ export default function Create({ parents, classes, schools ,series}) {
                                             <InputError className="mt-2" message={errors.email} />
                                         </div>
 
-
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="phone" value="Telephone" ></InputLabel>
                                             <TextInput
@@ -300,44 +299,67 @@ export default function Create({ parents, classes, schools ,series}) {
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="sexe" value="Le sexe" ><span className="text-danger">*</span></InputLabel>
 
-                                            <select
+                                            <Select
+                                                placeholder="Rechercher un sexe ..."
                                                 name="sexe"
                                                 id="sexe"
-                                                className='form-control mt-1 block w-full'
                                                 required
-                                                value={data.sexe}
-                                                onChange={(e) => setData('sexe', e.target.value)}
-                                            >
-                                                <option value="">-- Choisissez --</option>
-                                                <option value="Masculin">Masculin</option>
-                                                <option value="Féminin">Féminin</option>
-                                            </select>
-
+                                                className="form-control mt-1 block w-full"
+                                                options={[
+                                                    { value: 'Masculin', label: 'Masculin' },
+                                                    { value: 'Féminin', label: 'Féminin' },
+                                                ]}
+                                                value={[
+                                                    { value: 'Masculin', label: 'Masculin' },
+                                                    { value: 'Féminin', label: 'Féminin' },
+                                                ].map((sexe) => ({
+                                                    value: sexe.value,
+                                                    label: `${sexe.label}`,
+                                                }))
+                                                    .find((option) => option.value === data.sexe)} // set selected option
+                                                onChange={(option) => setData('sexe', option.value)} // update state with id
+                                            />
 
                                             <InputError className="mt-2" message={errors.sexe} />
                                         </div>
 
-                                        <div className="col-12">
-                                            <div className='mb-3'>
-                                                <InputLabel htmlFor="photo" value="Photo de l'apprenant" ><span className="text-danger">*</span></InputLabel>
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="lieu_naissance" value="Lieu de naissance" ><span className="text-danger">*</span></InputLabel>
 
-                                                <TextInput
-                                                    id="photo"
-                                                    type="file"
-                                                    className="mt-1 block w-full"
-                                                    required
-                                                    onChange={(e) => setData('photo', e.target.files[0])}
-                                                    autoComplete="photo"
-                                                />
+                                            <TextInput
+                                                id="lieu_naissance"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                value={data.lieu_naissance}
+                                                placeholder="Cotonou | Apkapka"
+                                                required
+                                                onChange={(e) => setData('lieu_naissance', e.target.value)}
+                                                autoComplete="lieu_naissance"
+                                            />
 
-                                                {progress && (
-                                                    <progress value={progress.percentage} max="100">
-                                                        {progress.percentage}%
-                                                    </progress>
-                                                )}
+                                            <InputError className="mt-2" message={errors.lieu_naissance} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="photo" value="Photo de l'apprenant" ><span className="text-danger">*</span></InputLabel>
 
-                                                <InputError className="mt-2" message={errors.logo} />
-                                            </div>
+                                            <TextInput
+                                                id="photo"
+                                                type="file"
+                                                className="mt-1 block w-full"
+                                                required
+                                                onChange={(e) => setData('photo', e.target.files[0])}
+                                                autoComplete="photo"
+                                            />
+
+                                            {progress && (
+                                                <progress value={progress.percentage} max="100">
+                                                    {progress.percentage}%
+                                                </progress>
+                                            )}
+
+                                            <InputError className="mt-2" message={errors.logo} />
                                         </div>
                                     </div>
                                 </div>

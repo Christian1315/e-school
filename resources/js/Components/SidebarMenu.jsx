@@ -47,19 +47,20 @@ export default function SidebarMenu() {
                                             </>
                                         }
                                     >
-                                        <CNavItem component={Link} href={route('school.index')}>
+                                        <Link href={route('school.index')} className="nav-link">
                                             <span className="nav-icon">
                                                 <span className="nav-icon-bullet text-danger"></span>
                                             </span>
                                             Liste des écoles
-                                        </CNavItem>
+                                        </Link>
 
-                                        <CNavItem component={Link} href={route('school.create')}>
+
+                                        <Link href={route('school.create')} className="nav-link">
                                             <span className="nav-icon">
                                                 <span className="nav-icon-bullet"></span>
                                             </span>
                                             Ajouter une école
-                                        </CNavItem>
+                                        </Link>
                                     </CNavGroup> : null
                             }
 
@@ -72,19 +73,19 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <CNavItem component={Link} href={route('apprenant.index')}>
+                                <Link href={route('apprenant.index')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>
                                     Liste des apprenants
-                                </CNavItem>
+                                </Link>
 
-                                <CNavItem component={Link} href={route('apprenant.create')}>
+                                <Link href={route('apprenant.create')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter un apprenant
-                                </CNavItem>
+                                </Link>
                             </CNavGroup>
 
                             {/* inscriptions */}
@@ -95,19 +96,19 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <CNavItem component={Link} href={route('inscription.index')}>
+                                <Link href={route('inscription.index')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>
                                     Liste des inscriptions
-                                </CNavItem>
+                                </Link>
 
-                                <CNavItem component={Link} href={route('inscription.create')}>
+                                <Link href={route('inscription.create')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter une inscription
-                                </CNavItem>
+                                </Link>
                             </CNavGroup>
 
                             <CNavTitle>Paramètrage</CNavTitle>
@@ -120,19 +121,19 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <CNavItem component={Link} href={route('user.index')}>
+                                <Link component={Link} href={route('user.index')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>
                                     Liste des utilisateurs
-                                </CNavItem>
+                                </Link>
 
-                                <CNavItem component={Link} href={route('user.create')}>
+                                <Link href={route('user.create')} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter un utilisateur
-                                </CNavItem>
+                                </Link>
                             </CNavGroup>
                         </CSidebarNav>
                     </CSidebar>

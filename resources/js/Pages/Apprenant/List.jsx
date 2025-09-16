@@ -13,6 +13,7 @@ import DangerButton from '@/Components/DangerButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
+import { CNavItem } from '@coreui/react';
 
 export default function List({ apprenants }) {
     const [showModal, setShowModal] = useState(false);
@@ -58,7 +59,7 @@ export default function List({ apprenants }) {
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-
+                        
                         <div className="  items-center gap-4">
                             <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
                         </div>
@@ -88,10 +89,10 @@ export default function List({ apprenants }) {
 
                                             <td>
                                                 {/* <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> */}
-                                                <img src={apprenant.photo} 
-                                                onClick={()=>showImg(apprenant)}
-                                                className='img-fluid img-circle shadow' srcSet="" 
-                                                style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6',cursor:'pointer' }} />
+                                                <img src={apprenant.photo}
+                                                    onClick={() => showImg(apprenant)}
+                                                    className='img-fluid img-circle shadow' srcSet=""
+                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>

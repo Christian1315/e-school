@@ -10,6 +10,7 @@ use App\Models\School;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -21,7 +22,13 @@ class InscriptionController extends Controller
      */
     function index(Request $request)
     {
-        $inscriptions = Inscription::latest()->get();
+        if (Auth::user()->school) {
+            $inscriptions = Inscription::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
+        } else {
+            $inscriptions = Inscription::latest()->get();
+        }
+
         return Inertia::render('Inscription/List', [
             'inscriptions' => InscriptionResource::collection($inscriptions),
         ]);
@@ -33,8 +40,12 @@ class InscriptionController extends Controller
     function create(Request $request)
     {
         return Inertia::render('Inscription/Create', [
-            "apprenants" => Apprenant::all(),
-            "schools" => School::all(),
+            "apprenants" => Auth::user()->school_id ?
+                Apprenant::where("id", Auth::user()->school_id)->get() :
+                Apprenant::all(),
+            "schools" => Auth::user()->school_id ?
+                School::where("id", Auth::user()->school_id)->get() :
+                School::all(),
         ]);
     }
 

@@ -12,11 +12,15 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool,cilSmilePlus,cilWallet } from '@coreui/icons'
-import { Link } from '@inertiajs/react'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople } from '@coreui/icons'
+import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
 export default function SidebarMenu() {
+    const user = usePage().props.auth.user;
+    const school = usePage().props.auth.school;
+    console.log("school", school)
+
     return (
         <>
             <div className="offcanvas offcanvas-start" style={{ width: '300px' }} tabIndex="-1" id="offcanvasMenu" aria-labelledby="offcanvasLabel">
@@ -31,28 +35,34 @@ export default function SidebarMenu() {
                 <div className="offcanvas-body">
                     <CSidebar style={{ height: "100vh", overflowY: 'auto' }}>
                         <CSidebarNav>
-                            {/* ecoles */}
-                            <CNavGroup
-                                toggler={
-                                    <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
-                                    </>
-                                }
-                            >
-                                <CNavItem component={Link} href={route('school.index')}>
-                                    <span className="nav-icon">
-                                        <span className="nav-icon-bullet text-danger"></span>
-                                    </span>
-                                    Liste des écoles
-                                </CNavItem>
+                            <CNavTitle>Gestion</CNavTitle>
 
-                                <CNavItem component={Link} href={route('school.create')}>
-                                    <span className="nav-icon">
-                                        <span className="nav-icon-bullet"></span>
-                                    </span>
-                                    Ajouter une école
-                                </CNavItem>
-                            </CNavGroup>
+                            {/* ecoles */}
+                            {
+                                school == null ?
+                                    <CNavGroup
+                                        toggler={
+                                            <>
+                                                <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
+                                            </>
+                                        }
+                                    >
+                                        <CNavItem component={Link} href={route('school.index')}>
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet text-danger"></span>
+                                            </span>
+                                            Liste des écoles
+                                        </CNavItem>
+
+                                        <CNavItem component={Link} href={route('school.create')}>
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet"></span>
+                                            </span>
+                                            Ajouter une école
+                                        </CNavItem>
+                                    </CNavGroup> : null
+                            }
+
 
                             {/* apprenants */}
                             <CNavGroup
@@ -97,6 +107,31 @@ export default function SidebarMenu() {
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter une inscription
+                                </CNavItem>
+                            </CNavGroup>
+
+                            <CNavTitle>Paramètrage</CNavTitle>
+
+                            {/* ecoles */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les utilisateurs
+                                    </>
+                                }
+                            >
+                                <CNavItem component={Link} href={route('user.index')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des utilisateurs
+                                </CNavItem>
+
+                                <CNavItem component={Link} href={route('user.create')}>
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter un utilisateur
                                 </CNavItem>
                             </CNavGroup>
                         </CSidebarNav>

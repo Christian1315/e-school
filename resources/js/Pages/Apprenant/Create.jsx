@@ -9,7 +9,7 @@ import CIcon from '@coreui/icons-react';
 import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
-export default function Create({ parents, classes, schools }) {
+export default function Create({ parents, classes, schools ,series}) {
     const {
         data,
         setData,
@@ -23,6 +23,7 @@ export default function Create({ parents, classes, schools }) {
         parent_id: "",
         school_id: "",
         classe_id: "",
+        serie_id:"",
         firstname: "",
         lastname: "",
         adresse: "",
@@ -157,6 +158,27 @@ export default function Create({ parents, classes, schools }) {
                                         </div>
 
                                         <div className='mb-3'>
+                                            <InputLabel htmlFor="serie_id" value="Série concernée" >  <span className="text-danger">*</span> </InputLabel>
+
+                                            <select
+                                                name="serie_id"
+                                                id="serie_id"
+                                                required
+                                                className='form-control mt-1 block w-full'
+                                                onChange={(e) => setData('serie_id', e.target.value)}
+                                            >
+                                                <option value="">Choisissez une série</option>
+                                                {series.map((serie) => (
+                                                    <option key={serie.id} value={serie.id}>
+                                                        {serie.libelle}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                            <InputError className="mt-2" message={errors.serie_id} />
+                                        </div>
+
+                                        <div className='mb-3'>
                                             <InputLabel htmlFor="firstname" value="Nom" ><span className="text-danger">*</span></InputLabel>
 
                                             <TextInput
@@ -232,7 +254,7 @@ export default function Create({ parents, classes, schools }) {
                                                 id="adresse"
                                                 type="text"
                                                 className="mt-1 block w-full"
-                                                placeholder="Do"
+                                                placeholder="Cotonou | Apkapka"
                                                 value={data.adresse}
                                                 onChange={(e) => setData('adresse', e.target.value)}
                                                 required
@@ -243,7 +265,7 @@ export default function Create({ parents, classes, schools }) {
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="email" value="Email" > <span className="text-danger">*</span></InputLabel>
+                                            <InputLabel htmlFor="email" value="Email" ></InputLabel>
                                             <TextInput
                                                 id="email"
                                                 type="email"
@@ -251,7 +273,7 @@ export default function Create({ parents, classes, schools }) {
                                                 placeholder="jpe@gmail.com"
                                                 value={data.email}
                                                 onChange={(e) => setData('email', e.target.value)}
-                                                required
+                                                // required
                                                 autoComplete="email"
                                             />
 
@@ -260,7 +282,7 @@ export default function Create({ parents, classes, schools }) {
 
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="phone" value="Telephone" ><span className="text-danger">*</span></InputLabel>
+                                            <InputLabel htmlFor="phone" value="Telephone" ></InputLabel>
                                             <TextInput
                                                 id="phone"
                                                 type="text"
@@ -268,7 +290,7 @@ export default function Create({ parents, classes, schools }) {
                                                 placeholder="+22956854397"
                                                 value={data.phone}
                                                 onChange={(e) => setData('phone', e.target.value)}
-                                                required
+                                                // required
                                                 autoComplete="phone"
                                             />
 

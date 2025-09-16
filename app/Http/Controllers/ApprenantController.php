@@ -6,8 +6,10 @@ use App\Http\Resources\ApprenantResource;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\School;
+use App\Models\Serie;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -19,9 +21,15 @@ class ApprenantController extends Controller
      */
     function index(Request $request)
     {
-        $schools = Apprenant::latest()->get();
+        if (Auth::user()->school) {
+            $apprenants = Apprenant::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
+        } else {
+            $apprenants = Apprenant::latest()->get();
+        }
+
         return Inertia::render('Apprenant/List', [
-            'apprenants' => ApprenantResource::collection($schools),
+            'apprenants' => ApprenantResource::collection($apprenants),
         ]);
     }
 
@@ -31,9 +39,13 @@ class ApprenantController extends Controller
     function create(Request $request)
     {
         return Inertia::render('Apprenant/Create', [
-            "parents" => User::all(),
-            "schools" => School::all(),
+            "parents" => Auth::user()->school_id ?
+                User::where("school_id", Auth::user()->school_id)->get() : User::all(),
+            "schools" => Auth::user()->school_id ?
+                School::where("id", Auth::user()->school_id)->get() :
+                School::all(),
             "classes" => Classe::all(),
+            "series" => Serie::all(),
         ]);
     }
 
@@ -48,6 +60,7 @@ class ApprenantController extends Controller
                 "parent_id"      => "required|integer",
                 "school_id"      => "required|integer",
                 "classe_id"      => "required|integer",
+                "serie_id"      => "required|integer",
                 "firstname"      => "required|string",
                 "lastname"       => "required|string",
                 "adresse"        => "required|string",
@@ -66,6 +79,10 @@ class ApprenantController extends Controller
 
                 "classe_id.required"      => "La classe est obligatoire.",
                 "classe_id.integer"       => "La classe doit être un identifiant valide.",
+
+                "serie_id.required"      => "La serie est obligatoire.",
+                "serie_id.integer"       => "La serie doit être un identifiant valide.",
+
 
                 "firstname.required"      => "Le prénom de l'apprenant est obligatoire.",
                 "lastname.required"       => "Le nom de l'apprenant est obligatoire.",

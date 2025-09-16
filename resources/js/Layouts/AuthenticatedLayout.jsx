@@ -33,7 +33,7 @@ pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
 import 'datatables.net-responsive';
 import 'datatables.net-responsive-dt';
 
-export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
+export default function AuthenticatedLayout({header, children, SidebarMenu }) {
     useEffect(() => {
         const table = new DataTable('#myTable', {
             pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
@@ -110,6 +110,8 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
 
     const user = usePage().props.auth.user;
     const school = usePage().props.auth.school;
+    // console.log('auth',user)
+
     const receivedNotificationsNbr = usePage().props.auth.receivedNotificationsNbr;
 
     const { post } = useForm();

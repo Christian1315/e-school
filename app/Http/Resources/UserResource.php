@@ -17,13 +17,11 @@ class UserResource extends JsonResource
         // return parent::toArray($request);
         return [
             "id" => $this->id,
+            "school" => $this->school,
             "firstname" => $this->firstname,
             "lastname" => $this->lastname,
             "email" => $this->email,
-            "detail" => DetailResource::collection($this->detail),
-            "logo" => $this->logo,
-            "rccm" => $this->rccm,
-            "statut" => $this->statut,
+            "detail" => $this->detail, //DetailResource::collection($this->detail),
         ];
     }
 }

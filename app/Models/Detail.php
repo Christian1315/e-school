@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Detail extends Model
 {
     /** @use HasFactory<\Database\Factories\DetailFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $table="users_details";
-    
+    protected $table = "users_details";
+
     protected $fillable = [
         "user_id",
         "phone",
@@ -33,9 +34,10 @@ class Detail extends Model
      * Upload photo
      */
 
-    function handlePhoto($request)
+    function handlePhoto()
     {
         $photoPath = null;
+        $request = request();
 
         if ($request->hasFile('profile_img')) {
             $file = $request->file('profile_img');
@@ -45,5 +47,26 @@ class Detail extends Model
         }
 
         return $photoPath;
+    }
+
+    /**
+     * Boot
+     */
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->profile_img = $model->handlePhoto();
+        });
+
+        static::created(function ($model) {
+            $model->created_by = Auth::id();
+        });
+
+        static::updated(function ($model) {
+            $model->updated_by = Auth::id();
+        });
     }
 }

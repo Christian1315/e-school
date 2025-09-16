@@ -4,6 +4,7 @@ use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\UserController;
 // use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
@@ -42,6 +43,10 @@ Route::middleware('auth')->group(function () {
     // Inscriptions
     Route::resource("inscription", InscriptionController::class);
     Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
+
+
+    // Users
+    Route::resource("user", UserController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

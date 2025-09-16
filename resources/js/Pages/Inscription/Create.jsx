@@ -76,7 +76,7 @@ export default function Create({ apprenants, schools }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             <div className="text-center items-center gap-4">
                                 <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.index")}>
-                                    <CIcon icon={cilArrowCircleLeft} /> Liste des apprenants
+                                    <CIcon icon={cilArrowCircleLeft} /> Liste des inscriptions
                                 </Link>
                             </div>
 

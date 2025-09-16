@@ -15,6 +15,7 @@ use App\Models\MoyenneInterrogation;
 use App\Models\Notification;
 use App\Models\Payement;
 use App\Models\School;
+use App\Models\Serie;
 use App\Models\Trimestre;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -29,70 +30,149 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
+        /**
+         * Users
+         */
+        $user = User::factory()->create([
             'firstname' => 'Admin',
             'lastname' => 'E-school',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('password'), // mot de passe par défaut
         ]);
 
+        $user->detail()->create([
+            "phone" => "+2290156854397",
+            "profile_img" => asset("fichisers/images/logo.png"),
+        ]);
+
+        /**
+         * Matiere
+         */
+        Matiere::insert([
+            [
+                "libelle" => "Mathématique",
+                "coefficient" => 3,
+            ],
+            [
+                "libelle" => "PCT",
+                "coefficient" => 3,
+            ],
+            [
+                "libelle" => "Français",
+                "coefficient" => 3,
+            ],
+            [
+                "libelle" => "Philosophie",
+                "coefficient" => 2,
+            ],
+            [
+                "libelle" => "Anglais",
+                "coefficient" => 2,
+            ],
+            [
+                "libelle" => "Conduite",
+                "coefficient" => 1,
+            ],
+            [
+                "libelle" => "Sport",
+                "coefficient" => 1,
+            ],
+        ]);
+
+        /**
+         * Trimestre
+         */
+        Trimestre::insert([
+            ["libelle" => "1 Trimestre"],
+            ["libelle" => "2 Trimestre"],
+            ["libelle" => "2 Trimestre"],
+        ]);
+
+        /**
+         * Classes
+         */
+        Classe::insert([
+            ["libelle" => "6 ième"],
+            ["libelle" => "5 ième"],
+            ["libelle" => "4 ième"],
+            ["libelle" => "3 ième"],
+            ["libelle" => "Seconde"],
+            ["libelle" => "Première"],
+            ["libelle" => "Terminale"],
+        ]);
+
+        /**
+         * Serie
+         */
+        Serie::insert([
+            ["libelle" => "A"],
+            ["libelle" => "A1"],
+            ["libelle" => "A2"],
+            ["libelle" => "B"],
+            ["libelle" => "C"],
+            ["libelle" => "D"],
+            ["libelle" => "E"],
+            ["libelle" => "F"],
+            ["libelle" => "G2"],
+        ]);
+
         /**
          * School Seed
          */
-        $schools = School::factory()
-            ->count(3)
-            ->has(
-                User::factory()
-                    ->count(10)
-                    ->has(
-                        Detail::factory()->state([
-                            "created_by" => 1,
-                            "updated_by" => 1,
-                        ])
-                    )
-                    ->has(
-                        CustomNotification::factory()
-                            ->count(10)
-                            ->state([
-                                "receiver_id" => 1,
-                                "created_by" => 1,
-                                "updated_by" => 1,
-                            ]),
-                        'notificationsReceived' // 👈 match your relation name
-                    )
-                    ->has(
-                        CustomNotification::factory()
-                            ->count(3)
-                            ->state([
-                                "sender_id" => 1,
-                                "created_by" => 1,
-                                "updated_by" => 1,
-                            ]),
-                        'notificationsSended' // 👈 match your relation name
-                    )
-            )
-            ->has(
-                Classe::factory()
-                    ->count(6)
-                    ->has(
-                        Apprenant::factory()
-                            ->count(5)
-                            ->has(Interrogation::factory()->count(3))
-                            ->has(Devoir::factory()->count(3))
-                            ->has(Inscription::factory()->count(3))
-                            ->has(Payement::factory()->count(3))
-                    )
-                    ->state([
-                        "created_by" => 1,
-                        "updated_by" => 1,
-                    ])
-            )
-            ->has(
-                Matiere::factory()->count(5)
-            )
-            ->has(
-                Trimestre::factory()->count(3)
-            )
-            ->create();
+        // $schools = School::factory()
+        //     ->count(3)
+        //     ->has(
+        //         User::factory()
+        //             ->count(10)
+        //             ->has(
+        //                 Detail::factory()->state([
+        //                     "created_by" => 1,
+        //                     "updated_by" => 1,
+        //                 ])
+        //             )
+        //             ->has(
+        //                 CustomNotification::factory()
+        //                     ->count(10)
+        //                     ->state([
+        //                         "receiver_id" => 1,
+        //                         "created_by" => 1,
+        //                         "updated_by" => 1,
+        //                     ]),
+        //                 'notificationsReceived' // 👈 match your relation name
+        //             )
+        //             ->has(
+        //                 CustomNotification::factory()
+        //                     ->count(3)
+        //                     ->state([
+        //                         "sender_id" => 1,
+        //                         "created_by" => 1,
+        //                         "updated_by" => 1,
+        //                     ]),
+        //                 'notificationsSended' // 👈 match your relation name
+        //             )
+        //     )
+        //     ->has(
+        //         Classe::factory()
+        //             ->count(6)
+        //             ->has(
+        //                 Apprenant::factory()
+        //                     ->count(5)
+        //                     ->has(Interrogation::factory()->count(3))
+        //                     ->has(Devoir::factory()->count(3))
+        //                     ->has(Inscription::factory()->count(3))
+        //                     ->has(Payement::factory()->count(3))
+        //             )
+        //             ->state([
+        //                 "created_by" => 1,
+        //                 "updated_by" => 1,
+        //             ])
+        //     )
+        //     ->has(
+        //         Matiere::factory()->count(5)
+        //     )
+        //     ->has(
+        //         Trimestre::factory()->count(3)
+        //     )
+        //     ->create();
     }
 }

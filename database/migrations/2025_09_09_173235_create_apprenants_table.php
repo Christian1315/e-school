@@ -29,6 +29,12 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->foreignId('serie_id')
+                ->nullable()
+                ->constrained('series')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('users')

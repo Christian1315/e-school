@@ -19,7 +19,7 @@ import ApplicationLogo from './ApplicationLogo'
 export default function SidebarMenu() {
     const user = usePage().props.auth.user;
     const school = usePage().props.auth.school;
-    console.log("school", school)
+    // console.log("school", school)
 
     return (
         <>
@@ -173,6 +173,29 @@ export default function SidebarMenu() {
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter un utilisateur
+                                </Link>
+                            </CNavGroup>
+
+                            {/* Classes */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Classes
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('classe.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des classes
+                                </Link>
+
+                                <Link href={route('classe.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter une classe
                                 </Link>
                             </CNavGroup>
                         </CSidebarNav>

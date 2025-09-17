@@ -91,6 +91,7 @@
 
                         <!-- Texte centre -->
                         <td style="width: 50%; text-align: center;">
+                            <p class="school-description text-upercase my-2" style="text-transform: uppercase!important;">République du Bénin</p>
                             <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$paiement->school?->raison_sociale}}</h1>
                             <h3 style="margin: 2px 0;"></h3>
                             <p class="school-description" style="margin: 0;">{{$paiement->school?->description}}</p>
@@ -141,8 +142,8 @@
                         <!-- Colonne droite -->
                         <td style="width: 30%; text-align: right; vertical-align: top;">
                             <div id="resteBlock">
-                                <h3 class="souscription">N° souscription : <strong class="souscription_number">00{{$paiement->id}}</strong></h3>
-                                <h3 class="souscription">Reste à payer : <strong class="souscription_number">00 {{ env('CURRENCY') }}</strong></h3>
+                                <h3 class="souscription">N° souscription : <strong class="souscription_number">{{$paiement->montant}}</strong></h3>
+                                <h3 class="souscription">Reste à payer : <strong class="souscription_number">{{$reste}} {{ env('CURRENCY') }}</strong></h3>
                             </div>
                             <p style="text-align: center;" class="">Service comptabilité</p>
                         </td>

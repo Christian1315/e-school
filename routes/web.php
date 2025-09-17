@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApprenantController;
+use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InscriptionController;
@@ -35,6 +36,13 @@ Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verif
 
 Route::middleware('auth')->group(function () {
 
+    /***
+     * LES PARAMETRAGES
+     */
+
+    // Classes d'apprenants
+    Route::resource("classe", ClasseController::class);
+
     // Schools
     Route::resource("school", SchoolController::class);
 
@@ -50,7 +58,7 @@ Route::middleware('auth')->group(function () {
 
     // Paiements
     Route::resource("paiement", PayementController::class);
-    Route::get("/paiement/generate-receit/{paiement}", [InscriptionController::class, "generateReceit"])->name("paiement.generate-receit");
+    Route::get("/paiement/generate-receit/{paiement}", [PayementController::class, "generateReceit"])->name("paiement.generate-receit");
 
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

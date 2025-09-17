@@ -18,7 +18,8 @@ class ClasseResource extends JsonResource
         return [
             "id" => $this->id,
             "libelle" => $this->libelle,
-            "school" => SchoolResource::collection($this->school),
+            "school" => $this->school,
+            "scolarite" => $this->scolarite,
         ];
     }
 }

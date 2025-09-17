@@ -29,6 +29,7 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->string('libelle');
+            $table->decimal('scolarite', 10, 2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

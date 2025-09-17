@@ -33,7 +33,6 @@ class PayementController extends Controller
         ]);
     }
 
-
     /**
      * Generate receit
      */
@@ -42,18 +41,26 @@ class PayementController extends Controller
     {
         try {
             $paiement->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
-    
+
+            // return response()->json($paiement);
+
+            /**
+             * Reste à payer
+             */
+            $reste = ($paiement->apprenant?->classe?->scolarite ?? 0) - $paiement->montant;
+
             set_time_limit(0);
             $pdf = Pdf::loadView("pdfs.paiements.receit", [
                 "paiement" => $paiement,
+                "reste" => $reste
             ]);
-    
+
             // Set PDF orientation to landscape
             $pdf->setPaper('a4', 'landscape');
-    
+
             return $pdf->stream();
         } catch (\Exception $e) {
-            return back()->withErrors(["exception"=>$e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 

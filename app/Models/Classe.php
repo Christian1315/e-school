@@ -19,8 +19,9 @@ class Classe extends Model
     protected $fillable = [
         "libelle",
         "school_id",
+        "scolarite",
         "created_by",
-        "updated_by"
+        "updated_by",
     ];
 
     /**
@@ -29,8 +30,9 @@ class Classe extends Model
     protected $casts = [
         "libelle"      => "string",
         "school_id"     => "integer",
+        "scolarite"     => "decimal:2",
         "created_by"     => "integer",
-        "updated_by"     => "integer"
+        "updated_by"     => "integer",
     ];
 
     /**
@@ -75,12 +77,17 @@ class Classe extends Model
 
         // creating
         static::creating(function ($model) {
-            $model->update(["created_by" => Auth::id()]);
+            $model->created_by = Auth::id();
         });
+
+        // // created
+        // static::created(function ($model) {
+        //     $model->school_id = Auth::user()->school_id;
+        // });
 
         // updating
         static::updating(function ($model) {
-            $model->update(["updated_by" => Auth::id()]);
+            $model->updated_by = Auth::id();
         });
     }
 }

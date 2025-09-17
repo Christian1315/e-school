@@ -92,13 +92,13 @@ class DatabaseSeeder extends Seeder
          * Classes
          */
         Classe::insert([
-            ["libelle" => "6 ième"],
-            ["libelle" => "5 ième"],
-            ["libelle" => "4 ième"],
-            ["libelle" => "3 ième"],
-            ["libelle" => "Seconde"],
-            ["libelle" => "Première"],
-            ["libelle" => "Terminale"],
+            ["libelle" => "6 ième", "scolarite" => 100000],
+            ["libelle" => "5 ième", "scolarite" => 300000],
+            ["libelle" => "4 ième", "scolarite" => 300000],
+            ["libelle" => "3 ième", "scolarite" => 300000],
+            ["libelle" => "Seconde", "scolarite" => 100000],
+            ["libelle" => "Première", "scolarite" => 200000],
+            ["libelle" => "Terminale", "scolarite" => 100000],
         ]);
 
         /**

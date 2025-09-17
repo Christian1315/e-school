@@ -23,7 +23,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                 datasets: [
                     {
                         label: "Nombre (mensuel)",
-                        data: apprenants,
+                        data: apprenants.data,
                         backgroundColor: "rgba(54, 162, 235, 0.5)",
                         borderColor: "rgba(54, 162, 235, 1)",
                         borderWidth: 1,
@@ -48,7 +48,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                 datasets: [
                     {
                         label: "Nombre (journalier)",
-                        data: inscriptions,
+                        data: inscriptions.data,
                         backgroundColor: "rgba(54, 162, 235, 0.5)",
                         borderColor: "rgba(54, 162, 235, 1)",
                         borderWidth: 1,
@@ -93,25 +93,25 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                                 <div
                                     uk-scrollspy="cls: uk-animation-slide-bottom"
                                     className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
-                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {schools.length < 10 ? '0' + schools.length : schools.length} </strong> </p>
+                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {schools.data.length < 10 ? '0' + schools.data.length : schools.data.length} </strong> </p>
                                     <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilWallet} /> Ecoles </h2>
                                 </div>
                                 <div
                                     uk-scrollspy="cls: uk-animation-slide-top"
                                     className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
-                                    <p className="text-2xl mt-2 text-cursive font-bold"> <strong className="text-success"> {apprenants.length < 10 ? '0' + apprenants.length : apprenants.length} </strong>  </p>
+                                    <p className="text-2xl mt-2 text-cursive font-bold"> <strong className="text-success"> {apprenants.data.length < 10 ? '0' + apprenants.data.length : apprenants.data.length} </strong>  </p>
                                     <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilSmilePlus} /> Apprenants </h2>
                                 </div>
                                 <div
                                     uk-scrollspy="cls: uk-animation-slide-top"
                                     className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
-                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {inscriptions.length < 10 ? '0' + inscriptions.length : inscriptions.length} </strong></p>
+                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {inscriptions.data.length < 10 ? '0' + inscriptions.data.length : inscriptions.data.length} </strong></p>
                                     <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilWallet} /> Inscriptions </h2>
                                 </div>
                                 <div
                                     uk-scrollspy="cls: uk-animation-slide-bottom"
                                     className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
-                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-success"> {users.length < 10 ? '0' + users.length : users.length} </strong></p>
+                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-success"> {users.data.length < 10 ? '0' + users.data.length : users.data.length} </strong></p>
                                     <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilPeople} /> Utilisateurs </h2>
                                 </div>
                             </div>

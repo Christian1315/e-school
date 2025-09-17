@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ApprenantResource;
 use App\Http\Resources\InscriptionResource;
+use App\Http\Resources\SchoolResource;
 use App\Http\Resources\UserResource;
 use App\Models\Apprenant;
 use App\Models\Inscription;
@@ -36,10 +38,10 @@ class DashboardController extends Controller
 
         // dd(UserResource::collection($users));
         return Inertia::render('Dashboard', [
-            "apprenants" => $apprenants,
+            "apprenants" => ApprenantResource::collection($apprenants),
             "inscriptions" => InscriptionResource::collection($inscriptions),
             "users" => UserResource::collection($users),
-            "schools" => School::all(),
+            "schools" => SchoolResource::collection(School::all()), 
         ]);
     }
 }

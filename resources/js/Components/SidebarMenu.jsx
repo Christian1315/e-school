@@ -36,7 +36,7 @@ export default function SidebarMenu() {
                     <CSidebar style={{ height: "100vh", overflowY: 'auto' }}>
                         <CSidebarNav>
                             {/* Dashboard */}
-                            <CNavTitle>Gestion</CNavTitle>
+                            <CNavTitle>Dashboard</CNavTitle>
                             <CNavGroup
                                 toggler={
                                     <>

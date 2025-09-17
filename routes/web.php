@@ -4,6 +4,7 @@ use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\PayementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\UserController;
@@ -37,6 +38,9 @@ Route::middleware('auth')->group(function () {
     // Schools
     Route::resource("school", SchoolController::class);
 
+    // Users
+    Route::resource("user", UserController::class);
+
     // Apprenants
     Route::resource("apprenant", ApprenantController::class);
 
@@ -44,9 +48,10 @@ Route::middleware('auth')->group(function () {
     Route::resource("inscription", InscriptionController::class);
     Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
 
+    // Paiements
+    Route::resource("paiement", PayementController::class);
+    Route::get("/paiement/generate-receit/{paiement}", [InscriptionController::class, "generateReceit"])->name("paiement.generate-receit");
 
-    // Users
-    Route::resource("user", UserController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -62,9 +62,10 @@ class Payement extends Model
     /**
      * Upload photo
      */
-    function handlePhoto($request)
+    function handlePaiementReceit()
     {
         $photoPath = null;
+        $request = request();
 
         if ($request->hasFile('paiement_receit')) {
             $file = $request->file('paiement_receit');
@@ -96,18 +97,25 @@ class Payement extends Model
      * Boot
      */
 
-    static protected function boot()
+    protected static function boot()
     {
         parent::boot();
 
         // creating
         static::creating(function ($model) {
-            $model->update(["created_by" => Auth::id()]);
+            $model->created_by = Auth::id();
+            $model->created_by = Auth::id();
+            // $model->school_id = Auth::user()->school_id;
+        });
+
+        // 
+        static::created(function ($model) {
+            $model->paiement_receit = $model->handlePaiementReceit();
         });
 
         // updating
         static::updating(function ($model) {
-            $model->update(["updated_by" => Auth::id()]);
+            $model->updated_by = Auth::id();
         });
     }
 }

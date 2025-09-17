@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople,cilApplications } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople,cilApplications,cibApplePay,cibAmazonPay } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -125,6 +125,29 @@ export default function SidebarMenu() {
                                         <span className="nav-icon-bullet"></span>
                                     </span>
                                     Ajouter une inscription
+                                </Link>
+                            </CNavGroup>
+
+                            {/* payements */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cibAmazonPay} /> Les paiements
+                                    </>
+                                }
+                            >
+                                <Link href={route('paiement.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des paiements
+                                </Link>
+
+                                <Link href={route('paiement.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter un paiement
                                 </Link>
                             </CNavGroup>
 

@@ -4,10 +4,14 @@ use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DevoirController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\InterrogationController;
+use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\PayementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
 // use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Application;
@@ -42,6 +46,18 @@ Route::middleware('auth')->group(function () {
 
     // Classes d'apprenants
     Route::resource("classe", ClasseController::class);
+
+    // Trimestres d'écoles
+    Route::resource("trimestre", TrimestreController::class);
+
+    // Matières d'écoles
+    Route::resource("matiere", MatiereController::class);
+
+    // Devoirs d'apprenants
+    Route::resource("devoir", DevoirController::class);
+
+    // Interrogations d'apprenants
+    Route::resource("interrogation", InterrogationController::class);
 
     // Schools
     Route::resource("school", SchoolController::class);

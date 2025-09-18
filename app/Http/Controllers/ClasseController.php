@@ -6,7 +6,6 @@ use App\Http\Resources\ClasseResource;
 use App\Models\Classe;
 use App\Models\School;
 use Exception;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,9 +26,7 @@ class ClasseController extends Controller
         } else {
             $classes = Classe::orderByDesc("id")->get();
         }
-        // dd($classes);
 
-        $classes = Classe::get();
         return Inertia::render("Classe/List", [
             "classes" => ClasseResource::collection($classes),
         ]);
@@ -96,7 +93,7 @@ class ClasseController extends Controller
      */
     function edit(Request $request)
     {
-        $schools = Apprenant::all();
+        $schools = Classe::all();
 
         return Inertia::render('Payement/Create', [
             'schools' => $schools,
@@ -108,7 +105,7 @@ class ClasseController extends Controller
      */
     function update(Request $request)
     {
-        $schools = Apprenant::all();
+        $schools = Classe::all();
 
         return Inertia::render('Payement/Create', [
             'schools' => $schools,
@@ -120,7 +117,7 @@ class ClasseController extends Controller
      */
     function destroy(Request $request)
     {
-        $schools = Apprenant::all();
+        $schools = Classe::all();
 
         return Inertia::render('Payement/Create', [
             'schools' => $schools,

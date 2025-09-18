@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople,cilApplications,cibApplePay,cibAmazonPay } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing,cilLayers,cilLibrary } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -151,6 +151,89 @@ export default function SidebarMenu() {
                                 </Link>
                             </CNavGroup>
 
+                            {/* Interrogations */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilGrain} /> Les Intérrogations
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('interrogation.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des intérrogations
+                                </Link>
+
+                                <Link href={route('interrogation.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter une intérrogation
+                                </Link>
+                            </CNavGroup>
+
+
+                            {/* Devoirs */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilList} /> Les devoir
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('devoir.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des devoir
+                                </Link>
+
+                                <Link href={route('devoir.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter un dévoir
+                                </Link>
+                            </CNavGroup>
+
+
+                            <CNavTitle>Moyennes</CNavTitle>
+                            
+                            {/* Moyennes des Interrogations */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilLayers} /> Moyennes des Intérros
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href="#" className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des moyennes
+                                </Link>
+                            </CNavGroup>
+
+                            {/* Moyennes des devoirs */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilLibrary} /> Moyennes des devoir
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href="#" className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des moyennes
+                                </Link>
+                            </CNavGroup>
+
+
                             <CNavTitle>Paramètrage</CNavTitle>
 
                             {/* ecoles */}
@@ -180,7 +263,7 @@ export default function SidebarMenu() {
                             <CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Classes
+                                        <CIcon customClassName="nav-icon text-success" icon={cilBlur} /> Les Classes
                                     </>
                                 }
                             >
@@ -198,6 +281,53 @@ export default function SidebarMenu() {
                                     Ajouter une classe
                                 </Link>
                             </CNavGroup>
+
+                            {/* Matières */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilBraille} /> Les Matières
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('matiere.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des matières
+                                </Link>
+
+                                <Link href={route('matiere.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter une matière
+                                </Link>
+                            </CNavGroup>
+
+                            {/* Trimestres */}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Trimestres
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('trimestre.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des trimestres
+                                </Link>
+
+                                <Link href={route('trimestre.create')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet"></span>
+                                    </span>
+                                    Ajouter un trimestre
+                                </Link>
+                            </CNavGroup>
+
                         </CSidebarNav>
                     </CSidebar>
                 </div>

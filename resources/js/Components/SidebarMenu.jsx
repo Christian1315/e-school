@@ -179,7 +179,7 @@ export default function SidebarMenu() {
                             <CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilList} /> Les devoir
+                                        <CIcon customClassName="nav-icon text-success" icon={cilList} /> Les devoirs
                                     </>
                                 }
                             >

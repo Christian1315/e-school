@@ -209,7 +209,7 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <Link component={Link} href="#" className="nav-link">
+                                <Link component={Link} href={route("moyenne.interro")} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>
@@ -225,7 +225,7 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <Link component={Link} href="#" className="nav-link">
+                                <Link component={Link} href={route("moyenne.devoir")} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>

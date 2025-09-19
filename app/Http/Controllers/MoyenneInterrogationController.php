@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InterrogationResource;
 use App\Models\Apprenant;
 use App\Models\School;
+use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class MoyenneInterrogationController extends Controller
 {
-    function __invoke(Request $request)
+    function __invoke(Request $request, Trimestre $trimestre)
     {
         if (Auth::user()->school) {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
@@ -19,15 +20,19 @@ class MoyenneInterrogationController extends Controller
         } else {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
         }
-        // with(["school", "parent", "classe", "serie", "interrogations"])->
+
         /**
          * Moyennes formatage
          */
-        $apprenants->transform(function ($apprenant) {
+        $apprenants->transform(function ($apprenant) use ($trimestre) {
             $matieres = $apprenant->school->matieres;
+            // $trimestres = $apprenant->school->trimestres;
 
-            $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant) {
-                $matiere_interros = $apprenant->interrogations()->where("matiere_id", $matiere->id)->get();
+            $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre) {
+                $matiere_interros = $apprenant->interrogations()
+                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])->get();
+
+                /** */
                 return [
                     "id" => $matiere->id,
                     "libelle" => $matiere->libelle,
@@ -39,9 +44,11 @@ class MoyenneInterrogationController extends Controller
             return $apprenant;
         });
 
+
         // return response()->json($apprenants);
         return Inertia::render('MoyennesInterro/List', [
             'apprenants' => $apprenants,
+            "trimestre" => $trimestre
         ]);
     }
 }

@@ -12,14 +12,15 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing,cilLayers,cilLibrary } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
 export default function SidebarMenu() {
     const user = usePage().props.auth.user;
     const school = usePage().props.auth.school;
-    // console.log("school", school)
+    const trimestres = usePage().props.auth.trimestres;
+    // console.log("trimestres", trimestres)
 
     return (
         <>
@@ -200,7 +201,7 @@ export default function SidebarMenu() {
 
 
                             <CNavTitle>Moyennes</CNavTitle>
-                            
+
                             {/* Moyennes des Interrogations */}
                             <CNavGroup
                                 toggler={
@@ -209,12 +210,25 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <Link component={Link} href={route("moyenne.interro")} className="nav-link">
-                                    <span className="nav-icon">
-                                        <span className="nav-icon-bullet text-danger"></span>
-                                    </span>
-                                    Liste des moyennes
-                                </Link>
+                                {
+                                    trimestres.length > 0 ? (
+                                        trimestres.map((trimestre) => (
+                                            <Link
+                                                key={trimestre.id}
+                                                href={route("moyenne.interro", { trimestre: trimestre.id })}
+                                                className="nav-link"
+                                            >
+                                                <span className="nav-icon">
+                                                    <span className="nav-icon-bullet text-danger"></span>
+                                                </span>
+                                                {trimestre.libelle}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span>Aucun trimestre!</span>
+                                    )
+                                }
+
                             </CNavGroup>
 
                             {/* Moyennes des devoirs */}
@@ -225,12 +239,31 @@ export default function SidebarMenu() {
                                     </>
                                 }
                             >
-                                <Link component={Link} href={route("moyenne.devoir")} className="nav-link">
+                                {
+                                    trimestres.length > 0 ? (
+                                        trimestres.map((trimestre) => (
+                                            <Link
+                                                key={trimestre.id}
+                                                href={route("moyenne.devoir", { trimestre: trimestre.id })}
+                                                className="nav-link"
+                                            >
+                                                <span className="nav-icon">
+                                                    <span className="nav-icon-bullet text-danger"></span>
+                                                </span>
+                                                {trimestre.libelle}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span>Aucun trimestre!</span>
+                                    )
+                                }
+
+                                {/* <Link component={Link} href={route("moyenne.devoir")} className="nav-link">
                                     <span className="nav-icon">
                                         <span className="nav-icon-bullet text-danger"></span>
                                     </span>
                                     Liste des moyennes
-                                </Link>
+                                </Link> */}
                             </CNavGroup>
 
 

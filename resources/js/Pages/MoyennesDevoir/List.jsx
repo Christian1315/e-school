@@ -41,13 +41,13 @@ export default function List({ apprenants,trimestre }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes d'interrogation | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
+                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes des devoirs | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
                 </h2>
             }
 
             SidebarMenu={<SidebarMenu />}
         >
-            <Head title="Moyennes des interrogations" />
+            <Head title="Moyennes des devoirs" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
@@ -131,7 +131,7 @@ export default function List({ apprenants,trimestre }) {
                                     <table className="border-separate border-spacing-2 border border-gray-400 dark:border-gray-500">
                                         <thead>
                                             <tr>
-                                                <th className="border border-gray-300 dark:border-gray-600">Interrogation</th>
+                                                <th className="border border-gray-300 dark:border-gray-600">Devoir</th>
                                                 <th className="border border-gray-300 dark:border-gray-600">Fait le</th>
                                                 <th className="border border-gray-300 dark:border-gray-600">Note</th>
                                                 <th className="border border-gray-300 dark:border-gray-600">Professeur</th>
@@ -139,20 +139,20 @@ export default function List({ apprenants,trimestre }) {
                                         </thead>
                                         <tbody>
                                             {
-                                                matiere.interrogations.data.length > 0 ?
-                                                    matiere.interrogations.data.map((interro, index) => (
+                                                matiere.devoirs.data.length > 0 ?
+                                                    matiere.devoirs.data.map((devoir, index) => (
                                                         <tr>
-                                                            <th className="border border-gray-100 dark:border-gray-700">Interro : {index + 1}</th>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{interro.createdAt}</td>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{interro.note}</td>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{`${interro.createdBy?.firstname} - ${interro.createdBy?.lastname}`}</td>
+                                                            <th className="border border-gray-100 dark:border-gray-700">Devoir : {index + 1}</th>
+                                                            <td className="border border-gray-300 dark:border-gray-700">{devoir.createdAt}</td>
+                                                            <td className="border border-gray-300 dark:border-gray-700">{devoir.note}</td>
+                                                            <td className="border border-gray-300 dark:border-gray-700">{`${devoir.createdBy?.firstname} - ${devoir.createdBy?.lastname}`}</td>
                                                         </tr>
-                                                    )) : <tr><td colSpan={4}><small className="text-center text-danger">Aucune interrogation éffectuée</small></td></tr>
+                                                    )) : <tr><td colSpan={4}><small className="text-center text-danger">Aucun devoir éffectué</small></td></tr>
                                             }
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colSpan={3}>Moyenne d'interrogation: <strong className='text-success'>{matiere.moyenne_interro}</strong> </td>
+                                                <td colSpan={3}>Moyenne de devoir: <strong className='text-success'>{matiere.moyenne_devoir}</strong> </td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -160,8 +160,6 @@ export default function List({ apprenants,trimestre }) {
                             ))
                         }
                     </div>
-
-
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeModal}>

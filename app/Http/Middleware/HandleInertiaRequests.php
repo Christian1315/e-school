@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\School;
+use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,7 +35,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'school' => $request->user() ? $request->user()->school : null,
+                'school' => $request->user()->school ?? School::all(),
+                'trimestres' => $request->user()->school?->trimestres ?? Trimestre::all(),
                 'receivedNotificationsNbr' => $request->user() ? $request->user()->notificationsReceived->count() : 0,
                 'base_url' => env("APP_URL"),
             ],

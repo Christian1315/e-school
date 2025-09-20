@@ -57,7 +57,7 @@ export default function SidebarMenu() {
 
                             {/* ecoles */}
                             {
-                                school == null ?
+                                user.school_id == null ?
                                     <CNavGroup
                                         toggler={
                                             <>
@@ -269,7 +269,7 @@ export default function SidebarMenu() {
 
                             <CNavTitle>Paramètrage</CNavTitle>
 
-                            {/* ecoles */}
+                            {/* utilisateurs */}
                             <CNavGroup
                                 toggler={
                                     <>

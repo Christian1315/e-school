@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary,cilBook } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -264,6 +264,37 @@ export default function SidebarMenu() {
                                     </span>
                                     Liste des moyennes
                                 </Link> */}
+                            </CNavGroup>
+
+
+                            <CNavTitle>Les Bulletins</CNavTitle>
+
+                            {/* Bulletins des trimestres*/}
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilBook} /> Les bulletins
+                                    </>
+                                }
+                            >
+                                {
+                                    trimestres.length > 0 ? (
+                                        trimestres.map((trimestre) => (
+                                            <Link
+                                                key={trimestre.id}
+                                                href={route("bulletin", { trimestre: trimestre.id })}
+                                                className="nav-link"
+                                            >
+                                                <span className="nav-icon">
+                                                    <span className="nav-icon-bullet text-danger"></span>
+                                                </span>
+                                                {trimestre.libelle}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <span>Aucun trimestre!</span>
+                                    )
+                                }
                             </CNavGroup>
 
 

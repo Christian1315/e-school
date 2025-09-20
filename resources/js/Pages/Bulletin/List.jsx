@@ -2,16 +2,21 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
-import { cilLibraryAdd, cilList, cilFilterPhoto } from "@coreui/icons";
+import { cilLibraryAdd, cilList, cilFilterPhoto,cilSave } from "@coreui/icons";
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function List({ apprenants,trimestre }) {
+export default function List({ apprenants, trimestre }) {
 
     const [showModal, setShowModal] = useState(false);
     const [currentApprenant, setCurrentApprenant] = useState(null);
+
+    const { reset, setData, data, errors, processing } = useForm({
+        reste: null,
+    })
 
     const confirmShowModal = (e, apprenant) => {
         e.preventDefault();
@@ -25,7 +30,6 @@ export default function List({ apprenants,trimestre }) {
 
     const showImg = (apprenant) => {
         Swal.fire({
-            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
             text: `Profile de : ${apprenant.parent?.firstname} - ${apprenant.parent?.lastname}`,
             imageUrl: apprenant.photo,
             imageWidth: 400,
@@ -41,13 +45,13 @@ export default function List({ apprenants,trimestre }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes d'interrogation | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
+                    <CIcon className='text-success' icon={cilList} /> Panel de gestion des bulletins | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
                 </h2>
             }
 
             SidebarMenu={<SidebarMenu />}
         >
-            <Head title="Moyennes des interrogations" />
+            <Head title="Liste des bulletins" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
@@ -63,7 +67,7 @@ export default function List({ apprenants,trimestre }) {
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Parent</th>
                                     <th scope="col">Classe</th>
-                                    <th scope="col">Moyennes</th>
+                                    <th scope="col">Bulletin</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -97,73 +101,17 @@ export default function List({ apprenants,trimestre }) {
             <Modal show={showModal} onClose={closeModal}>
                 <div className="p-3">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Liste des moyennes pour l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
+                        Génerer le bulletin de l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
                     </h2>
-
-                    <ul className="nav nav-pills" id="pills-tab" role="tablist">
-                        {
-                            currentApprenant?.matieres.map((matiere, index) => (
-                                <li className="nav-item" role="presentation" key={matiere.id}>
-                                    <button
-                                        className={`btn btn-sm _nav-link ${index === 0 ? "active" : ""}`}
-                                        id={`pills-${matiere.id}-tab`}
-                                        data-bs-toggle="pill"
-                                        data-bs-target={`#pills-${matiere.id}`}
-                                        type="button"
-                                    >
-                                        {matiere.libelle}
-                                    </button>
-                                </li>
-                            ))
-                        }
-                    </ul>
-
-                    <div className="tab-content mt-3">
-                        {
-                            currentApprenant?.matieres.map((matiere, index) => (
-                                <div key={matiere.id} className={`tab-pane fade ${index == 0 ? 'show active' : ''}`}
-                                    id={`pills-${matiere.id}`}>
-                                    {/* Table Content */}
-
-                                    <table className="border-separate border-spacing-2 border border-gray-400 dark:border-gray-500">
-                                        <thead>
-                                            <tr>
-                                                <th className="border border-gray-300 dark:border-gray-600">Interrogation</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Fait le</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Note</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Professeur</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                matiere.interrogations.data.length > 0 ?
-                                                    matiere.interrogations.data.map((interro, index) => (
-                                                        <tr>
-                                                            <th className="border border-gray-100 dark:border-gray-700">Interro : {index + 1}</th>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{interro.createdAt}</td>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{interro.note}</td>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{`${interro.createdBy?.firstname} - ${interro.createdBy?.lastname}`}</td>
-                                                        </tr>
-                                                    )) : <tr><td colSpan={4}><small className="text-center text-danger">Aucune interrogation éffectuée</small></td></tr>
-                                            }
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colSpan={3}>Moyenne d'interrogation: <strong className='text-success'>{matiere.moyenne_interro}</strong> </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            ))
-                        }
-                    </div>
-
-
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeModal}>
                             Fermer
                         </SecondaryButton>
+
+                        <PrimaryButton className="ms-3" disabled={processing}>
+                            <CIcon icon={cilSave} />  Generer maintenant
+                        </PrimaryButton>
                     </div>
                 </div>
             </Modal>

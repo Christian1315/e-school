@@ -97,12 +97,12 @@ class Devoir extends Model
 
         // creating
         static::creating(function ($model) {
-            $model->update(["created_by" => Auth::id()]);
+            $model->created_by = Auth::id();
         });
 
         // updating
         static::updating(function ($model) {
-            $model->update(["updated_by" => Auth::id()]);
+            $model->updated_by = Auth::id();
         });
     }
 }

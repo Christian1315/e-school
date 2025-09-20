@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApprenantController;
+use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
@@ -90,6 +91,9 @@ Route::middleware('auth')->group(function () {
         // Moyennes des devoirs
         Route::get("devoir/{trimestre}", MoyenneDevoirController::class)->name("moyenne.devoir");
     });
+
+    // Les bulletins
+    Route::get("bulletin/{trimestre}", BulletinController::class)->name("bulletin");
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

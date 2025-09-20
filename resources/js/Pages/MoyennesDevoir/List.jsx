@@ -53,9 +53,6 @@ export default function List({ apprenants,trimestre }) {
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
 
-                        <div className="  items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                        </div>
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>

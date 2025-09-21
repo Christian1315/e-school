@@ -94,7 +94,6 @@
                             <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$apprenant->school?->raison_sociale}}</h1>
                             <h3 style="margin: 2px!important;">{{$apprenant->school?->description}}</h3>
                             <br>
-                            <p class="school-description" style="margin: 0;">{{$apprenant->school?->slogan}}</p>
                             <p class="school-contact" style="margin: 0;">Tel: {{$apprenant->school?->phone}}</p>
                             <p class="school-slogan" style="margin: 0;">{{$apprenant->school?->slogan}}</p>
                         </td>

@@ -16,17 +16,17 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
-use App\Models\Apprenant;
+// use App\Models\Apprenant;
 // use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
 Route::get("/debug", function () {
-
+    return phpinfo();
     Mail::raw('Ceci est un test', function ($message) {
         $message->to('gogochristian009@gmail.com')->subject('Test mail Laravel');
     });
@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
 
     // Les bulletins
     Route::get("bulletin/{trimestre}", BulletinController::class)->name("bulletin");
+    Route::get("bulletin/{trimestre}/{apprenant}", [BulletinController::class,"generateBulletin"])->name("generateBulletin");
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

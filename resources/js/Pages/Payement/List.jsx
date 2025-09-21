@@ -54,6 +54,7 @@ export default function List({ payements }) {
 
     const generateReceit = (e) => {
         e.preventDefault();
+        setShowModal(false);
 
         Swal.fire({
             icon: 'info',

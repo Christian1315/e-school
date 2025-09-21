@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 
-export default function List({ apprenants,trimestre }) {
+export default function List({ apprenants, trimestre }) {
 
     const [showModal, setShowModal] = useState(false);
     const [currentApprenant, setCurrentApprenant] = useState(null);
@@ -102,19 +102,22 @@ export default function List({ apprenants,trimestre }) {
 
                     <ul className="nav nav-pills" id="pills-tab" role="tablist">
                         {
-                            currentApprenant?.matieres.map((matiere, index) => (
-                                <li className="nav-item" role="presentation" key={matiere.id}>
-                                    <button
-                                        className={`btn btn-sm _nav-link ${index === 0 ? "active" : ""}`}
-                                        id={`pills-${matiere.id}-tab`}
-                                        data-bs-toggle="pill"
-                                        data-bs-target={`#pills-${matiere.id}`}
-                                        type="button"
-                                    >
-                                        {matiere.libelle}
-                                    </button>
-                                </li>
-                            ))
+                            currentApprenant?.matieres.length > 0 ?
+                                currentApprenant?.matieres.map((matiere, index) => (
+                                    <li className="nav-item" role="presentation" key={matiere.id}>
+                                        <button
+                                            className={`btn btn-sm _nav-link ${index === 0 ? "active" : ""}`}
+                                            id={`pills-${matiere.id}-tab`}
+                                            data-bs-toggle="pill"
+                                            data-bs-target={`#pills-${matiere.id}`}
+                                            type="button"
+                                        >
+                                            {matiere.libelle}
+                                        </button>
+                                    </li>
+                                )) : (
+                                    <li className='text-danger'>Aucune matière disponible!</li>
+                                )
                         }
                     </ul>
 

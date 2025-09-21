@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
-import { cilLibraryAdd, cilList, cilFilterPhoto,cilSave } from "@coreui/icons";
+import { cilLibraryAdd, cilList, cilFilterPhoto, cilSave } from "@coreui/icons";
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
@@ -38,7 +38,43 @@ export default function List({ apprenants, trimestre }) {
             confirmButtonColor: '#1b5a38',
             confirmButtonText: "Merci"
         });
+    }
 
+    const submit = (e) => {
+        e.preventDefault();
+
+        setShowModal(false);
+
+        Swal.fire({
+            icon: 'info',
+            title: 'Opération en cours...',
+            text: "Veuillez patienter un instant",
+            allowOutsideClick: false,   // empêche de fermer en cliquant dehors
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            timer: 3000, // ⏳ 3 secondes
+            timerProgressBar: true     // affiche une barre de progression
+        }).then(() => {
+            // Quand le timer est fini, tu peux lancer une autre alerte
+            Swal.fire({
+                icon: 'success',
+                html: `
+                            <div style="text-align: center;">
+                                <p class=''>
+                                    Bulletin généré avec succès ! Cliquez sur 
+                                    <strong>le lien</strong> ci-dessous pour le récupérer :
+                                </p>
+                                <p>
+                                    <a target="_blank" href="${route('generateBulletin', { trimestre: trimestre?.id, apprenant: currentApprenant?.id })}">
+                                    📥 Télécharger le bulletin
+                                    </a>
+                                </p>
+                            </div>
+                        `,
+                showConfirmButton: false
+            })
+        });
     }
 
     return (
@@ -99,21 +135,23 @@ export default function List({ apprenants, trimestre }) {
 
             {/* Modal */}
             <Modal show={showModal} onClose={closeModal}>
-                <div className="p-3">
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Génerer le bulletin de l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
-                    </h2>
+                <form method='get' onClick={submit}>
+                    <div className="p-3">
+                        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Génerer le bulletin de l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
+                        </h2>
 
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Fermer
-                        </SecondaryButton>
+                        <div className="mt-6 flex justify-end">
+                            <SecondaryButton onClick={closeModal}>
+                                Fermer
+                            </SecondaryButton>
 
-                        <PrimaryButton className="ms-3" disabled={processing}>
-                            <CIcon icon={cilSave} />  Generer maintenant
-                        </PrimaryButton>
+                            <PrimaryButton className="ms-3">
+                                <CIcon icon={cilSave} />  Generer maintenant
+                            </PrimaryButton>
+                        </div>
                     </div>
-                </div>
+                </form>
             </Modal>
         </AuthenticatedLayout>
     );

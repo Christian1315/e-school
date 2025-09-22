@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             'firstname' => 'Admin',
             'lastname' => 'E-school',
             'email' => 'admin@gmail.com',
-            'password' => bcrypt('password'), // mot de passe par défaut
+            'password' => bcrypt('admin@2025'), // mot de passe par défaut
         ]);
 
         $user->detail()->create([

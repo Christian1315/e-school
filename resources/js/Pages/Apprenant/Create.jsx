@@ -359,7 +359,7 @@ export default function Create({ parents, classes, schools, series }) {
                                                 </progress>
                                             )}
 
-                                            <InputError className="mt-2" message={errors.logo} />
+                                            <InputError className="mt-2" message={errors.photo} />
                                         </div>
                                     </div>
                                 </div>

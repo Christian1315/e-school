@@ -1,14 +1,19 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
-import { cilLibraryAdd, cilList, cilFilterPhoto } from "@coreui/icons";
+import { cilList, cilFilterPhoto } from "@coreui/icons";
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 
 export default function List({ apprenants, trimestre }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
 
     const [showModal, setShowModal] = useState(false);
     const [currentApprenant, setCurrentApprenant] = useState(null);

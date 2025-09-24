@@ -1,34 +1,16 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
-import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import { cilUserX, cilSchool, cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilTrash } from "@coreui/icons";
-import PrimaryButton from '@/Components/PrimaryButton';
-import Modal from '@/Components/Modal';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import SecondaryButton from '@/Components/SecondaryButton';
-import DangerButton from '@/Components/DangerButton';
-import { useState } from 'react';
-import InputError from '@/Components/InputError';
+import { cilLibraryAdd, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
-import { CNavItem } from '@coreui/react';
 
 export default function List({ apprenants }) {
-    const [showModal, setShowModal] = useState(false);
-    const [currentApprenant, setCurrentApprenant] = useState(null);
+    const permissions = usePage().props.auth.permissions;
 
-    const confirmShowModal = (e) => {
-        e.preventDefault();
-        setShowModal(true);
-    };
-    const closeModal = () => {
-        setShowModal(false);
-
-        clearErrors();
-        reset();
-    };
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
 
     const showImg = (apprenant) => {
         Swal.fire({
@@ -59,10 +41,12 @@ export default function List({ apprenants }) {
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-                        
-                        <div className="  items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                        </div>
+
+                        {checkPermission('apprenant.create') ?
+                            (<div className="  items-center gap-4">
+                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            </div>) : null
+                        }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>

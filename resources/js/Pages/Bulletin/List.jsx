@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
-import { cilLibraryAdd, cilList, cilFilterPhoto, cilSave } from "@coreui/icons";
+import { cilList, cilFilterPhoto, cilSave } from "@coreui/icons";
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
@@ -10,13 +10,14 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function List({ apprenants, trimestre }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
 
     const [showModal, setShowModal] = useState(false);
     const [currentApprenant, setCurrentApprenant] = useState(null);
-
-    const { reset, setData, data, errors, processing } = useForm({
-        reste: null,
-    })
 
     const confirmShowModal = (e, apprenant) => {
         e.preventDefault();
@@ -122,8 +123,12 @@ export default function List({ apprenants, trimestre }) {
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
                                             <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-                                            <td className='text-center'><button className="btn bg-light border rounded text-dark"
-                                                onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} /> </button></td>
+                                            <td className='text-center'>
+                                                {checkPermission('bulletin.imprimer') ?
+                                                    (<button className="btn bg-light border rounded text-dark"
+                                                        onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} /> </button>) : null
+                                                }
+                                            </td>
                                         </tr>
                                     ))
                                 }

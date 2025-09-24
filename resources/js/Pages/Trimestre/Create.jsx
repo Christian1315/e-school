@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
@@ -12,6 +12,12 @@ import Select from 'react-select'
 
 
 export default function Create({ schools }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
+
     const {
         data,
         setData,

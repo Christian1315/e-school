@@ -16,17 +16,14 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
-// use App\Models\Apprenant;
-// use Illuminate\Contracts\Mail\Mailer;
+
 use Illuminate\Foundation\Application;
-// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-
 Route::get("/debug", function () {
-    return phpinfo();
+    return auth()->user()->getRoleNames();
     Mail::raw('Ceci est un test', function ($message) {
         $message->to('gogochristian009@gmail.com')->subject('Test mail Laravel');
     });

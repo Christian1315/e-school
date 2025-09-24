@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
@@ -11,7 +11,11 @@ import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 export default function Create({ schools }) {
+    const permissions = usePage().props.auth.permissions;
 
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
     const {
         data,
         setData,
@@ -78,11 +82,13 @@ export default function Create({ schools }) {
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className="text-center items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("user.index")}>
-                                    <CIcon icon={cilArrowCircleLeft} /> Liste des utilisateurs
-                                </Link>
-                            </div>
+                            {checkPermission('utilisateur.view') ?
+                                (<div className="text-center items-center gap-4">
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("user.index")}>
+                                        <CIcon icon={cilArrowCircleLeft} /> Liste des utilisateurs
+                                    </Link>
+                                </div>) : null
+                            }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">

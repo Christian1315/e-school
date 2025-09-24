@@ -28,9 +28,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        /**
+         /**
          * Users
          */
         $user = User::factory()->create([
@@ -43,6 +42,15 @@ class DatabaseSeeder extends Seeder
         $user->detail()->create([
             "phone" => "+2290156854397",
             "profile_img" => asset("fichisers/images/logo.png"),
+        ]);
+
+        /**
+         * Les roles & permissions
+         */
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+            AllPermissionToSuperAdminSeeder::class
         ]);
 
         /**

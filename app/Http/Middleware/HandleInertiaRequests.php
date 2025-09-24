@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                 'trimestres' => $request->user()->school?->trimestres ?? Trimestre::all(),
                 'receivedNotificationsNbr' => $request->user() ? $request->user()->notificationsReceived->count() : 0,
                 'base_url' => env("APP_URL"),
+                'permissions' => $request->user()?->getAllPermissions(),
             ],
         ];
     }

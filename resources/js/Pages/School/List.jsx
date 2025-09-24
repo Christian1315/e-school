@@ -1,13 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import { cilUserX, cilSchool, cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList } from "@coreui/icons";
-import PrimaryButton from '@/Components/PrimaryButton';
+import { cilUserX, cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
 export default function List({ schools }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
+
     const showImg = (school) => {
         Swal.fire({
             // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
@@ -37,10 +42,11 @@ export default function List({ schools }) {
 
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-
-                        <div className="  items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                        </div>
+                        {checkPermission('ecole.create') ?
+                            (<div className="items-center gap-4">
+                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            </div>) : null
+                        }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
@@ -105,17 +111,21 @@ export default function List({ schools }) {
                                                     </Dropdown.Trigger>
 
                                                     <Dropdown.Content>
-                                                        <Dropdown.Link
-                                                            href={route('school.edit', 1)}
-                                                        >
-                                                            <CIcon icon={cilUserX} />  Modifier
-                                                        </Dropdown.Link>
+                                                        {checkPermission('ecole.edit') ?
+                                                            (<Dropdown.Link
+                                                                href={route('school.edit', 1)}
+                                                            >
+                                                                <CIcon icon={cilUserX} />  Modifier
+                                                            </Dropdown.Link>) : null
+                                                        }
 
-                                                        <Dropdown.Link
-                                                            href={route('school.destroy', 1)}
-                                                        >
-                                                            <CIcon icon={cilUserX} />  Supprimer
-                                                        </Dropdown.Link>
+                                                        {checkPermission('ecole.delete') ?
+                                                            (<Dropdown.Link
+                                                                href={route('school.destroy', 1)}
+                                                            >
+                                                                <CIcon icon={cilUserX} />  Supprimer
+                                                            </Dropdown.Link>) : null
+                                                        }
                                                     </Dropdown.Content>
                                                 </Dropdown>
                                             </td>

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
@@ -10,6 +10,12 @@ import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
 export default function Create() {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
+
     const {
         data,
         setData,
@@ -18,7 +24,7 @@ export default function Create() {
         post,
         reset,
         processing,
-        progress 
+        progress
     } = useForm({
         raison_sociale: "",
         adresse: "",
@@ -83,9 +89,11 @@ export default function Create() {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
 
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className=" text-center  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
-                            </div>
+                            {checkPermission('ecole.view') ?
+                                (<div className=" text-center  items-center gap-4">
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                </div>) : null
+                            }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">

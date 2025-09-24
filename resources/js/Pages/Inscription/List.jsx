@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
@@ -8,13 +8,17 @@ import Modal from '@/Components/Modal';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import SecondaryButton from '@/Components/SecondaryButton';
-import DangerButton from '@/Components/DangerButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
 import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
 
     const [showModal, setShowModal] = useState(false);
     const [currentInscription, setCurrentInscription] = useState(null);
@@ -27,7 +31,6 @@ export default function List({ inscriptions }) {
         e.preventDefault();
         setShowModal(true);
 
-        // console.log(inscription)
         setCurrentInscription(inscription)
     };
     const closeModal = () => {
@@ -103,9 +106,11 @@ export default function List({ inscriptions }) {
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
 
-                        <div className="  items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("inscription.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                        </div>
+                        {checkPermission('inscription.create') ?
+                            (<div className="items-center gap-4">
+                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("inscription.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            </div>) : null
+                        }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
@@ -148,12 +153,14 @@ export default function List({ inscriptions }) {
                                                     </Dropdown.Trigger>
 
                                                     <Dropdown.Content>
-                                                        <Dropdown.Link
-                                                            href="#"
-                                                            onClick={(e) => confirmShowModal(e, inscription)}
-                                                        >
-                                                            <CIcon icon={cilUserX} />  Generer un reçu
-                                                        </Dropdown.Link>
+                                                        {checkPermission('inscription.imprimer.receit') ?
+                                                            (<Dropdown.Link
+                                                                href="#"
+                                                                onClick={(e) => confirmShowModal(e, inscription)}
+                                                            >
+                                                                <CIcon icon={cilUserX} />  Generer un reçu
+                                                            </Dropdown.Link>) : null
+                                                        }
                                                     </Dropdown.Content>
                                                 </Dropdown>
                                             </td>

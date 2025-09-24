@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
@@ -12,6 +12,12 @@ import Select from 'react-select'
 
 
 export default function Create({ schools, apprenants, trimestres, matieres }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
+
     const {
         data,
         setData,
@@ -80,9 +86,11 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
 
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className=" text-center  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
-                            </div>
+                            {checkPermission('devoir.view') ?
+                                (<div className=" text-center  items-center gap-4">
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                </div>) : null
+                            }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
@@ -101,9 +109,9 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                     label: `${school.raison_sociale}`,
                                                 }))}
                                                 value={schools.data.map((school) => ({
-                                                        value: school.id,
-                                                        label: `${school.raison_sociale}`,
-                                                    }))
+                                                    value: school.id,
+                                                    label: `${school.raison_sociale}`,
+                                                }))
                                                     .find((option) => option.value === data.school_id)} // set selected option
                                                 onChange={(option) => setData('school_id', option.value)} // update state with id
                                             />
@@ -126,9 +134,9 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                     label: `${apprenant.firstname} - ${apprenant.lastname}`,
                                                 }))}
                                                 value={apprenants.data.map((apprenant) => ({
-                                                        value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname}`,
-                                                    }))
+                                                    value: apprenant.id,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id
                                             />
@@ -153,9 +161,9 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                     label: `${trimestre.libelle}`,
                                                 }))}
                                                 value={trimestres.data.map((trimestre) => ({
-                                                        value: trimestre.id,
-                                                        label: `${trimestre.libelle}`,
-                                                    }))
+                                                    value: trimestre.id,
+                                                    label: `${trimestre.libelle}`,
+                                                }))
                                                     .find((option) => option.value === data.trimestre_id)} // set selected option
                                                 onChange={(option) => setData('trimestre_id', option.value)} // update state with id
                                             />
@@ -178,9 +186,9 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                     label: `${matiere.libelle}`,
                                                 }))}
                                                 value={matieres.data.map((matiere) => ({
-                                                        value: matiere.id,
-                                                        label: `${matiere.libelle}`,
-                                                    }))
+                                                    value: matiere.id,
+                                                    label: `${matiere.libelle}`,
+                                                }))
                                                     .find((option) => option.value === data.matiere_id)} // set selected option
                                                 onChange={(option) => setData('matiere_id', option.value)} // update state with id
                                             />

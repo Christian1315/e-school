@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
@@ -12,6 +12,12 @@ import Select from 'react-select'
 
 
 export default function Create({ schools }) {
+    const permissions = usePage().props.auth.permissions;
+
+    const checkPermission = (name) => {
+        return permissions.some(per => per.name == name);
+    }
+
     const {
         data,
         setData,
@@ -24,7 +30,7 @@ export default function Create({ schools }) {
     } = useForm({
         libelle: "",
         school_id: "",
-        coefficient:''
+        coefficient: ''
     });
 
     const submit = (e) => {
@@ -78,9 +84,11 @@ export default function Create({ schools }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
 
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className=" text-center  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("matiere.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des matières</Link>
-                            </div>
+                            {checkPermission('matiere.view') ?
+                                (<div className=" text-center  items-center gap-4">
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("matiere.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des matières</Link>
+                                </div>) : null
+                            }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
@@ -130,21 +138,21 @@ export default function Create({ schools }) {
                                 </div>
 
                                 <div className="col-md-12">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="coefficient" value="Coefficient" > <span className="text-danger">*</span> </InputLabel>
-                                            <TextInput
-                                                id="coefficient"
-                                                className="mt-1 block w-full"
-                                                value={data.coefficient}
-                                                placeholder="3"
-                                                onChange={(e) => setData('coefficient', e.target.value)}
-                                                autoComplete="coefficient"
-                                                required
-                                            />
+                                    <div className='mb-3'>
+                                        <InputLabel htmlFor="coefficient" value="Coefficient" > <span className="text-danger">*</span> </InputLabel>
+                                        <TextInput
+                                            id="coefficient"
+                                            className="mt-1 block w-full"
+                                            value={data.coefficient}
+                                            placeholder="3"
+                                            onChange={(e) => setData('coefficient', e.target.value)}
+                                            autoComplete="coefficient"
+                                            required
+                                        />
 
-                                            <InputError className="mt-2" message={errors.coefficient} />
-                                        </div>
+                                        <InputError className="mt-2" message={errors.coefficient} />
                                     </div>
+                                </div>
 
                                 <div className="flex items-center gap-4">
                                     <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>

@@ -10,7 +10,7 @@ import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Create({ schools,roles }) {
+export default function Create({ schools, roles }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -24,7 +24,7 @@ export default function Create({ schools,roles }) {
         processing,
         progress
     } = useForm({
-        role_id:'',
+        role_id: '',
         school_id: "",
         phone: "",
         email: "",
@@ -137,7 +137,7 @@ export default function Create({ schools,roles }) {
 
                                         {/* Phone */}
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="phome" value="Numéro de télépone" ><span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="phome" value="Numéro de télépone" ></InputLabel>
                                             <TextInput
                                                 id="phone"
                                                 type="text"
@@ -151,7 +151,7 @@ export default function Create({ schools,roles }) {
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="profile_img" value="Photo de profil" ><span className="text-danger">*</span></InputLabel>
+                                            <InputLabel htmlFor="profile_img" value="Photo de profil" ></InputLabel>
 
                                             <TextInput
                                                 id="profile_img"
@@ -213,7 +213,7 @@ export default function Create({ schools,roles }) {
 
                                         {/* Email */}
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="email" value="Email" > <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="email" value="Email" > <span className="text-danger">*</span>  </InputLabel>
                                             <TextInput
                                                 name="email"
                                                 id="email"

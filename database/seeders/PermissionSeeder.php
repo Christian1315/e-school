@@ -58,6 +58,11 @@ class PermissionSeeder extends Seeder
             "Classes" => $this->createCrudValidatePermissions("classes", "classe"),
             "Matières" => $this->createCrudValidatePermissions("matières", "matiere"),
             "Trimestres" => $this->createCrudValidatePermissions("trimestres", "trimestre"),
+
+            "Rôles" => array_merge(
+                $this->createCrudValidatePermissions("rôles", "role"),
+                ["Affecter un rôle" => "affect.role"],
+            ),
         ];
 
         foreach ($permissions_groups as $group => $permissions) {

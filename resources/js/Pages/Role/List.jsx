@@ -4,14 +4,15 @@ import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilPencil } from "@coreui/icons";
 import { useState } from 'react';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function List({ roles }) {
-    console.log(roles)
+    const authUser = usePage().props.auth.user;
+
     const [currentRole, setCurrentRole] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -28,18 +29,6 @@ export default function List({ roles }) {
         setCurrentRole(role)
     };
 
-    const closeModal = () => {
-        setShowModal(false);
-
-        reset();
-    };
-
-    const { data, setData, errors, post,
-        processing, progress
-    } = useForm({
-        school_id: "",
-        phone: "", email: "", firstname: "", lastname: "", profile_img: "", password: "", confirm_password: ""
-    });
 
     return (
         <AuthenticatedLayout
@@ -80,40 +69,41 @@ export default function List({ roles }) {
                                                 <Link href={route('role.permissions', role.id)}
                                                     className='btn btn-sm btn-light border bg-hover shadow-sm'
                                                 >
-                                                    <CIcon icon={cilCenterFocus} />
+                                                    <strong className="text-danger">{role.permissions?.length}</strong> <CIcon icon={cilList} />
                                                 </Link>
                                             </td>
                                             <td>
                                                 <Link href={route('role.users', role.id)}
                                                     className='btn btn-sm btn-light border bg-hover shadow-sm'
                                                 >
-                                                    <CIcon icon={cilCenterFocus} />
+                                                    <strong className="text-danger">{role.users?.length}</strong> <CIcon icon={cilList} />
                                                 </Link>
                                             </td>
                                             <td>
-                                                <Dropdown>
-                                                    <Dropdown.Trigger>
-                                                        <span className="inline-flex rounded-md">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            >
-                                                                <CIcon icon={cilAlignCenter} /> Gérer
-                                                            </button>
-                                                        </span>
-                                                    </Dropdown.Trigger>
+                                                {!authUser.school_id ?
+                                                    (<Dropdown>
+                                                        <Dropdown.Trigger>
+                                                            <span className="inline-flex rounded-md">
+                                                                <button
+                                                                    type="button"
+                                                                    className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                                >
+                                                                    <CIcon icon={cilAlignCenter} /> Gérer
+                                                                </button>
+                                                            </span>
+                                                        </Dropdown.Trigger>
 
-                                                    <Dropdown.Content>
-                                                        {checkPermission('utilisateur.edit') ?
-                                                            (<Dropdown.Link
-                                                                href={route('role.edit', role.id)}
-                                                                onClick={(e) => confirmShowModal(e, user)}
-                                                            >
-                                                                <CIcon icon={cilUserX} />  Modifier
-                                                            </Dropdown.Link>) : null
-                                                        }
-                                                    </Dropdown.Content>
-                                                </Dropdown>
+                                                        <Dropdown.Content>
+                                                            {checkPermission('role.edit') ?
+                                                                (<Dropdown.Link
+                                                                    href={route('role.permissions', role.id)}
+                                                                >
+                                                                    <CIcon icon={cilPencil} /> Modifier
+                                                                </Dropdown.Link>) : null
+                                                            }
+                                                        </Dropdown.Content>
+                                                    </Dropdown>) : '---'
+                                                }
                                             </td>
                                         </tr>
                                     ))

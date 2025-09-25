@@ -150,7 +150,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                                                         <tr key={user.id}>
                                                             <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user.firstname}</span></td>
                                                             <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user.lastname}</span></td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user?.detail?.phone}</span> </td>
+                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user?.detail?.phone || '---'}</span> </td>
                                                             <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded"> {user.created_at}</span></td>
                                                         </tr>
                                                     ))

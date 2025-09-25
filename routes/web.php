@@ -92,19 +92,20 @@ Route::middleware('auth')->group(function () {
 
     // Les bulletins
     Route::get("bulletin/{trimestre}", BulletinController::class)->name("bulletin");
-    Route::get("bulletin/{trimestre}/{apprenant}", [BulletinController::class,"generateBulletin"])->name("generateBulletin");
+    Route::get("bulletin/{trimestre}/{apprenant}", [BulletinController::class, "generateBulletin"])->name("generateBulletin");
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Roles
-    Route::resource("role", RoleController::class);
-    Route::get("role/{id}/permissions", [RoleController::class,'getPermissions'])->name("role.permissions");
-    Route::get("role/{id}/users", [RoleController::class,'getUsers'])->name("role.users");
+    Route::resource("role", RoleController::class)->except("update");
+    Route::get("role/{id}/permissions", [RoleController::class, 'getPermissions'])->name("role.permissions");
+    Route::get("role/{id}/users", [RoleController::class, 'getUsers'])->name("role.users");
+    Route::post("role/affect", [RoleController::class, 'affectRole'])->name("affect.role");
 
-    Route::patch("role/{id}/update-permissions", [RoleController::class,'updatePermissions'])->name("role.update.permissions");
-    Route::patch("role/{id}/update-users", [RoleController::class,'updateUsers'])->name("role.update.users");
+    Route::patch("role/{id}/update-permissions", [RoleController::class, 'updatePermissions'])->name("role.update.permissions");
+    Route::patch("role/{id}/update-users", [RoleController::class, 'updateUsers'])->name("role.update.users");
 });
 
 require __DIR__ . '/auth.php';

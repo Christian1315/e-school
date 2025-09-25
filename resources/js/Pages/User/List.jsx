@@ -1,31 +1,40 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend } from "@coreui/icons";
+import Modal from '@/Components/Modal';
+import { useEffect, useState } from 'react';
+import InputLabel from '@/Components/InputLabel';
+import Checkbox from '@/Components/Checkbox';
+import SecondaryButton from '@/Components/SecondaryButton';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function List({ users }) {
+export default function List({ users, roles }) {
     const permissions = usePage().props.auth.permissions;
+    const [currentUser, setCurrentUser] = useState(null)
+    const [showModal, setShowModal] = useState(false)
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
 
+    useEffect(() => (
+        setData("user_id", currentUser?.id)
+    ), [currentUser]);
+
     const confirmShowModal = (e, user) => {
         e.preventDefault();
         setShowModal(true);
+        console.log("Current user :", currentUser)
 
         setCurrentUser(user)
     };
     const closeModal = () => {
         setShowModal(false);
-
-        // clearErrors();
-        reset();
     };
-
 
     const showUserProfile = (user) => {
         Swal.fire({
@@ -37,8 +46,68 @@ export default function List({ users }) {
             confirmButtonColor: '#1b5a38',
             confirmButtonText: "Merci"
         });
-
     }
+
+    const [formatedRoles, setFormatedRoles] = useState(roles.map((role) => ({
+        'id': role.id,
+        'name': role.name,
+        'checked': false
+    })))
+
+    const { data, setData, processing, post } = useForm({
+        role_id: '',
+        user_id: currentUser?.id,
+    })
+
+    useEffect(() => {
+        const selectedRole = formatedRoles.find(role => role.checked);
+        setData("role_id", selectedRole ? selectedRole.id : null);
+    }, [formatedRoles]);
+
+    /**
+     * DataTable hundle
+     */
+
+    const selectRole = (role) => {
+        const newRoles = formatedRoles.map(r => ({
+            ...r,
+            checked: r.id === role.id  // ✅ seul le rôle cliqué devient true
+        }));
+        setFormatedRoles(newRoles);
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        post(route('affect.role'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: `Rôle affecté au user (${currentUser?.firstname} - ${currentUser?.lastname}) avec succès`,
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+        });
+    };
 
     return (
         <AuthenticatedLayout
@@ -92,12 +161,12 @@ export default function List({ users }) {
                                             <td>{user.lastname}</td>
                                             <td>{user.email}</td>
                                             <td>{user.detail?.phone}</td>
-                                            <td>
+                                            <td className='text-center'>
                                                 {
                                                     user.roles?.length > 0 ?
-                                                        user.roles.map((role) => (
-                                                            <span className="m-1 badge bg-light text-dark border rounded">{role.name}</span>
-                                                        )) : ''
+                                                        user.roles.map((role, index) => (
+                                                            <span key={index} className="m-1 badge bg-light text-dark border rounded">{role.name}</span>
+                                                        )) : '---'
                                                 }
                                             </td>
                                             <td>
@@ -114,12 +183,12 @@ export default function List({ users }) {
                                                     </Dropdown.Trigger>
 
                                                     <Dropdown.Content>
-                                                        {checkPermission('utilisateur.edit') ?
+                                                        {!checkPermission('affect.role') ?
                                                             (<Dropdown.Link
-                                                                href="#"
+                                                                href='#'
                                                                 onClick={(e) => confirmShowModal(e, user)}
                                                             >
-                                                                <CIcon icon={cilUserX} />  Modifier
+                                                                <CIcon icon={cilLink} />  Affecter à un rôle
                                                             </Dropdown.Link>) : null
                                                         }
 
@@ -143,6 +212,56 @@ export default function List({ users }) {
                 </div>
             </div>
 
+            {/*  */}
+            <Modal show={showModal} onClose={closeModal}>
+                <form onSubmit={submit} className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Affectation de rôle à <em className='text-success'>{currentUser?.firstname} -  {currentUser?.lastname} </em>
+                    </h2>
+
+                    <p className="alert alert-warning">
+                        <CIcon className='text-danger' icon={cilInfo} /> En affectant un rôle à un utilisateur, tous les autres utilisateurs disposant de ce rôle vont tous le perdre
+                    </p>
+
+                    {/*  */}
+                    <table className="shadow-sm table table-striped" id='myTable' style={{ width: '100%' }}>
+                        <thead>
+                            <tr>
+                                <th scope="col">N°</th>
+                                <th scope="col">Libele</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                formatedRoles.length > 0 ?
+                                    formatedRoles.map((role, index) => (
+                                        <tr key={index}>
+                                            <th scope="row">{index + 1}</th>
+                                            <td ><span className="badge bg-light rounded border text-dark">{role.name}</span></td>
+                                            <td>
+                                                <Checkbox
+                                                    checked={role.checked}          // ⚡ important : bind à role.checked
+                                                    onChange={() => selectRole(role)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )) : (<tr><td colSpan={3} className='text-danger'>Aucun rôle!</td> </tr>)
+                            }
+                        </tbody>
+                    </table>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={closeModal}>
+                            Abandonner
+                        </SecondaryButton>
+
+                        <PrimaryButton disabled={processing}>
+                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
         </AuthenticatedLayout>
     );
 }

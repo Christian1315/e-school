@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -19,7 +20,18 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with(['permissions', 'users'])->latest()->get();
+        $user = Auth::user();
+
+        if ($user->school) {
+            $roles = Role::with(['permissions', 'users'])
+                ->where('id', '!=', 1)
+                ->whereNotIn('name', $user->roles->pluck('name')->toArray())
+                ->latest()
+                ->get();
+        } else {
+            $roles = Role::with(['permissions', 'users'])
+                ->latest()->get();
+        }
 
         return Inertia::render('Role/List', [
             "roles" => $roles,
@@ -35,6 +47,7 @@ class RoleController extends Controller
 
         return Inertia::render('Role/Permissions', [
             "role" => $role,
+            "permissions" => Permission::all(),
         ]);
     }
 
@@ -43,7 +56,20 @@ class RoleController extends Controller
      */
     public function getUsers(Request $request, $id)
     {
-        $role = Role::with(["users.detail", "users.school"])->find($id);
+        $user = Auth::user();
+
+        if ($user->school) {
+            $role = Role::with([
+                "users" => function ($query) use ($user) {
+                    $query->where("school_id", $user->school_id);
+                },
+                "users.detail",
+                "users.school"
+            ])
+                ->find($id);
+        } else {
+            $role = Role::with(["users.detail", "users.school"])->find($id);
+        }
 
         return Inertia::render('Role/Users', [
             "role" => $role,
@@ -82,14 +108,63 @@ class RoleController extends Controller
         ]);
     }
 
-    public function edit($id)
+    /**
+     * Actualisation 
+     * des permissions d'un rôle
+     */
+    public function affectRole(Request $request)
     {
-        $role = Role::with('permissions')->findOrFail($id);
+        try {
+            $validated = $request->validate([
+                'user_id' => 'required|integer|exists:users,id',
+                'role_id' => 'required|integer|exists:roles,id',
+            ], [
+                'user_id.required' => 'L’utilisateur est obligatoire.',
+                'user_id.integer'  => 'L’identifiant de l’utilisateur doit être un nombre entier.',
+                'user_id.exists'   => 'L’utilisateur sélectionné n’existe pas dans le système.',
 
-        return response()->json([
-            'role' => $role,
-            'rolePermissions' => $role->permissions->pluck('name')
-        ]);
+                'role_id.required' => 'Le rôle est obligatoire.',
+                'role_id.integer'  => 'L’identifiant du rôle doit être un nombre entier.',
+                'role_id.exists'   => 'Le rôle sélectionné n’existe pas dans le système.',
+            ]);
+
+            $role = Role::find($validated["role_id"]);
+            $user = User::find($validated["user_id"]);
+
+            if (!$role) {
+                throw new \Exception("Ce rôle n'existe pas!");
+            }
+
+            if (!$user) {
+                throw new \Exception("Ce utilisateur n'existe pas!");
+            }
+
+            DB::beginTransaction();
+
+            /**
+             *  On supprime tous les anciens liens et on garde seulement ceux envoyés
+             * */
+            DB::table('model_has_roles')
+                ->where('model_id', $user->id)
+                ->orWhere('role_id', $role->id)
+                ->delete();
+
+            /**
+             * Affcetation
+             */
+            $user->assignRole($role->name);
+
+            DB::commit();
+            return Redirect::back();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure de validation", ["errors" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure de d'exception", ["exception" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
@@ -115,8 +190,19 @@ class RoleController extends Controller
             }
 
             $request->validate([
+                'name' => 'required|unique:roles,name,' . $id,
                 'permissions' => 'required|array'
+            ], [
+                'name.required' => 'Le nom du rôle est obligatoire.',
+                'name.unique' => 'Ce nom de rôle existe déjà, veuillez en choisir un autre.',
+                'permissions.required' => 'Vous devez sélectionner au moins une permission.',
+                'permissions.array' => 'Le format des permissions est invalide.',
             ]);
+
+            /**
+             * Update role name
+             */
+            $role->update(["name" => $request->name]);
 
             /**
              * Synchronisation des permissions
@@ -124,7 +210,7 @@ class RoleController extends Controller
             $role->syncPermissions($permissions->pluck("name"));
 
             DB::commit();
-            return Redirect::route("role.index", ["id" => $role->id]);
+            return Redirect::route("role.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::debug("Erreure de validation", ["errors" => $e->errors()]);
@@ -148,12 +234,14 @@ class RoleController extends Controller
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas!");
             }
+
             DB::beginTransaction();
 
             /**
              * Users
              */
             $users = collect($request->users);
+
             if ($users->isEmpty()) {
                 throw new Exception("Choississez au moins un utilisateur");
             }
@@ -165,12 +253,20 @@ class RoleController extends Controller
             /**
              * Synchronisation des users
              */
-            foreach (User::whereIn("id", [$users->pluck("id")])->get() as $user) {
-                $user->syncRoles([$role->name]);
-            }
+            User::whereIn('id', $users->pluck('id')->toArray())
+                ->get()
+                ->each(function ($user) use ($role) {
+                    // On supprime tous les anciens liens et on garde seulement ceux envoyés
+                    DB::table('model_has_roles')
+                        ->where('model_id', $user->id)
+                        ->orWhere('role_id', $role->id)
+                        ->delete();
+
+                    $user->assignRole($role->name);
+                });
 
             DB::commit();
-            return Redirect::route("role.index", ["id" => $role->id]);
+            return Redirect::route("role.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::debug("Erreure de validation", ["errors" => $e->errors()]);

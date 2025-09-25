@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import { cilList, cilArrowLeft, cilSend } from "@coreui/icons";
@@ -8,17 +8,24 @@ import { useEffect, useState } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
 
-export default function List({ role }) {
+export default function List({ role, permissions }) {
+    const authUser = usePage().props.auth.user;
 
-    const [ckeckPermissions, setCheckPermissions] = useState(role.permissions.map((per) => ({
+    const checkPermission = (name) => {
+        return role.permissions.some(per => per.name == name);
+    }
+
+    const [ckeckPermissions, setCheckPermissions] = useState(permissions.map((per) => ({
         'id': per.id,
         'name': per.name,
         'description': per.description,
-        'checked': true
+        'checked': checkPermission(per.name)
     })))
 
-    const { data, errors, setData, processing, patch } = useForm({
+    const { data, setData, processing, patch } = useForm({
+        name: role.name,
         permissions: ckeckPermissions
     })
 
@@ -100,6 +107,16 @@ export default function List({ role }) {
                         </div>
 
                         <form onSubmit={submit} >
+                            <div className="mb-3">
+                                <InputLabel htmlFor="name" value='Le libelle du rôle'><span className="text-danger">*</span></InputLabel>
+                                <br />
+                                <TextInput
+                                    id="name"
+                                    required
+                                    value={data.name}
+                                    onChange={(e) => setData("name", e.target.value)}
+                                />
+                            </div>
                             <div className="text-center">
                                 <InputLabel htmlFor="checkAll"><span className="btn btn-sm bg-success text-white shadow-sm btn-hover">Tout selectionner ou deselectionner</span></InputLabel>
                                 <br />
@@ -107,7 +124,8 @@ export default function List({ role }) {
                                     id="checkAll"
                                     // hidden
                                     onChange={(e) => checkAllPermissions(e)}
-                                /></div>
+                                />
+                            </div>
                             <table className="shadow-sm table table-striped" id='myTable' style={{ width: '100%' }}>
                                 <thead>
                                     <tr>
@@ -138,11 +156,13 @@ export default function List({ role }) {
                             </table>
                             <br />
                             {/* Bouton */}
-                            <div className="flex items-center gap-4">
-                                <PrimaryButton disabled={processing}>
-                                    <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
-                                </PrimaryButton>
-                            </div>
+                            {!authUser.school_id ?
+                                (<div className="flex items-center gap-4">
+                                    <PrimaryButton disabled={processing}>
+                                        <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                                    </PrimaryButton>
+                                </div>) : ''
+                            }
                         </form>
                     </div>
                 </div>

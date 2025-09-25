@@ -146,8 +146,7 @@ export default function List({ payements }) {
                     </div>
                 </div>
             </div>
-
-
+            
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={generateReceit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">

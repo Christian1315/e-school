@@ -151,9 +151,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 <div className="col-md-6 text-justify">
                     <h2 className="text-center section-title box-border"> <img src={icon} alt="" srcSet="" /> A Propos de nous</h2>
                     <hr />
-                    <p className=""><strong>Lorem ipsum</strong> , dolor sit amet consectetur adipisicing elit. Iure modi, magnam a quis rem sequi, officia incidunt alias quasi ex aperiam, similique dignissimos cum voluptatibus dolor molestiae aut et veritatis?
-                        Nostrum quibusdam suscipit nisi ipsam doloribus quisquam, culpa atque. Reiciendis eaque voluptate sint modi nobis libero rerum eius, deserunt vitae facilis labore debitis maxime in repellendus explicabo sit! Ab, culpa!
-                        Adipisci, obcaecati numquam repudiandae consequatur tenetur nihil doloremque quidem iste ex repellendus quam,!</p>
+                    <p className="">Nous sommes <em>une équipe engagée</em> au service de l’éducation, avec une mission claire : faciliter
+                        la gestion scolaire au quotidien pour tous les acteurs de la communauté éducative. Notre
+                        plateforme a été conçue pour répondre aux besoins concrets des établissements scolaires, en
+                        simplifiant les tâches administratives, en améliorant la communication entre les écoles et les
+                        familles, et en soutenant le travail des enseignants.
+                        Pour les directions et gestionnaires d’écoles, notre solution offre un environnement centralisé,
+                        sécurisé et conforme aux exigences réglementaires.</p>
                 </div>
                 <div className="col-md-6 align-items-center">
                     <div className="relative">

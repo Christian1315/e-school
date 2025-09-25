@@ -30,6 +30,7 @@ class UserController extends Controller
         }
         return Inertia::render('User/List', [
             'users' => UserResource::collection($users),
+            'roles' => Role::where("id", "!=", 1)->get(),
         ]);
     }
 
@@ -67,7 +68,7 @@ class UserController extends Controller
                 'email'       => 'required|string|lowercase|email|max:255|unique:users,email',
                 'password'    => ['required', 'confirmed', Rules\Password::defaults()],
 
-                'phone'       => 'required|string',
+                'phone'       => 'nullable|string',
                 'profile_img' => 'nullable|image|mimes:png,jpeg',
             ], [
                 // 🔹 Messages personnalisés
@@ -94,7 +95,7 @@ class UserController extends Controller
                 'password.confirmed'   => "La confirmation du mot de passe ne correspond pas.",
                 'password.min'         => "Le mot de passe doit contenir au moins 8 caractères.",
 
-                'phone.required'       => "Le numéro de téléphone est obligatoire.",
+                // 'phone.required'       => "Le numéro de téléphone est obligatoire.",
                 'phone.string'         => "Le numéro de téléphone doit être une chaîne de caractères.",
 
                 'profile_img.image'    => "Le fichier doit être une image.",
@@ -110,7 +111,8 @@ class UserController extends Controller
                 'password' => Hash::make($validated["password"]),
             ]);
 
-            $user->detail()->create(["phone" => $validated["phone"]]);
+            $user->detail()->create(["phone" => $validated["phone"] ?? null]);
+
 
             /**
              * Affectation de role
@@ -119,6 +121,18 @@ class UserController extends Controller
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas");
             }
+
+            /**
+             *  On supprime tous les anciens liens et on garde seulement ceux envoyés
+             * */
+            DB::table('model_has_roles')
+                ->where('model_id', $user->id)
+                ->orWhere('role_id', $role->id)
+                ->delete();
+
+            /**
+             * Affectation
+             */
             $user->assignRole($role->name);
 
             event(new Registered($user));

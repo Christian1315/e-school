@@ -54,8 +54,7 @@ export default function SidebarMenu() {
                             <CNavTitle>Gestion</CNavTitle>
 
                             {/* ecoles */}
-                            {
-                                checkPermission('ecole.view') || checkPermission('ecole.create') ?
+                            {checkPermission('ecole.view') || checkPermission('ecole.create') ?
                                     (user.school_id == null ?
                                         <CNavGroup
                                             toggler={
@@ -83,8 +82,7 @@ export default function SidebarMenu() {
 
 
                             {/* apprenants */}
-                            {
-                                checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
+                            {checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
                                     (<CNavGroup
                                         toggler={
                                             <>
@@ -165,7 +163,7 @@ export default function SidebarMenu() {
                             }
 
                             {/* Interrogations */}
-                            {!checkPermission('interrogation.view') || checkPermission('interrogation.create') ?
+                            {checkPermission('interrogation.view') || checkPermission('interrogation.create') ?
                                 (<CNavGroup
                                     toggler={
                                         <>
@@ -284,13 +282,6 @@ export default function SidebarMenu() {
                                             <span>Aucun trimestre!</span>
                                         )
                                     }
-
-                                    {/* <Link component={Link} href={route("moyenne.devoir")} className="nav-link">
-                                    <span className="nav-icon">
-                                        <span className="nav-icon-bullet text-danger"></span>
-                                    </span>
-                                    Liste des moyennes
-                                </Link> */}
                                 </CNavGroup>) : null
                             }
 
@@ -445,20 +436,24 @@ export default function SidebarMenu() {
 
                             <CNavTitle>Gestion des Rôles</CNavTitle>
 
-                            <CNavGroup
-                                toggler={
-                                    <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Rôles
-                                    </>
-                                }
-                            >
-                                <Link component={Link} href={route('role.index')} className="nav-link">
-                                    <span className="nav-icon">
-                                        <span className="nav-icon-bullet text-danger"></span>
-                                    </span>
-                                    Liste des rôles
-                                </Link>
-                            </CNavGroup>
+                            {
+                                checkPermission('role.view') || checkPermission('role.view') ?
+                                    (<CNavGroup
+                                        toggler={
+                                            <>
+                                                <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Rôles
+                                            </>
+                                        }
+                                    >
+                                        <Link component={Link} href={route('role.index')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet text-danger"></span>
+                                            </span>
+                                            Liste des rôles
+                                        </Link>
+                                    </CNavGroup>) : null
+
+                            }
                         </CSidebarNav>
                     </CSidebar>
                 </div>

@@ -443,6 +443,22 @@ export default function SidebarMenu() {
                                 </CNavGroup>) : null
                             }
 
+                            <CNavTitle>Gestion des Rôles</CNavTitle>
+
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Rôles
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('role.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des rôles
+                                </Link>
+                            </CNavGroup>
                         </CSidebarNav>
                     </CSidebar>
                 </div>

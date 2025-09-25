@@ -13,6 +13,7 @@ use App\Http\Controllers\MoyenneDevoirController;
 use App\Http\Controllers\MoyenneInterrogationController;
 use App\Http\Controllers\PayementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
@@ -96,6 +97,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Roles
+    Route::resource("role", RoleController::class);
+    Route::get("role/{id}/permissions", [RoleController::class,'getPermissions'])->name("role.permissions");
+    Route::get("role/{id}/users", [RoleController::class,'getUsers'])->name("role.users");
+
+    Route::patch("role/{id}/update-permissions", [RoleController::class,'updatePermissions'])->name("role.update.permissions");
+    Route::patch("role/{id}/update-users", [RoleController::class,'updateUsers'])->name("role.update.users");
 });
 
 require __DIR__ . '/auth.php';

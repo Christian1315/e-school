@@ -6,7 +6,7 @@ import CIcon from '@coreui/icons-react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilAccountLogout, cilUserX, cilBellExclamation,cilApplications } from '@coreui/icons'
+import { cilAccountLogout, cilUserX, cilBellExclamation, cilApplications } from '@coreui/icons'
 
 import { useEffect } from 'react';
 import DataTable from 'datatables.net-dt';
@@ -33,7 +33,7 @@ pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
 import 'datatables.net-responsive';
 import 'datatables.net-responsive-dt';
 
-export default function AuthenticatedLayout({header, children, SidebarMenu }) {
+export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
     useEffect(() => {
         const table = new DataTable('#myTable', {
             pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
@@ -50,6 +50,10 @@ export default function AuthenticatedLayout({header, children, SidebarMenu }) {
                     p
                 >
                 `,
+            order: [
+                [0, 'desc']
+            ],
+            // columns: [null, null, null, null], // ⬅ match number of <th>
             buttons: [
                 {
                     extend: 'copy',
@@ -166,7 +170,7 @@ export default function AuthenticatedLayout({header, children, SidebarMenu }) {
                                     data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasExample"
                                 >
                                     <button className="space-x-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400">
-                                       <CIcon icon={cilApplications} />
+                                        <CIcon icon={cilApplications} />
                                     </button>
                                 </NavLink>
                             </div>

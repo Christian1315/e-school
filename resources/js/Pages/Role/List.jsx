@@ -1,104 +1,94 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave } from "@coreui/icons";
+import { useState } from 'react';
+import Modal from '@/Components/Modal';
+import SecondaryButton from '@/Components/SecondaryButton';
+import PrimaryButton from '@/Components/PrimaryButton';
 
-export default function List({ users }) {
+export default function List({ roles }) {
+    console.log(roles)
+    const [currentRole, setCurrentRole] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
 
-    const confirmShowModal = (e, user) => {
+    const confirmShowModal = (e, role) => {
         e.preventDefault();
-        setShowModal(true);
+        // setShowModal(true);
 
-        setCurrentUser(user)
+        setCurrentRole(role)
     };
+
     const closeModal = () => {
         setShowModal(false);
 
-        // clearErrors();
         reset();
     };
 
-
-    const showUserProfile = (user) => {
-        Swal.fire({
-            text: `Profile de : ${user.firstname} - ${user.lastname}`,
-            imageUrl: user.detail?.profile_img,
-            imageWidth: 400,
-            imageHeight: 200,
-            imageAlt: "Photo de profile",
-            confirmButtonColor: '#1b5a38',
-            confirmButtonText: "Merci"
-        });
-
-    }
+    const { data, setData, errors, post,
+        processing, progress
+    } = useForm({
+        school_id: "",
+        phone: "", email: "", firstname: "", lastname: "", profile_img: "", password: "", confirm_password: ""
+    });
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des utilisateurs
+                    <CIcon className='text-success' icon={cilList} /> Panel des rôles
                 </h2>
             }
 
             SidebarMenu={<SidebarMenu />}
         >
-            <Head title="Les Utilisateurs" />
+            <Head title="Les Rôles" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-                        {checkPermission('utilisateur.create') ?
-                            (<div className="items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("user.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                            </div>) : null
-                        }
+                        <div className="items-center gap-4">
+                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("role.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                        </div>
+
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
-                                    <th scope="col">Profile</th>
-                                    <th scope="col">Ecole</th>
-                                    <th scope="col">Nom</th>
-                                    <th scope="col">Prénom</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
-                                    <th scope="col">Rôles</th>
+                                    <th scope="col">Libele</th>
+                                    <th scope="col">Permissions</th>
+                                    <th scope="col">Utilisateurs</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    users.data.map((user, index) => (
-                                        <tr key={user.id}>
+                                    roles.map((role, index) => (
+                                        <tr key={role.id}>
                                             <th scope="row">{index + 1}</th>
+                                            <td >{role.name}</td>
                                             <td>
-                                                <button
+                                                <Link href={route('role.permissions', role.id)}
                                                     className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                    onClick={() => showUserProfile(user)}
                                                 >
                                                     <CIcon icon={cilCenterFocus} />
-                                                </button>
+                                                </Link>
                                             </td>
-                                            <td>{user.school?.raison_sociale || '---'}</td>
-                                            <td>{user.firstname}</td>
-                                            <td>{user.lastname}</td>
-                                            <td>{user.email}</td>
-                                            <td>{user.detail?.phone}</td>
                                             <td>
-                                                {
-                                                    user.roles?.length > 0 ?
-                                                        user.roles.map((role) => (
-                                                            <span className="m-1 badge bg-light text-dark border rounded">{role.name}</span>
-                                                        )) : ''
-                                                }
+                                                <Link href={route('role.users', role.id)}
+                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                >
+                                                    <CIcon icon={cilCenterFocus} />
+                                                </Link>
                                             </td>
                                             <td>
                                                 <Dropdown>
@@ -116,19 +106,10 @@ export default function List({ users }) {
                                                     <Dropdown.Content>
                                                         {checkPermission('utilisateur.edit') ?
                                                             (<Dropdown.Link
-                                                                href="#"
+                                                                href={route('role.edit', role.id)}
                                                                 onClick={(e) => confirmShowModal(e, user)}
                                                             >
                                                                 <CIcon icon={cilUserX} />  Modifier
-                                                            </Dropdown.Link>) : null
-                                                        }
-
-                                                        {checkPermission('utilisateur.delete') ?
-                                                            (<Dropdown.Link
-                                                                href="#"
-                                                                onClick={(e) => confirmShowModal(e, user)}
-                                                            >
-                                                                <CIcon icon={cilUserX} />  Supprimer
                                                             </Dropdown.Link>) : null
                                                         }
                                                     </Dropdown.Content>

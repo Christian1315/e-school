@@ -84,9 +84,11 @@ export default function Create({ schools }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
 
                         <div className="bg-light p-3 rounded border mb-5">
-                            <div className=" text-center  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("trimestre.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des trimestres</Link>
-                            </div>
+                            {checkPermission('trimestre.view') ?
+                                (<div className=" text-center  items-center gap-4">
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("trimestre.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des trimestres</Link>
+                                </div>) : null
+                            }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">

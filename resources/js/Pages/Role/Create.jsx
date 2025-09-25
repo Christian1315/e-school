@@ -10,7 +10,7 @@ import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Create({ schools,roles }) {
+export default function Create({ schools }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -24,7 +24,6 @@ export default function Create({ schools,roles }) {
         processing,
         progress
     } = useForm({
-        role_id:'',
         school_id: "",
         phone: "",
         email: "",
@@ -172,29 +171,6 @@ export default function Create({ schools,roles }) {
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        {/* Role */}
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="role_id" value="Affectez-lui un rôle" > <span className="text-danger">*</span> </InputLabel>
-                                            <Select
-                                                placeholder="Rechercher un rôle ..."
-                                                name="role_id"
-                                                id="role_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={roles.map((role) => ({
-                                                    value: role.id,
-                                                    label: `${role.name}`,
-                                                }))}
-                                                value={roles
-                                                    .map((role) => ({
-                                                        value: role.id,
-                                                        label: `${role.name}`,
-                                                    }))
-                                                    .find((option) => option.value === data.role_id)} // set selected option
-                                                onChange={(option) => setData('role_id', option.value)} // update state with id
-                                            />
-                                            <InputError className="mt-2" message={errors.role_id} />
-                                        </div>
                                         {/* Lastname */}
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="lastname" value="Prénom" > <span className="text-danger">*</span> </InputLabel>

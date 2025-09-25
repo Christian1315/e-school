@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\Apprenant;
+use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -23,9 +24,9 @@ class UserController extends Controller
     function index(Request $request)
     {
         if (Auth::user()->school) {
-            $users = User::where("school_id",  Auth::user()->school_id)->get();
+            $users = User::with("roles")->where("school_id",  Auth::user()->school_id)->get();
         } else {
-            $users = User::all();
+            $users = User::with("roles")->get();
         }
         return Inertia::render('User/List', [
             'users' => UserResource::collection($users),
@@ -45,6 +46,7 @@ class UserController extends Controller
 
         return Inertia::render('User/Create', [
             "schools" => $schools,
+            "roles" => Role::where("id", "!=", 1)->get()
         ]);
     }
 
@@ -60,6 +62,7 @@ class UserController extends Controller
                 'firstname'   => 'required|string',
                 'lastname'    => 'required|string',
                 'school_id'   => 'required|integer',
+                'role_id'   => 'required|integer',
 
                 'email'       => 'required|string|lowercase|email|max:255|unique:users,email',
                 'password'    => ['required', 'confirmed', Rules\Password::defaults()],
@@ -76,6 +79,9 @@ class UserController extends Controller
 
                 'school_id.required'   => "L'identifiant de l'école est obligatoire.",
                 'school_id.integer'    => "L'identifiant de l'école doit être un nombre.",
+
+                'role_id.required'   => "Le rôle est obligatoire.",
+                'role_id.integer'    => "Le rôle doit être un nombre.",
 
                 'email.required'       => "L'adresse email est obligatoire.",
                 'email.string'         => "L'adresse email doit être une chaîne de caractères.",
@@ -105,6 +111,15 @@ class UserController extends Controller
             ]);
 
             $user->detail()->create(["phone" => $validated["phone"]]);
+
+            /**
+             * Affectation de role
+             */
+            $role = Role::find($validated["role_id"]);
+            if (!$role) {
+                throw new \Exception("Ce rôle n'existe pas");
+            }
+            $user->assignRole($role->name);
 
             event(new Registered($user));
 

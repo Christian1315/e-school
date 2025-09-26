@@ -38,9 +38,19 @@ class ApprenantController extends Controller
      */
     function create(Request $request)
     {
+        $parentsQuery = User::query();
+
+        if (Auth::user()->school_id) {
+            $parentsQuery->where('school_id', Auth::user()->school_id);
+        }
+
+        $parents = $parentsQuery->whereHas('roles', function ($query) {
+            $query->where('name', 'Parent');
+        })->get();
+
         return Inertia::render('Apprenant/Create', [
-            "parents" => Auth::user()->school_id ?
-                User::where("school_id", Auth::user()->school_id)->get() : User::all(),
+            "parents" => $parents,
+
             "schools" => Auth::user()->school_id ?
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),
@@ -64,12 +74,12 @@ class ApprenantController extends Controller
                 "firstname"      => "required|string",
                 "lastname"       => "required|string",
                 "adresse"        => "required|string",
-                "email"          => "required|email",
-                "phone"          => "required",
-                "date_naissance" => "required|date",
-                "lieu_naissance" => "required|string",
+                "email"          => "nullable|email",
+                "phone"          => "nullable",
+                "date_naissance" => "nullable|date",
+                "lieu_naissance" => "nullable|string",
                 "sexe"           => "required|in:Masculin,Féminin",
-                "photo"          => "required|image|max:2048",
+                "photo"          => "nullable|image|max:2048",
             ], [
                 "parent_id.required"      => "Le parent est obligatoire.",
                 "parent_id.integer"       => "Le parent doit être un identifiant valide.",

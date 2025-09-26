@@ -13,6 +13,8 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function List({ users, roles }) {
+    const authUser = usePage().props.auth.user;
+
     const permissions = usePage().props.auth.permissions;
     const [currentUser, setCurrentUser] = useState(null)
     const [showModal, setShowModal] = useState(false)
@@ -137,8 +139,8 @@ export default function List({ users, roles }) {
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
+                                    <th scope="col">Email/Phone</th>
+                                    {/* <th scope="col">Phone</th> */}
                                     <th scope="col">Rôles</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -159,8 +161,8 @@ export default function List({ users, roles }) {
                                             <td>{user.school?.raison_sociale || '---'}</td>
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
-                                            <td>{user.email}</td>
-                                            <td>{user.detail?.phone}</td>
+                                            <td>{user.email}/{user.detail?.phone || '---'}</td>
+                                            {/* <td>{user.detail?.phone}</td> */}
                                             <td className='text-center'>
                                                 {
                                                     user.roles?.length > 0 ?
@@ -183,7 +185,8 @@ export default function List({ users, roles }) {
                                                     </Dropdown.Trigger>
 
                                                     <Dropdown.Content>
-                                                        {!checkPermission('affect.role') ?
+                                                        {/* Un user ne peuut pas s'affceter un role */}
+                                                        {checkPermission('affect.role') && authUser.id != user.id ?
                                                             (<Dropdown.Link
                                                                 href='#'
                                                                 onClick={(e) => confirmShowModal(e, user)}
@@ -195,7 +198,7 @@ export default function List({ users, roles }) {
                                                         {checkPermission('utilisateur.delete') ?
                                                             (<Dropdown.Link
                                                                 href="#"
-                                                                onClick={(e) => confirmShowModal(e, user)}
+                                                            // onClick={(e) => confirmShowModal(e, user)}
                                                             >
                                                                 <CIcon icon={cilUserX} />  Supprimer
                                                             </Dropdown.Link>) : null

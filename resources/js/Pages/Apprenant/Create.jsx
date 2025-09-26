@@ -229,7 +229,7 @@ export default function Create({ parents, classes, schools, series }) {
                                                 type="date"
                                                 className="mt-1 block w-full"
                                                 placeholder="01/03/2025"
-                                                required
+                                                // required
                                                 value={data.date_naissance}
                                                 onChange={(e) => setData('date_naissance', e.target.value)}
                                                 autoComplete="date_naissance"
@@ -332,7 +332,7 @@ export default function Create({ parents, classes, schools, series }) {
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="lieu_naissance" value="Lieu de naissance" ><span className="text-danger">*</span></InputLabel>
+                                            <InputLabel htmlFor="lieu_naissance" value="Lieu de naissance" ></InputLabel>
 
                                             <TextInput
                                                 id="lieu_naissance"
@@ -340,7 +340,7 @@ export default function Create({ parents, classes, schools, series }) {
                                                 className="mt-1 block w-full"
                                                 value={data.lieu_naissance}
                                                 placeholder="Cotonou | Apkapka"
-                                                required
+                                                // required
                                                 onChange={(e) => setData('lieu_naissance', e.target.value)}
                                                 autoComplete="lieu_naissance"
                                             />
@@ -350,13 +350,13 @@ export default function Create({ parents, classes, schools, series }) {
                                     </div>
                                     <div className="col-12">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="photo" value="Photo de l'apprenant" ><span className="text-danger">*</span></InputLabel>
+                                            <InputLabel htmlFor="photo" value="Photo de l'apprenant" ></InputLabel>
 
                                             <TextInput
                                                 id="photo"
                                                 type="file"
                                                 className="mt-1 block w-full"
-                                                required
+                                                // required
                                                 onChange={(e) => setData('photo', e.target.files[0])}
                                                 autoComplete="photo"
                                             />

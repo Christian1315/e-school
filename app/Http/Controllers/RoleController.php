@@ -146,7 +146,7 @@ class RoleController extends Controller
              * */
             DB::table('model_has_roles')
                 ->where('model_id', $user->id)
-                ->orWhere('role_id', $role->id)
+                // ->orWhere('role_id', $role->id)
                 ->delete();
 
             /**

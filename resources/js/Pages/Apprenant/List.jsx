@@ -70,13 +70,13 @@ export default function List({ apprenants }) {
                                     apprenants.data.map((apprenant, index) => (
                                         <tr key={apprenant.id}>
                                             <th scope="row">{index + 1}</th>
-
                                             <td>
-                                                {/* <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> */}
-                                                <img src={apprenant.photo}
+                                                {apprenant.photo?
+                                                (<img src={apprenant.photo}
                                                     onClick={() => showImg(apprenant)}
                                                     className='img-fluid img-circle shadow' srcSet=""
-                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
+                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />):'---'
+                                                }
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>

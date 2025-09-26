@@ -72,7 +72,7 @@ class PayementController extends Controller
         return Inertia::render('Payement/Create', [
             "apprenants" => Auth::user()->school_id ?
                 Apprenant::where("school_id", Auth::user()->school_id)->get() :
-                User::all(),
+                Apprenant::all(),
             "schools" => Auth::user()->school_id ?
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
+use App\Imports\ParentImport;
 use App\Models\Apprenant;
 use App\Models\Role;
 use App\Models\School;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -33,6 +35,23 @@ class UserController extends Controller
             'roles' => Role::where("id", "!=", 1)->get(),
         ]);
     }
+
+    /**
+     * Parents
+     */
+    function parents(Request $request)
+    {
+        $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent"));
+        if (Auth::user()->school) {
+            $parentsQuery->where("school_id",  Auth::user()->school_id);
+        }
+
+        return Inertia::render('Apprenant/Parent', [
+            'users' => UserResource::collection($parentsQuery->get()),
+            'roles' => Role::where("id", "!=", 1)->get(),
+        ]);
+    }
+
 
     /**
      * Create
@@ -148,6 +167,44 @@ class UserController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::debug("Erreure lors de création de l'école", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Importation des parents
+     */
+    function importParents(Request $request)
+    {
+        try {
+            $request->validate(
+                [
+                    'parents' => 'required|file|mimes:xlsx,xls|max:5120',
+                ],
+                [
+                    'parents.required' => 'Le fichier est obligatoire.',
+                    'parents.file'     => 'Vous devez envoyer un fichier valide.',
+                    'parents.mimes'    => 'Le fichier doit être au format : .xlsx ou .xls.',
+                    'parents.max'      => 'Le fichier ne doit pas dépasser 5 Mo.',
+                ]
+            );
+
+            $parents = $request->file('parents');
+
+            DB::beginTransaction();
+
+            Excel::import(new ParentImport, $parents);
+
+            DB::commit();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur générale lors de l'import", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }

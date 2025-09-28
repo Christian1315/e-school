@@ -55,57 +55,75 @@ export default function SidebarMenu() {
 
                             {/* ecoles */}
                             {checkPermission('ecole.view') || checkPermission('ecole.create') ?
-                                    (user.school_id == null ?
-                                        <CNavGroup
-                                            toggler={
-                                                <>
-                                                    <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
-                                                </>
-                                            }
-                                        >
-                                            {checkPermission('ecole.view') ?
-                                                (<Link href={route('school.index')} className="nav-link">
-                                                    <span className="nav-icon">
-                                                        <span className="nav-icon-bullet text-danger"></span>
-                                                    </span>
-                                                    Liste des écoles
-                                                </Link>) : null}
-
-                                            {checkPermission('ecole.create') ? (<Link href={route('school.create')} className="nav-link">
-                                                <span className="nav-icon">
-                                                    <span className="nav-icon-bullet"></span>
-                                                </span>
-                                                Ajouter une école
-                                            </Link>) : null}
-                                        </CNavGroup> : null) : null
-                            }
-
-
-                            {/* apprenants */}
-                            {checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
-                                    (<CNavGroup
+                                (user.school_id == null ?
+                                    <CNavGroup
                                         toggler={
                                             <>
-                                                <CIcon customClassName="nav-icon text-success" icon={cilSmilePlus} /> Les Apprenants
+                                                <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
                                             </>
                                         }
                                     >
-                                        {checkPermission('apprenant.view') ?
-                                            (<Link href={route('apprenant.index')} className="nav-link">
+                                        {checkPermission('ecole.view') ?
+                                            (<Link href={route('school.index')} className="nav-link">
                                                 <span className="nav-icon">
                                                     <span className="nav-icon-bullet text-danger"></span>
                                                 </span>
-                                                Liste des apprenants
+                                                Liste des écoles
                                             </Link>) : null}
 
-                                        {checkPermission('apprenant.create') ?
-                                            (<Link href={route('apprenant.create')} className="nav-link">
-                                                <span className="nav-icon">
-                                                    <span className="nav-icon-bullet"></span>
-                                                </span>
-                                                Ajouter un apprenant
-                                            </Link>) : null}
-                                    </CNavGroup>) : null
+                                        {checkPermission('ecole.create') ? (<Link href={route('school.create')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet"></span>
+                                            </span>
+                                            Ajouter une école
+                                        </Link>) : null}
+                                    </CNavGroup> : null) : null
+                            }
+
+                            {/* parents */}
+                            {checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ?
+                                (<CNavGroup
+                                    toggler={
+                                        <>
+                                            <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Parents
+                                        </>
+                                    }
+                                >
+                                    {checkPermission('utilisateur.view') ?
+                                        (<Link href={route('parent.index')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet text-danger"></span>
+                                            </span>
+                                            Liste des parents
+                                        </Link>) : null}
+                                </CNavGroup>) : null
+                            }
+
+                            {/* apprenants */}
+                            {checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
+                                (<CNavGroup
+                                    toggler={
+                                        <>
+                                            <CIcon customClassName="nav-icon text-success" icon={cilSmilePlus} /> Les Apprenants
+                                        </>
+                                    }
+                                >
+                                    {checkPermission('apprenant.view') ?
+                                        (<Link href={route('apprenant.index')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet text-danger"></span>
+                                            </span>
+                                            Liste des apprenants
+                                        </Link>) : null}
+
+                                    {checkPermission('apprenant.create') ?
+                                        (<Link href={route('apprenant.create')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet"></span>
+                                            </span>
+                                            Ajouter un apprenant
+                                        </Link>) : null}
+                                </CNavGroup>) : null
                             }
 
                             {/* inscriptions */}

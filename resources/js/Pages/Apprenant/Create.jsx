@@ -179,13 +179,13 @@ export default function Create({ parents, classes, schools, series }) {
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="serie_id" value="Série concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="serie_id" value="Série concernée" >  </InputLabel>
 
                                             <Select
                                                 placeholder="Rechercher une série ..."
                                                 name="serie_id"
                                                 id="serie_id"
-                                                required
+                                                // required
                                                 className="form-control mt-1 block w-full"
                                                 options={series.map((serie) => ({
                                                     value: serie.id,
@@ -219,7 +219,6 @@ export default function Create({ parents, classes, schools, series }) {
 
                                             <InputError className="mt-2" message={errors.firstname} />
                                         </div>
-
 
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="date_naissance" value="Date de naissance" />

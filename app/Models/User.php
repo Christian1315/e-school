@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -82,5 +83,19 @@ class User extends Authenticatable
     function notificationsSended(): HasMany
     {
         return $this->hasMany(CustomNotification::class, "sender_id");
+    }
+
+    /**
+     * Boot
+     */
+
+    static protected function boot()
+    {
+        parent::boot();
+
+        // creating
+        static::creating(function ($model) {
+            $model->school_id = Auth::user()?->school_id;
+        });
     }
 }

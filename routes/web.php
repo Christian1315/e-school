@@ -69,9 +69,12 @@ Route::middleware('auth')->group(function () {
 
     // Users
     Route::resource("user", UserController::class);
+    Route::get("parent", [UserController::class, "parents"])->name("parent.index");
+    Route::post("parent/import", [UserController::class, "importParents"])->name("parent.import");
 
     // Apprenants
     Route::resource("apprenant", ApprenantController::class);
+    Route::post("apprenant/import", [ApprenantController::class, "importApprenants"])->name("apprenant.import");
 
     // Inscriptions
     Route::resource("inscription", InscriptionController::class);

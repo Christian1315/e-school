@@ -39,7 +39,6 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le mail $row[2] existe déjà!");
         }
 
-        // dd(User::firstWhere("email",$row[2]));
         /**
          * Creation du user
          */

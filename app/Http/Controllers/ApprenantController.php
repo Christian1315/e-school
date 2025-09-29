@@ -70,7 +70,6 @@ class ApprenantController extends Controller
      */
     function importApprenants(Request $request)
     {
-        // dd("gogo");
         try {
             $request->validate(
                 [
@@ -139,7 +138,6 @@ class ApprenantController extends Controller
                 "classe_id.required"      => "La classe est obligatoire.",
                 "classe_id.integer"       => "La classe doit être un identifiant valide.",
 
-                // "serie_id.required"      => "La serie est obligatoire.",
                 "serie_id.integer"       => "La serie doit être un identifiant valide.",
 
 

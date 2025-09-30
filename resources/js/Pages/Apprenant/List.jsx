@@ -141,13 +141,13 @@ export default function List({ apprenants }) {
                                             <td>{apprenant.firstname}</td>
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
-                                            <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-                                            <td>{apprenant.email}</td>
-                                            <td>{apprenant.adresse}</td>
-                                            <td>{apprenant.phone}</td>
-                                            <td>{apprenant.sexe}</td>
-                                            <td><span className="badge bg-light border rounded text-dark">{apprenant.date_naissance}</span></td>
-                                            <td><span className="badge bg-light border rounded text-dark">{apprenant.lieu_naissance}</span></td>
+                                            <td>{apprenant.classe?.libelle || '--'} - {apprenant.serie?.libelle || '--'} </td>
+                                            <td>{apprenant.email || '--'}</td>
+                                            <td>{apprenant.adresse || '--'}</td>
+                                            <td>{apprenant.phone || '--'}</td>
+                                            <td>{apprenant.sexe || '--'}</td>
+                                            <td><span className="badge bg-light border rounded text-dark">{apprenant.date_naissance || '--'}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{apprenant.lieu_naissance || '--'}</span></td>
                                         </tr>
                                     ))
                                 }
@@ -176,7 +176,7 @@ export default function List({ apprenants }) {
                     <div className="my-2">
                         <a
                             target="_blank"
-                            href="/parents-model.xlsx"
+                            href="/apprenants-model.xlsx"
                             className="w-100 text-white btn btn-sm bg-success btn-hover"
                         >
                             <CIcon icon={cilCloudDownload} />

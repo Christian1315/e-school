@@ -37,7 +37,6 @@ export default function Edit({ mustVerifyEmail, status }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             <DeleteUserForm className="_max-w-xl" />
                         </div>
-
                     </div>
                 </div>
             </div>

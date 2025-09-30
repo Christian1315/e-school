@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import { CIcon } from '@coreui/icons-react';
 import { cilUserFollow, cilTrash } from '@coreui/icons'
@@ -13,6 +13,9 @@ import Swal from 'sweetalert2';
 export default function DeleteUserForm({ className = '' }) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
+    const userAuth = usePage().props.auth.user
+
+    console.log("userAuth",userAuth)
 
     const {
         data,
@@ -92,7 +95,9 @@ export default function DeleteUserForm({ className = '' }) {
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
+            <DangerButton 
+            disabled={userAuth?.school_id}
+            onClick={confirmUserDeletion}>
                 <CIcon icon={cilTrash} /> Supprimer le compte
             </DangerButton>
 

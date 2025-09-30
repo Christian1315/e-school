@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\OnEachRow;
@@ -47,6 +48,7 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             'lastname' => $rowData[1],
             'email' => $rowData[2],
             'password' => Hash::make($rowData[0] . "@2025"),
+            'school_id' => Auth::user()->school_id,
         ]);
 
         /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Imports\ParentImport;
+use App\Imports\UsersImport;
 use App\Models\Apprenant;
 use App\Models\Role;
 use App\Models\School;
@@ -194,6 +195,44 @@ class UserController extends Controller
             DB::beginTransaction();
 
             Excel::import(new ParentImport, $parents);
+
+            DB::commit();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur générale lors de l'import", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Importation des utilisateurs
+     */
+    function importUsers(Request $request)
+    {
+        try {
+            $request->validate(
+                [
+                    'users' => 'required|file|mimes:xlsx,xls|max:5120',
+                ],
+                [
+                    'users.required' => 'Le fichier est obligatoire.',
+                    'users.file'     => 'Vous devez envoyer un fichier valide.',
+                    'users.mimes'    => 'Le fichier doit être au format : .xlsx ou .xls.',
+                    'users.max'      => 'Le fichier ne doit pas dépasser 5 Mo.',
+                ]
+            );
+
+            $users = $request->file('users');
+
+            DB::beginTransaction();
+
+            Excel::import(new UsersImport, $users);
 
             DB::commit();
         } catch (\Illuminate\Validation\ValidationException $e) {

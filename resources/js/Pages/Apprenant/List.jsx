@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import { cilCloudDownload, cilInfo, cilLibraryAdd, cilList, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
@@ -89,8 +88,6 @@ export default function List({ apprenants }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des listes d'apprenants
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les apprenants" />
 

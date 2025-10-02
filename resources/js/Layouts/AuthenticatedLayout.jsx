@@ -32,8 +32,11 @@ pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
 
 import 'datatables.net-responsive';
 import 'datatables.net-responsive-dt';
+import SidebarMenu from '@/Components/SidebarMenu';
 
-export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
+export default function AuthenticatedLayout({ header, children }) {
+    const [visible, setVisible] = useState(true)
+
     useEffect(() => {
         const table = new DataTable('#myTable', {
             pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
@@ -111,10 +114,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
         return () => table.destroy();
     }, []);
 
-
     const user = usePage().props.auth.user;
-    const school = usePage().props.auth.school;
-    // console.log('auth',user)
 
     const receivedNotificationsNbr = usePage().props.auth.receivedNotificationsNbr;
 
@@ -161,7 +161,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="items-center flex">
+                            {/* <div className="items-center flex">
                                 <Link href="/">
                                     <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
                                 </Link>
@@ -173,7 +173,46 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                         <CIcon icon={cilApplications} />
                                     </button>
                                 </NavLink>
-                            </div>
+                                <button onClick={() => setVisible(!visible)}>☰</button>
+
+                            </div> */}
+                            {/* <button onClick={() => setVisible(!visible)} className='text-success'>☰</button> */}
+                            <button
+                                onClick={() =>
+                                    setVisible(!visible)
+                                }
+                                className="inline-flex text-success items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
+                            >
+                                <svg
+                                    className="h-6 w-6"
+                                    stroke="currentColor"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        className={
+                                            !showingNavigationDropdown
+                                                ? 'inline-flex'
+                                                : 'hidden'
+                                        }
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 6h16M4 12h16M4 18h16"
+                                    />
+                                    <path
+                                        className={
+                                            showingNavigationDropdown
+                                                ? 'inline-flex'
+                                                : 'hidden'
+                                        }
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                </svg>
+                            </button>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
@@ -233,7 +272,7 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
                                         (previousState) => !previousState,
                                     )
                                 }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
+                                className="inline-flex text-success items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -320,8 +359,11 @@ export default function AuthenticatedLayout({ header, children, SidebarMenu }) {
 
             {/*  */}
             <div className="row">
-                {SidebarMenu}
-                <div className="col-md-12" style={{ overflowX: "scroll!important" }}>
+                <SidebarMenu
+                    visible={visible}
+                    setVisible={setVisible} />
+
+                <div className="col-sm-12" style={{ overflowX: "scroll!important" }}>
                     <div className={`h-[600px] overflow-y-auto`}>
                         {children}
 

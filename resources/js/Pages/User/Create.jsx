@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -75,7 +74,6 @@ export default function Create({ schools, roles }) {
                     <CIcon className='text-success' icon={cilLibraryAdd} /> Nouvel Utilisateur
                 </h2>
             }
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Nouvel utilisateur" />
 

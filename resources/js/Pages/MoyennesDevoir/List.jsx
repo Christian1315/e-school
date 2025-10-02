@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import { cilList, cilFilterPhoto } from "@coreui/icons";
 import { useState } from 'react';
@@ -49,8 +48,6 @@ export default function List({ apprenants, trimestre }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des moyennes des devoirs | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Moyennes des devoirs" />
 

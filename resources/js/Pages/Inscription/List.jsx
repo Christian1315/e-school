@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -97,8 +96,6 @@ export default function List({ inscriptions }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des inscriptions
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Inscriptions" />
 

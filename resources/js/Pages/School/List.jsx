@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import { cilUserX, cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList } from "@coreui/icons";
@@ -33,8 +32,6 @@ export default function List({ schools }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des listes d'écoles
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les écoles" />
 

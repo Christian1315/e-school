@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import { cilLibraryAdd, cilList } from "@coreui/icons";
 
@@ -18,8 +17,6 @@ export default function List({ matieres }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des matières d'écoles
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Matières d'écoles" />
 

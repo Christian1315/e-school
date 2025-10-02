@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import PrimaryButton from '@/Components/PrimaryButton';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -84,8 +83,6 @@ export default function Create({ parents, classes, schools, series }) {
                     <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des apprenants
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Ajouter école" />
 

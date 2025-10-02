@@ -1,34 +1,17 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilPencil } from "@coreui/icons";
-import { useState } from 'react';
-import Modal from '@/Components/Modal';
-import SecondaryButton from '@/Components/SecondaryButton';
-import PrimaryButton from '@/Components/PrimaryButton';
+import { cilAlignCenter, cilLibraryAdd, cilList, cilPencil } from "@coreui/icons";
 
 export default function List({ roles }) {
     const authUser = usePage().props.auth.user;
-
-    const [currentRole, setCurrentRole] = useState(null);
-    const [showModal, setShowModal] = useState(false);
 
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
-
-    const confirmShowModal = (e, role) => {
-        e.preventDefault();
-        // setShowModal(true);
-
-        setCurrentRole(role)
-    };
-
 
     return (
         <AuthenticatedLayout
@@ -37,8 +20,6 @@ export default function List({ roles }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des rôles
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Rôles" />
 

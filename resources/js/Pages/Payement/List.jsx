@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Modal from '@/Components/Modal';
@@ -94,8 +93,6 @@ export default function List({ payements }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des paiements
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les paiements" />
 

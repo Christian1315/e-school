@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
 import { cilCenterFocus, cilList, cilInfo, cilSend, cilCloudDownload } from "@coreui/icons";
@@ -90,8 +89,6 @@ export default function List({ users }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des parents
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Parents" />
 

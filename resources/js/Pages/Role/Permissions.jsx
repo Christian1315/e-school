@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import CIcon from '@coreui/icons-react';
 import { cilList, cilArrowLeft, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
@@ -94,8 +93,6 @@ export default function List({ role, permissions }) {
                     <CIcon className='text-success' icon={cilList} /> Les permissions associées au rôle : <em>{role.name}</em>
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Permissions" />
 

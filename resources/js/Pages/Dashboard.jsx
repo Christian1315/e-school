@@ -1,5 +1,4 @@
 import "./../../../public/fichiers/base.css";
-import SidebarMenu from '@/Components/SidebarMenu';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CIcon from '@coreui/icons-react';
 import { cilBlur } from "@coreui/icons";
@@ -79,13 +78,12 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                     <CIcon className='text-success' icon={cilBlur} />  Tableau de board
                 </h2>
             }
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Dashboard" />
 
             {/*  */}
-            <div className="py-6">
-                <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <div className="p-6">
+                <div className="mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             {/* Totaux */}

@@ -144,15 +144,11 @@ figcaption img {
     border: solid 3px #cd3c23;
 }
 
-/* Pagination */
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-    @apply bg-gray-100 text-gray-700 border border-gray-300 rounded px-3 py-1 mx-1;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
-    @apply bg-blue-600 text-white;
-}
-
-.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    @apply bg-blue-500 text-white;
+/* désactive le backdrop sur petits écrans */
+@media (max-width: 991.98px) {
+  .sidebar-backdrop,
+  .c-sidebar-backdrop {
+    display: none !important;
+    pointer-events: none !important;
+  }
 }

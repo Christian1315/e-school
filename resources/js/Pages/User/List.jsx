@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import SidebarMenu from '@/Components/SidebarMenu';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
@@ -164,8 +163,6 @@ export default function List({ users, roles }) {
                     <CIcon className='text-success' icon={cilList} /> Panel des utilisateurs
                 </h2>
             }
-
-            SidebarMenu={<SidebarMenu />}
         >
             <Head title="Les Utilisateurs" />
 
@@ -341,7 +338,6 @@ export default function List({ users, roles }) {
                             Télécharger le modèle
                         </a>
                     </div>
-
 
                     <div className="my-2">
                         <InputLabel htmlFor="users" value="Les utilisateurs en fichier excel" > <span className="text-danger">*</span>  </InputLabel>

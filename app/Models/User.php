@@ -95,7 +95,7 @@ class User extends Authenticatable
 
         // creating
         static::creating(function ($model) {
-            $model->school_id = Auth::user()?->school_id;
+            // $model->school_id = Auth::user()?->school_id;
         });
     }
 }

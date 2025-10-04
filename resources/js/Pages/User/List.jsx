@@ -62,10 +62,12 @@ export default function List({ users, roles }) {
     const [formatedRoles, setFormatedRoles] = useState(roles.map((role) => ({
         'id': role.id,
         'name': role.name,
+        'school_id': role.school_id,
+        'school': role.school,
         'checked': false
     })))
 
-    const { data,errors, setData, processing, post } = useForm({
+    const { data, errors, setData, processing, post } = useForm({
         role_id: '',
         user_id: currentUser?.id,
     })
@@ -107,6 +109,7 @@ export default function List({ users, roles }) {
                     title: 'Opération réussie',
                     text: `Rôle affecté au user (${currentUser?.firstname} - ${currentUser?.lastname}) avec succès`,
                 });
+                setShowModal(false)
             },
             onError: (e) => {
                 Swal.close();
@@ -115,7 +118,7 @@ export default function List({ users, roles }) {
                     title: 'Opération échouée',
                     text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
                 });
-                console.log(e);
+                setShowModal(false);
             },
         });
     };
@@ -182,13 +185,13 @@ export default function List({ users, roles }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Profile</th>
+                                    <th scope="col">Action</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email/Phone</th>
                                     {/* <th scope="col">Phone</th> */}
                                     <th scope="col">Rôles</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -203,19 +206,6 @@ export default function List({ users, roles }) {
                                                 >
                                                     <CIcon icon={cilCenterFocus} />
                                                 </button>
-                                            </td>
-                                            <td>{user.school?.raison_sociale || '---'}</td>
-                                            <td>{user.firstname}</td>
-                                            <td>{user.lastname}</td>
-                                            <td>{user.email}/{user.detail?.phone || '---'}</td>
-                                            {/* <td>{user.detail?.phone}</td> */}
-                                            <td className='text-center'>
-                                                {
-                                                    user.roles?.length > 0 ?
-                                                        user.roles.map((role, index) => (
-                                                            <span key={index} className="m-1 badge bg-light text-dark border rounded">{role.name}</span>
-                                                        )) : '---'
-                                                }
                                             </td>
                                             <td>
                                                 <Dropdown>
@@ -252,6 +242,19 @@ export default function List({ users, roles }) {
                                                     </Dropdown.Content>
                                                 </Dropdown>
                                             </td>
+                                            <td>{user.school?.raison_sociale || '---'}</td>
+                                            <td>{user.firstname}</td>
+                                            <td>{user.lastname}</td>
+                                            <td>{user.email}/{user.detail?.phone || '---'}</td>
+                                            {/* <td>{user.detail?.phone}</td> */}
+                                            <td className='text-center'>
+                                                {
+                                                    user.roles?.length > 0 ?
+                                                        user.roles.map((role, index) => (
+                                                            <span key={index} className="m-1  bg-light text-dark border rounded">{role.name}</span>
+                                                        )) : '---'
+                                                }
+                                            </td>
                                         </tr>
                                     ))
                                 }
@@ -287,7 +290,7 @@ export default function List({ users, roles }) {
                                     formatedRoles.map((role, index) => (
                                         <tr key={index}>
                                             <th scope="row">{index + 1}</th>
-                                            <td ><span className="badge bg-light rounded border text-dark">{role.name}</span></td>
+                                            <td ><span className="badge bg-light rounded border text-dark">{`${role.name} ${role.school_id ? '(' + role.school.raison_sociale + ')' : ''}`}</span></td>
                                             <td>
                                                 <Checkbox
                                                     checked={role.checked}          // ⚡ important : bind à role.checked

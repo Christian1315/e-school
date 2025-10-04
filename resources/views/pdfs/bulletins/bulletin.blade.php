@@ -14064,10 +14064,9 @@
                             <td>{{number_format($matiere->moyenne,2,","," ")}}</td>
                             <td>{{$matiere->moyenne_coefficie}}</td>
                             <td>{{$matiere->moyenne_failble??10}}</td>
-                            <td>{{$matiere->moyenne_forte}} 10</td>
-                            <td>{{$matiere->moyenne_forte}} 10</td>
+                            <td>{{$matiere->moyenne_forte??10}}</td>
                             <td>
-                                <p>---</p>
+                                <p></p>
                             </td>
                         </tr>
                         @empty

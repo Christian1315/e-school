@@ -44,14 +44,16 @@ class ApprenantController extends Controller
     {
         $parentsQuery = User::query();
         $classesQuery = Classe::query();
+        $seriesQuery = Serie::query();
 
         if (Auth::user()->school_id) {
             $parentsQuery->where('school_id', Auth::user()->school_id);
             $classesQuery->where('school_id', Auth::user()->school_id);
+            $seriesQuery->where('school_id', Auth::user()->school_id);
         }
 
         $parents = $parentsQuery->whereHas('roles', function ($query) {
-            $query->where('name', 'Parent');
+            $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
         })->get();
 
         return Inertia::render('Apprenant/Create', [
@@ -61,11 +63,11 @@ class ApprenantController extends Controller
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),
             "classes" => $classesQuery->get(),
-            "series" => Serie::all(),
+            "series" => $seriesQuery->get(),
         ]);
     }
 
-     /**
+    /**
      * Importation des apprenants
      */
     function importApprenants(Request $request)
@@ -106,7 +108,7 @@ class ApprenantController extends Controller
             return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
-    
+
     /**
      * Store
      */

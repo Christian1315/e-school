@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Serie extends Model
@@ -13,5 +14,14 @@ class Serie extends Model
 
     protected $fillable = [
         "libelle",
+        "school_id"
     ];
+
+    /**
+     * School
+     */
+    function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class, "school_id");
+    }
 }

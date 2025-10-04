@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('series', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('school_id')
+                ->nullable()
+                ->constrained('schools')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->string("libelle");
             $table->softDeletes();
             $table->timestamps();

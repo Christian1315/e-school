@@ -181,7 +181,7 @@ export default function Create({ schools, roles }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={roles.map((role) => ({
                                                     value: role.id,
-                                                    label: `${role.name}`,
+                                                    label: `${role.name} ${role.school_id ? '(' + role.school.raison_sociale + ')' : ''}`,
                                                 }))}
                                                 value={roles
                                                     .map((role) => ({

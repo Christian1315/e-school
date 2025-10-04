@@ -7,7 +7,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -371,6 +371,35 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
+                        {/* Series */}
+                        {!checkPermission('serie.view') || checkPermission('serie.create') ?
+                            (<CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilAudioSpectrum} /> Les Séries
+                                    </>
+                                }
+                            >
+                                {!checkPermission('serie.view') ?
+                                    (<Link component={Link} href={route('serie.index')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet text-danger"></span>
+                                        </span>
+                                        Liste des séries
+                                    </Link>) : null
+                                }
+
+                                {!checkPermission('serie.create') ?
+                                    (<Link href={route('serie.create')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet"></span>
+                                        </span>
+                                        Ajouter une série
+                                    </Link>) : null
+                                }
+                            </CNavGroup>) : null
+                        }
+
                         {/* Classes */}
                         {checkPermission('classe.view') || checkPermission('classe.create') ?
                             (<CNavGroup
@@ -465,7 +494,7 @@ export default function SidebarMenu(props) {
                                 (<CNavGroup
                                     toggler={
                                         <>
-                                            <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Rôles
+                                            <CIcon customClassName="nav-icon text-success" icon={cilLockUnlocked} /> Les Rôles
                                         </>
                                     }
                                 >

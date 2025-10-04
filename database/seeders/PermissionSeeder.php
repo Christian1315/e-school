@@ -56,6 +56,7 @@ class PermissionSeeder extends Seeder
             ),
 
             "Classes" => $this->createCrudValidatePermissions("classes", "classe"),
+            "Series" => $this->createCrudValidatePermissions("séries", "serie"),
             "Matières" => $this->createCrudValidatePermissions("matières", "matiere"),
             "Trimestres" => $this->createCrudValidatePermissions("trimestres", "trimestre"),
 

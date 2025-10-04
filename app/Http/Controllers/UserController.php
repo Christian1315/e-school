@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Permission\Models\Role as ModelsRole;
 
 class UserController extends Controller
 {
@@ -27,13 +28,25 @@ class UserController extends Controller
     function index(Request $request)
     {
         if (Auth::user()->school) {
-            $users = User::with("roles")->where("school_id",  Auth::user()->school_id)->get();
+            $users = User::with("roles.school")
+                ->where("school_id",  Auth::user()->school_id)->get();
+
+            $roles = Role::with(['school'])
+                ->where('id', '!=', 1)
+                ->whereNotIn('name', Auth::user()->roles->pluck('name')->toArray())
+                ->latest()
+                ->get();
         } else {
-            $users = User::with("roles")->get();
+            $users = User::with("roles.school")->get();
+
+            $roles = Role::with(['school'])
+                ->where('id', '!=', 1)
+                ->latest()->get();
         }
+
         return Inertia::render('User/List', [
             'users' => UserResource::collection($users),
-            'roles' => Role::where("id", "!=", 1)->get(),
+            'roles' => $roles,
         ]);
     }
 
@@ -42,9 +55,16 @@ class UserController extends Controller
      */
     function parents(Request $request)
     {
-        $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent"));
-        if (Auth::user()->school) {
-            $parentsQuery->where("school_id",  Auth::user()->school_id);
+        $school = Auth::user()->school;
+        if ($school) {
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent" . ' (' . $school->raison_sociale . ')'));
+            $parentsQuery->where("school_id",  $school->id);
+        } else {
+            $schoolsName = School::get()->pluck("raison_sociale");
+            $nameArray = $schoolsName->map(function ($name) {
+                return "Parent" . ' (' . $name . ')';
+            });
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
         }
 
         return Inertia::render('Apprenant/Parent', [
@@ -61,13 +81,16 @@ class UserController extends Controller
     {
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
+            $roles = Auth::user()->school->roles()->with("school")->get();
         } else {
             $schools = School::latest()->get();
+            $roles = Role::with("school")->where("id", "!=", 1)->get();
         }
 
+        // dd($roles);
         return Inertia::render('User/Create', [
             "schools" => $schools,
-            "roles" => Role::where("id", "!=", 1)->get()
+            "roles" => $roles
         ]);
     }
 
@@ -122,6 +145,7 @@ class UserController extends Controller
                 'profile_img.mimes'    => "L'image doit être au format PNG ou JPEG.",
             ]);
 
+            DB::beginTransaction();
 
             $user = User::create([
                 'firstname' => $validated["firstname"],
@@ -137,7 +161,7 @@ class UserController extends Controller
             /**
              * Affectation de role
              */
-            $role = Role::find($validated["role_id"]);
+            $role = ModelsRole::find($validated["role_id"]);
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas");
             }
@@ -153,11 +177,10 @@ class UserController extends Controller
             /**
              * Affectation
              */
-            $user->assignRole($role->name);
+            $user->assignRole($role);
 
             event(new Registered($user));
 
-            DB::beginTransaction();
 
             DB::commit();
             return redirect()->route("user.index");

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SchoolResource;
+use App\Models\Role;
 use App\Models\School;
 use Exception;
 use Illuminate\Http\Request;
@@ -64,8 +65,20 @@ class SchoolController extends Controller
 
             DB::beginTransaction();
 
-            School::create($validated);
+            $school = School::create($validated);
 
+            /**
+             * Generation des rôles
+             */
+            $defaultRoles = Role::whereNull("school_id")
+                ->where('id', '!=', 1)
+                ->pluck("name");
+
+            $defaultRoles->each(function ($name) use ($school) {
+                $school->roles()->create(["name" => $name . ' (' . $school->raison_sociale . ')']);
+            });
+
+            // dd($school->roles);
             DB::commit();
             return redirect()->route("school.index");
         } catch (\Illuminate\Validation\ValidationException $e) {

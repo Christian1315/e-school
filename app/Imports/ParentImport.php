@@ -36,7 +36,7 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             throw new \Exception("Tous les champs (nom, Prénom,email, phone) sont réquis!");
         }
 
-        if (User::firstWhere("email",$row[2])) {
+        if (User::firstWhere("email", $row[2])) {
             throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le mail $row[2] existe déjà!");
         }
 
@@ -57,12 +57,14 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         $user->detail()
             ->create(["phone" => $row[3] ?? null]);
 
+        $school = Auth::user()->school;
+
         /**
          * Affectation de role
          */
-        $role = Role::firstWhere(["name" => "Parent"]);
+        $role = Role::firstWhere(["name" => "Parent" . ' (' . $school->raison_sociale . ')']);
         if (!$role) {
-            throw new \Exception("Le rôle n'existe pas");
+            throw new \Exception("Le rôle parent n'existe pas");
         }
 
         /**
@@ -75,6 +77,6 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         /**
          * Affectation
          */
-        $user->assignRole("Parent");
+        $user->assignRole("Parent" . ' (' . $school->raison_sociale . ')');
     }
 }

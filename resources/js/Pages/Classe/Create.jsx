@@ -83,7 +83,7 @@ export default function Create({ schools }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('classe.view') ?
                                 (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("classe.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
                                 </div>) : null
                             }
 

@@ -15,6 +15,7 @@ use App\Http\Controllers\PayementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\SerieController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
 
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
 
     // Classes d'apprenants
     Route::resource("classe", ClasseController::class);
+
+    // Serie d'école
+    Route::resource("serie", SerieController::class);
 
     // Trimestres d'écoles
     Route::resource("trimestre", TrimestreController::class);

@@ -23,13 +23,15 @@ class RoleController extends Controller
         $user = Auth::user();
 
         if ($user->school) {
-            $roles = Role::with(['permissions', 'users'])
+            $roles = Role::with(['permissions', 'users', 'school'])
                 ->where('id', '!=', 1)
-                ->whereNotIn('name', $user->roles->pluck('name')->toArray())
+                ->where('school_id', $user->school_id)
+                // ->whereNotIn('id', $user->roles->pluck('id')->toArray())
                 ->latest()
                 ->get();
         } else {
-            $roles = Role::with(['permissions', 'users'])
+            $roles = Role::with(['permissions', 'users', 'school'])
+                ->where('id', '!=', 1)
                 ->latest()->get();
         }
 
@@ -43,7 +45,7 @@ class RoleController extends Controller
      */
     public function getPermissions(Request $request, $id)
     {
-        $role = Role::with("permissions")->find($id);
+        $role = Role::with(["permissions", "school"])->find($id);
 
         return Inertia::render('Role/Permissions', [
             "role" => $role,
@@ -190,11 +192,11 @@ class RoleController extends Controller
             }
 
             $request->validate([
-                'name' => 'required|unique:roles,name,' . $id,
+                'name' => 'required',
                 'permissions' => 'required|array'
             ], [
                 'name.required' => 'Le nom du rôle est obligatoire.',
-                'name.unique' => 'Ce nom de rôle existe déjà, veuillez en choisir un autre.',
+                // 'name.unique' => 'Ce nom de rôle existe déjà, veuillez en choisir un autre.',
                 'permissions.required' => 'Vous devez sélectionner au moins une permission.',
                 'permissions.array' => 'Le format des permissions est invalide.',
             ]);

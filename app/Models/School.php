@@ -68,6 +68,14 @@ class School extends Model
     }
 
     /**
+     * Roles
+     */
+    function roles(): HasMany
+    {
+        return $this->hasMany(Role::class, "school_id");
+    }
+
+    /**
      * Users
      */
     function users(): HasMany

@@ -23,14 +23,14 @@ class RoleController extends Controller
         $user = Auth::user();
 
         if ($user->school) {
-            $roles = Role::with(['permissions', 'users', 'school'])
+            $roles = Role::with(['permissions', 'users'])
                 ->where('id', '!=', 1)
                 ->where('school_id', $user->school_id)
                 // ->whereNotIn('id', $user->roles->pluck('id')->toArray())
                 ->latest()
                 ->get();
         } else {
-            $roles = Role::with(['permissions', 'users', 'school'])
+            $roles = Role::with(['permissions', 'users'])
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }

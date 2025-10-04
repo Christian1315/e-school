@@ -32,7 +32,8 @@ class Apprenant extends Model
         "sexe",
         "photo",
         "created_by",
-        "updated_by"
+        "updated_by",
+        'educ_master'
     ];
 
     /**

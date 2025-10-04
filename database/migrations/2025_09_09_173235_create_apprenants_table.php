@@ -54,6 +54,7 @@ return new class extends Migration
             $table->string("lieu_naissance")->nullable();
             $table->enum("sexe", ["Masculin", "Féminin"])->nullable();
 
+            $table->text("educ_master")->nullable();
             $table->text("photo")->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -34,6 +34,7 @@ class ApprenantResource extends JsonResource
             "lieu_naissance" => $this->lieu_naissance,
             "sexe" => $this->sexe,
             "photo" => $this->photo,
+            "educ_master" => $this->educ_master,
         ];
     }
 }

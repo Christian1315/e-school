@@ -130,6 +130,7 @@ class ApprenantController extends Controller
                 "lieu_naissance" => "nullable|string",
                 "sexe"           => "required|in:Masculin,Féminin",
                 "photo"          => "nullable|image|max:2048",
+                "educ_master"          => "nullable",
             ], [
                 "parent_id.required"      => "Le parent est obligatoire.",
                 "parent_id.integer"       => "Le parent doit être un identifiant valide.",

@@ -119,6 +119,7 @@ export default function List({ apprenants }) {
                                     <th scope="col">Sexe</th>
                                     <th scope="col">Date de naissance</th>
                                     <th scope="col">Lieu de naissance</th>
+                                    <th scope="col">N° Educ Master</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -145,6 +146,7 @@ export default function List({ apprenants }) {
                                             <td>{apprenant.sexe || '--'}</td>
                                             <td><span className="badge bg-light border rounded text-dark">{apprenant.date_naissance || '--'}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{apprenant.lieu_naissance || '--'}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{apprenant.educ_master || '--'}</span></td>
                                         </tr>
                                     ))
                                 }

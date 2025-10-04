@@ -39,10 +39,10 @@ export default function Create({ parents, classes, schools, series }) {
         lieu_naissance: "",
         sexe: "",
         photo: "",
+        educ_master:''
     });
 
     const submit = (e) => {
-        // alert("gogog")
         e.preventDefault();
 
         Swal.fire({
@@ -342,6 +342,23 @@ export default function Create({ parents, classes, schools, series }) {
                                             />
 
                                             <InputError className="mt-2" message={errors.lieu_naissance} />
+                                        </div>
+
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="educ_master" value="N° EducMaster" ></InputLabel>
+
+                                            <TextInput
+                                                id="educ_master"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                value={data.educ_master}
+                                                placeholder="##65TU7656"
+                                                // required
+                                                onChange={(e) => setData('educ_master', e.target.value)}
+                                                autoComplete="educ_master"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.educ_master} />
                                         </div>
                                     </div>
                                     <div className="col-12">

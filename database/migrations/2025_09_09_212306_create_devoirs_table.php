@@ -51,6 +51,8 @@ return new class extends Migration
 
             $table->decimal('note', 10, 2)->nullable();
 
+            $table->boolean("is_validated")->default(true);
+
             $table->softDeletes();
             $table->timestamps();
         });

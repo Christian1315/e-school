@@ -63,7 +63,8 @@ class UserController extends Controller
             $schoolsName = School::get()->pluck("raison_sociale");
             $nameArray = $schoolsName->map(function ($name) {
                 return "Parent" . ' (' . $name . ')';
-            });
+            })->concat(["Parent"])->toArray();
+
             $parentsQuery = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
         }
 

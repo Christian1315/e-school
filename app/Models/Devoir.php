@@ -23,7 +23,8 @@ class Devoir extends Model
         "matiere_id",
         "note",
         "created_by",
-        "updated_by"
+        "updated_by",
+        "is_validated"
     ];
 
     /**

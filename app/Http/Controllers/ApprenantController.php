@@ -53,7 +53,11 @@ class ApprenantController extends Controller
         }
 
         $parents = $parentsQuery->whereHas('roles', function ($query) {
-            $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
+            if (Auth::user()->school_id) {
+                $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
+            } else {
+                $query->where('name', 'Parent');
+            }
         })->get();
 
         return Inertia::render('Apprenant/Create', [

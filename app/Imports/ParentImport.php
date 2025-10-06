@@ -62,7 +62,8 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         /**
          * Affectation de role
          */
-        $role = Role::firstWhere(["name" => "Parent" . ' (' . $school->raison_sociale . ')']);
+        $roleName = $school ? "Parent" . ' (' . $school->raison_sociale . ')' : 'Parent';
+        $role = Role::firstWhere(["name" => $roleName]);
         if (!$role) {
             throw new \Exception("Le rôle parent n'existe pas");
         }
@@ -77,6 +78,6 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         /**
          * Affectation
          */
-        $user->assignRole("Parent" . ' (' . $school->raison_sociale . ')');
+        $user->assignRole($roleName);
     }
 }

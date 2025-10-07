@@ -6,7 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Imports\ParentImport;
 use App\Imports\UsersImport;
 use App\Models\Apprenant;
-use App\Models\Role;
+// use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -31,7 +31,7 @@ class UserController extends Controller
             $users = User::with("roles.school")
                 ->where("school_id",  Auth::user()->school_id)->get();
 
-            $roles = Role::with(['school'])
+            $roles = ModelsRole::with(['school'])
                 ->where('id', '!=', 1)
                 ->whereNotIn('name', Auth::user()->roles->pluck('name')->toArray())
                 ->latest()
@@ -39,7 +39,7 @@ class UserController extends Controller
         } else {
             $users = User::with("roles.school")->get();
 
-            $roles = Role::with(['school'])
+            $roles = ModelsRole::with(['school'])
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }
@@ -85,10 +85,9 @@ class UserController extends Controller
             $roles = Auth::user()->school->roles()->with("school")->get();
         } else {
             $schools = School::latest()->get();
-            $roles = Role::with("school")->where("id", "!=", 1)->get();
+            $roles = ModelsRole::with("school")->where("id", "!=", 1)->get();
         }
 
-        // dd($roles);
         return Inertia::render('User/Create', [
             "schools" => $schools,
             "roles" => $roles
@@ -172,7 +171,6 @@ class UserController extends Controller
              * */
             DB::table('model_has_roles')
                 ->where('model_id', $user->id)
-                // ->orWhere('role_id', $role->id)
                 ->delete();
 
             /**

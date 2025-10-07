@@ -2,19 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Apprenant;
 use App\Models\Classe;
-use App\Models\CustomNotification;
-use App\Models\Detail;
-use App\Models\Devoir;
-use App\Models\Inscription;
-use App\Models\Interrogation;
 use App\Models\Matiere;
-use App\Models\MoyenneDevoir;
-use App\Models\MoyenneInterrogation;
-use App\Models\Notification;
-use App\Models\Payement;
-use App\Models\School;
 use App\Models\Serie;
 use App\Models\Trimestre;
 use App\Models\User;

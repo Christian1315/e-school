@@ -372,7 +372,7 @@ export default function SidebarMenu(props) {
                         }
 
                         {/* Series */}
-                        {!checkPermission('serie.view') || checkPermission('serie.create') ?
+                        {checkPermission('serie.view') || checkPermission('serie.create') ?
                             (<CNavGroup
                                 toggler={
                                     <>
@@ -380,7 +380,7 @@ export default function SidebarMenu(props) {
                                     </>
                                 }
                             >
-                                {!checkPermission('serie.view') ?
+                                {checkPermission('serie.view') ?
                                     (<Link component={Link} href={route('serie.index')} className="nav-link">
                                         <span className="nav-icon">
                                             <span className="nav-icon-bullet text-danger"></span>
@@ -389,7 +389,7 @@ export default function SidebarMenu(props) {
                                     </Link>) : null
                                 }
 
-                                {!checkPermission('serie.create') ?
+                                {checkPermission('serie.create') ?
                                     (<Link href={route('serie.create')} className="nav-link">
                                         <span className="nav-icon">
                                             <span className="nav-icon-bullet"></span>

@@ -6,7 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Imports\ParentImport;
 use App\Imports\UsersImport;
 use App\Models\Apprenant;
-// use App\Models\Role;
+use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Spatie\Permission\Models\Role as ModelsRole;
 
 class UserController extends Controller
 {
@@ -31,15 +30,16 @@ class UserController extends Controller
             $users = User::with("roles.school")
                 ->where("school_id",  Auth::user()->school_id)->get();
 
-            $roles = ModelsRole::with(['school'])
+            $roles = Role::with(['school'])
                 ->where('id', '!=', 1)
                 ->whereNotIn('name', Auth::user()->roles->pluck('name')->toArray())
                 ->latest()
                 ->get();
         } else {
-            $users = User::with("roles.school")->get();
+            $users = User::with("roles")->get();
 
-            $roles = ModelsRole::with(['school'])
+            // dd("gogo");
+            $roles = Role::with(['school'])
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }
@@ -85,7 +85,7 @@ class UserController extends Controller
             $roles = Auth::user()->school->roles()->with("school")->get();
         } else {
             $schools = School::latest()->get();
-            $roles = ModelsRole::with("school")->where("id", "!=", 1)->get();
+            $roles = Role::with("school")->where("id", "!=", 1)->get();
         }
 
         return Inertia::render('User/Create', [
@@ -161,7 +161,7 @@ class UserController extends Controller
             /**
              * Affectation de role
              */
-            $role = ModelsRole::find($validated["role_id"]);
+            $role = Role::find($validated["role_id"]);
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas");
             }

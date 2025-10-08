@@ -1,17 +1,26 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import CIcon from '@coreui/icons-react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilAccountLogout, cilUserX, cilBellExclamation, cilApplications } from '@coreui/icons'
+import { cilAccountLogout, cilUserX, cilBellExclamation } from '@coreui/icons'
 
 import { useEffect } from 'react';
-import DataTable from 'datatables.net-dt';
+// import DataTable from 'datatables.net-dt';
 
-import 'datatables.net-buttons-dt'; // styles des boutons
+// import 'datatables.net-buttons-dt'; // styles des boutons
+
+// CSS principal
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
+import 'datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css';
+import 'datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css';
+
+// JS DataTables avec intégration Bootstrap
+import DataTable from 'datatables.net-bs5';
+import 'datatables.net-buttons-bs5';
+import 'datatables.net-responsive-bs5';
 
 // Plugins boutons
 import 'datatables.net-buttons/js/buttons.html5';
@@ -26,12 +35,10 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 // JSZip est utilisé par Excel
 window.JSZip = jszip;
 
-// pdfmake a besoin des polices
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
 
 import 'datatables.net-responsive';
-import 'datatables.net-responsive-dt';
+// import 'datatables.net-responsive-dt';
 import SidebarMenu from '@/Components/SidebarMenu';
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -41,18 +48,18 @@ export default function AuthenticatedLayout({ header, children }) {
         const table = new DataTable('#myTable', {
             pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
             responsive: true,
-            // dom: 'Bfrtip',
             dom: `
-                <'d-flex justify-content-between mb-2'
-                    <'dt-search'f>
-                    <'dt-buttons'B>
-                >
-                <'table-responsive'tr>
-                <'d-flex justify-content-between mt-2'
-                    i
-                    p
-                >
-                `,
+                    <'dt-top d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-2'
+                        <'dt-search mb-2 mb-sm-0'f>
+                        <'dt-buttons text-sm-end'B>
+                    >
+                    <'table-responsive'tr>
+                    <'d-flex flex-column flex-sm-row justify-content-between align-items-center mt-2'
+                        i
+                        p
+                    >
+            `,
+            pageLength: 15,
             order: [
                 [0, 'desc']
             ],
@@ -92,8 +99,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 search: "Rechercher :",
                 zeroRecords: "Aucun enregistrement trouvé",
                 paginate: {
-                    first: "Premier",
-                    last: "Dernier",
+                    first: "<<",
+                    last: ">>",
                     next: "Suivant",
                     previous: "Précédent"
                 },
@@ -161,22 +168,6 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            {/* <div className="items-center flex">
-                                <Link href="/">
-                                    <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
-                                </Link>
-
-                                <NavLink
-                                    data-bs-toggle="offcanvas" href="#offcanvasMenu" role="button" aria-controls="offcanvasExample"
-                                >
-                                    <button className="space-x-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400">
-                                        <CIcon icon={cilApplications} />
-                                    </button>
-                                </NavLink>
-                                <button onClick={() => setVisible(!visible)}>☰</button>
-
-                            </div> */}
-                            {/* <button onClick={() => setVisible(!visible)} className='text-success'>☰</button> */}
                             <button
                                 onClick={() =>
                                     setVisible(!visible)

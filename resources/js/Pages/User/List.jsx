@@ -290,7 +290,7 @@ export default function List({ users, roles }) {
                                     formatedRoles.map((role, index) => (
                                         <tr key={index}>
                                             <th scope="row">{index + 1}</th>
-                                            <td ><span className="badge bg-light rounded border text-dark">{`${role.name} ${role.school_id ? '(' + role.school.raison_sociale + ')' : ''}`}</span></td>
+                                            <td ><span className="badge bg-light rounded border text-dark">{role.name}</span></td>
                                             <td>
                                                 <Checkbox
                                                     checked={role.checked}          // ⚡ important : bind à role.checked

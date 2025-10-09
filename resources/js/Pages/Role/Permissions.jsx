@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
 import { cilList, cilArrowLeft, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
@@ -66,6 +66,9 @@ export default function List({ role, permissions }) {
         });
 
         patch(route('role.update.permissions', role.id), {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({

@@ -38,7 +38,6 @@ class UserController extends Controller
         } else {
             $users = User::with("roles")->get();
 
-            // dd("gogo");
             $roles = Role::with(['school'])
                 ->where('id', '!=', 1)
                 ->latest()->get();

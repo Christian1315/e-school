@@ -27,7 +27,7 @@ class UserController extends Controller
     function index(Request $request)
     {
         if (Auth::user()->school) {
-            $users = User::with("roles.school")
+            $users = User::with("roles")
                 ->where("school_id",  Auth::user()->school_id)->get();
 
             $roles = Role::with(['school'])

@@ -90,7 +90,7 @@ export default function List({ role, permissions }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Les permissions associées au rôle : <em>{role.name}</em>
+                    <CIcon className='text-success' icon={cilList} /> Les permissions associées au rôle : <small className='badge bg-light text-danger border rounded'>{role.name}</small>
                 </h2>
             }
         >

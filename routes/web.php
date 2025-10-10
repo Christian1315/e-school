@@ -18,19 +18,23 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SerieController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
-
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get("/debug", function () {
-    return auth()->user()->getRoleNames();
-    Mail::raw('Ceci est un test', function ($message) {
-        $message->to('gogochristian009@gmail.com')->subject('Test mail Laravel');
-    });
+Route::get("/{roleId}/affect-permissions", function ($roleId) {
+    
+    $role = Role::findOrFail($roleId);
 
-    return "mail envoyé";
+    if (!$role) {
+        return "Ce role n'existe pas";
+    }
+    $permissions = Permission::all();
+    $role->syncPermissions($permissions->pluck("name"));
+    return "Permissions affectées avec succès";
 });
 
 Route::get('/', function () {

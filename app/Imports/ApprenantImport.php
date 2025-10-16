@@ -53,9 +53,9 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         $isSerieExiste = isset($row[3]) ?
             Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
 
-        if (!$isSerieExiste) {
-            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La dérie $row[3] n'existe pas!");
-        }
+        // if (!$isSerieExiste) {
+        //     throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La dérie $row[3] n'existe pas!");
+        // }
 
         /**Parent */
         $parentColumn = explode('-', $row[2]);

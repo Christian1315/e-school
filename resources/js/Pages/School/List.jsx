@@ -1,13 +1,17 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
-import Dropdown from '@/Components/Dropdown';
+import { Head, Link, usePage, useForm} from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilUserX, cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList } from "@coreui/icons";
+import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
+import Modal from '@/Components/Modal';
+import { useState } from 'react';
+
 
 export default function List({ schools }) {
     const permissions = usePage().props.auth.permissions;
+    const [showModal, setShowModal] = useState(false);
 
+    // Vérifier si l'utilisateur a la permission
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
@@ -23,8 +27,55 @@ export default function List({ schools }) {
             confirmButtonColor: '#1b5a38',
             confirmButtonText: "Merci"
         });
-
     }
+
+    const confirmShowModal = (e) => {
+        e.preventDefault();
+        setShowModal(true);
+    }
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+    const { data, setData, errors, processing, post } = useForm({
+        parents: '',
+    })
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        post(route('school.update'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: `Importation effectuée avec succès`,
+                });
+                setShowModal(false)
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                setShowModal(false)
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -65,9 +116,6 @@ export default function List({ schools }) {
                                         <tr key={school.id}>
                                             <th scope="row">{index + 1}</th>
                                             <td>
-                                                {/* <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> */}
-                                                {/* <img src={school.logo} className='img-fluid shadow' srcSet="" style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6' }} /> */}
-
                                                 <img src={school.logo}
                                                     onClick={() => showImg(school)}
                                                     className='img-fluid img-circle shadow' srcSet=""
@@ -95,36 +143,35 @@ export default function List({ schools }) {
                                                 </span>
                                             </td>
                                             <td>
-                                                <Dropdown>
-                                                    <Dropdown.Trigger>
-                                                        <span className="inline-flex rounded-md">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            >
-                                                                <CIcon icon={cilAlignCenter} /> Gérer
-                                                            </button>
-                                                        </span>
-                                                    </Dropdown.Trigger>
+                                                <div className="dropdown">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilAlignCenter} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu rounded-md p-2 shadow-lg bg-white dark:bg-gray-700" aria-labelledby="dropdownMenuButton1">
 
-                                                    <Dropdown.Content>
                                                         {checkPermission('ecole.edit') ?
-                                                            (<Dropdown.Link
-                                                                href={route('school.edit', 1)}
+                                                            (<li><Link
+                                                                className='text-warning'
+                                                                href={route('school.edit', school.id)}
                                                             >
-                                                                <CIcon icon={cilUserX} />  Modifier
-                                                            </Dropdown.Link>) : null
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>) : null
                                                         }
 
                                                         {checkPermission('ecole.delete') ?
-                                                            (<Dropdown.Link
-                                                                href={route('school.destroy', 1)}
+                                                            (<li><Link
+                                                                className='text-danger'
+                                                                href={route('school.destroy', school.id)}
                                                             >
-                                                                <CIcon icon={cilUserX} />  Supprimer
-                                                            </Dropdown.Link>) : null
+                                                                <CIcon icon={cilDelete} />  Supprimer
+                                                            </Link></li>) : null
                                                         }
-                                                    </Dropdown.Content>
-                                                </Dropdown>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
@@ -134,6 +181,7 @@ export default function List({ schools }) {
                     </div>
                 </div>
             </div>
+
         </AuthenticatedLayout>
     );
 }

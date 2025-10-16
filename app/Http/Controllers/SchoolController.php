@@ -78,7 +78,6 @@ class SchoolController extends Controller
                 $school->roles()->create(["name" => $name . ' (' . $school->raison_sociale . ')']);
             });
 
-            // dd($school->roles);
             DB::commit();
             return redirect()->route("school.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -95,19 +94,17 @@ class SchoolController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(School $school)
     {
-        $schools = School::all();
-
-        return Inertia::render('School/Create', [
-            'schools' => $schools,
+        return Inertia::render('School/Update', [
+            'school' => $school,
         ]);
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, School $school)
     {
         $schools = School::all();
 

@@ -33,7 +33,6 @@ export default function List({ apprenants }) {
 
     }
 
-
     const confirmShowModal = (e) => {
         e.preventDefault();
         setShowModal(true);

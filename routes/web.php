@@ -21,7 +21,6 @@ use App\Http\Controllers\UserController;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 

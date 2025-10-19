@@ -42,8 +42,18 @@ export default function Register() {
 
                 {/* Contenu au-dessus (le formulaire) */}
                 <div className="relative z-10 bg-white rounded-xl shadow-lg p-6">
+                    <div className="text-center">
 
-                    <form onSubmit={submit}>
+                        <p className="">🤦‍♂️ <strong className="">Ce panel est en cours de développement ...</strong> </p>
+                        <br />
+                        <Link
+                            href={route('login')}
+                            className="btn btn-dark rounded-md text-sm text-white btn-hover underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        >
+                           👌 Avez-vous déjà un compte?
+                        </Link>
+                    </div>
+                    {/* <form onSubmit={submit}>
                         <div>
                             <InputLabel htmlFor="name" value="Name" />
 
@@ -129,12 +139,9 @@ export default function Register() {
                         </Link>
 
                         <div className="mt-4 flex items-center justify-end">
-                            {/* <PrimaryButton className="ms-4" disabled={processing}>
-                                Register
-                            </PrimaryButton> */}
                             <button disabled className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i class="bi bi-check2-circle"></i> Enregistrer</button>
                         </div>
-                    </form>
+                    </form> */}
                 </div>
             </div>
         </GuestLayout>

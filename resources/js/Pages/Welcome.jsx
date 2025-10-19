@@ -201,7 +201,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <br /><br />
                                     <Link
-                                        href="#"
+                                        href={route('register')}
                                         className="text-center space-x-3  btn btn-lg rounded shadow-sm border bg-light text-success transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500"
                                         uk-scrollspy="cls: uk-animation-slide-top; repeat: true">
                                         <span className="">

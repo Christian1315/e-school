@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import { cilAlignCenter, cilLibraryAdd, cilList, cilPencil } from "@coreui/icons";
+import { cilAlignCenter, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
 
 export default function List({ roles }) {
     const authUser = usePage().props.auth.user;
@@ -62,28 +62,30 @@ export default function List({ roles }) {
                                             </td>
                                             <td>
                                                 {!authUser.school_id ?
-                                                    (<Dropdown>
-                                                        <Dropdown.Trigger>
-                                                            <span className="inline-flex rounded-md">
-                                                                <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                                >
-                                                                    <CIcon icon={cilAlignCenter} /> Gérer
-                                                                </button>
-                                                            </span>
-                                                        </Dropdown.Trigger>
-
-                                                        <Dropdown.Content>
+                                                    (
+                                                    <div className="dropstart">
+                                                        <button
+                                                            type="button"
+                                                            className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                                        >
+                                                            <CIcon icon={cilMenu} /> Gérer
+                                                        </button>
+                                                        <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+    
                                                             {checkPermission('role.edit') ?
-                                                                (<Dropdown.Link
-                                                                    href={route('role.permissions', role.id)}
-                                                                >
-                                                                    <CIcon icon={cilPencil} /> Modifier
-                                                                </Dropdown.Link>) : null
+                                                                (
+                                                                    <li>
+                                                                        <Link
+                                                                            href={route('role.permissions', role.id)}
+                                                                        >
+                                                                            <CIcon icon={cilPencil} /> Modifier
+                                                                        </Link>
+                                                                    </li>
+                                                                ) : null
                                                             }
-                                                        </Dropdown.Content>
-                                                    </Dropdown>) : '---'
+                                                        </ul>
+                                                    </div>) : '---'
                                                 }
                                             </td>
                                         </tr>

@@ -10,7 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilMenu } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
     const permissions = usePage().props.auth.permissions;
@@ -115,9 +115,9 @@ export default function List({ inscriptions }) {
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Numero Educ Master</th>
                                     <th scope="col">Dossier Transfert</th>
-                                    <th scope="col">Action</th>
                                     <th scope="col">Frais d'inscription</th>
                                     <th scope="col">Inséré par</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -136,33 +136,35 @@ export default function List({ inscriptions }) {
                                                     <CIcon icon={cilCenterFocus} />
                                                 </a>
                                             </td>
-                                            <td>
-                                                <Dropdown>
-                                                    <Dropdown.Trigger>
-                                                        <span className="inline-flex rounded-md">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            >
-                                                                <CIcon icon={cilAlignCenter} /> Gérer
-                                                            </button>
-                                                        </span>
-                                                    </Dropdown.Trigger>
-
-                                                    <Dropdown.Content>
-                                                        {checkPermission('inscription.imprimer.receit') ?
-                                                            (<Dropdown.Link
-                                                                href="#"
-                                                                onClick={(e) => confirmShowModal(e, inscription)}
-                                                            >
-                                                                <CIcon icon={cilUserX} />  Generer un reçu
-                                                            </Dropdown.Link>) : null
-                                                        }
-                                                    </Dropdown.Content>
-                                                </Dropdown>
-                                            </td>
                                             <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>
                                             <td>{`${inscription.createdBy?.firstname} - ${inscription.createdBy?.lastname}`}</td>
+                                            <td>
+                                                <div className="dropstart">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilMenu} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {checkPermission('inscription.imprimer.receit') ?
+                                                            (
+                                                                <li>
+                                                                    <Link
+                                                                        href="#"
+                                                                        onClick={(e) => confirmShowModal(e, inscription)}
+                                                                    >
+                                                                        <CIcon icon={cilUserX} />  Generer un reçu
+                                                                    </Link>
+                                                                </li>
+                                                            ) : null
+                                                        }
+                                                        
+                                                    </ul>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))
                                 }

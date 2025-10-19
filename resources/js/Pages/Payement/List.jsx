@@ -6,7 +6,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilLibraryAdd, cilList, cilSave } from "@coreui/icons";
+import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu } from "@coreui/icons";
 
 export default function List({ payements }) {
     const permissions = usePage().props.auth.permissions;
@@ -113,8 +113,8 @@ export default function List({ payements }) {
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Montant versé</th>
-                                    <th scope="col">Action</th>
                                     <th scope="col">Inséré par</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,16 +125,35 @@ export default function List({ payements }) {
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
-                                            <td>
-                                                {checkPermission('paiement.imprimer.receit') ?
-                                                    (<button className="btn btn-sm btn-light border shadow-sm"
-                                                        onClick={(e) => confirmShowModal(e, paiement)}
-                                                    >
-                                                        <CIcon icon={cilUserX} />  Generer un reçu
-                                                    </button>) : '--'
-                                                }
-                                            </td>
                                             <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
+                                            <td>
+                                                <div className="dropstart">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilMenu} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {checkPermission('paiement.imprimer.receit') ?
+                                                            (
+                                                                <li>
+                                                                    <Link
+                                                                        href="#"
+                                                                        onClick={(e) => confirmShowModal(e, paiement)}
+                                                                    >
+                                                                        <CIcon icon={cilUserX} />  Generer un reçu
+                                                                    </Link>
+                                                                </li>
+                                                            ) : null
+                                                        }
+
+                                                    </ul>
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     ))
                                 }
@@ -143,7 +162,7 @@ export default function List({ payements }) {
                     </div>
                 </div>
             </div>
-            
+
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={generateReceit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">

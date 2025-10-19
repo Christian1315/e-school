@@ -3,7 +3,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
@@ -185,13 +185,12 @@ export default function List({ users, roles }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Profile</th>
-                                    <th scope="col">Action</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email/Phone</th>
-                                    {/* <th scope="col">Phone</th> */}
                                     <th scope="col">Rôles</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -207,46 +206,10 @@ export default function List({ users, roles }) {
                                                     <CIcon icon={cilCenterFocus} />
                                                 </button>
                                             </td>
-                                            <td>
-                                                <Dropdown>
-                                                    <Dropdown.Trigger>
-                                                        <span className="inline-flex rounded-md">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            >
-                                                                <CIcon icon={cilAlignCenter} /> Gérer
-                                                            </button>
-                                                        </span>
-                                                    </Dropdown.Trigger>
-
-                                                    <Dropdown.Content>
-                                                        {/* Un user ne peuut pas s'affceter un role */}
-                                                        {checkPermission('affect.role') && authUser.id != user.id ?
-                                                            (<Dropdown.Link
-                                                                href='#'
-                                                                onClick={(e) => confirmShowModal(e, user)}
-                                                            >
-                                                                <CIcon icon={cilLink} />  Affecter à un rôle
-                                                            </Dropdown.Link>) : null
-                                                        }
-
-                                                        {checkPermission('utilisateur.delete') ?
-                                                            (<Dropdown.Link
-                                                                href="#"
-                                                            // onClick={(e) => confirmShowModal(e, user)}
-                                                            >
-                                                                <CIcon icon={cilUserX} />  Supprimer
-                                                            </Dropdown.Link>) : null
-                                                        }
-                                                    </Dropdown.Content>
-                                                </Dropdown>
-                                            </td>
                                             <td>{user.school?.raison_sociale || '---'}</td>
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
                                             <td>{user.email}/{user.detail?.phone || '---'}</td>
-                                            {/* <td>{user.detail?.phone}</td> */}
                                             <td className='text-center'>
                                                 {
                                                     user.roles?.length > 0 ?
@@ -254,6 +217,33 @@ export default function List({ users, roles }) {
                                                             <span key={index} className="m-1  bg-light text-dark border rounded">{role.name}</span>
                                                         )) : '---'
                                                 }
+                                            </td>
+                                            <td>
+                                                <div className="dropstart">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilMenu} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {/* Un user ne peuut pas s'affceter un role */}
+                                                        {checkPermission('affect.role') && authUser.id != user.id ?
+                                                            (
+                                                                <li>
+                                                                    <Link
+                                                                        href='#'
+                                                                        onClick={(e) => confirmShowModal(e, user)}
+                                                                    >
+                                                                        <CIcon icon={cilLink} />  Affecter à un rôle
+                                                                    </Link>
+                                                                </li>
+                                                            ) : null
+                                                        }
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))

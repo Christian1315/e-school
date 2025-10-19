@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage, useForm} from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil } from "@coreui/icons";
+import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil, cilMenu } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
@@ -143,19 +143,19 @@ export default function List({ schools }) {
                                                 </span>
                                             </td>
                                             <td>
-                                                <div className="dropdown">
+                                                <div className="dropstart">
                                                     <button
                                                         type="button"
                                                         className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                                         data-bs-toggle="dropdown" aria-expanded="false"
                                                     >
-                                                        <CIcon icon={cilAlignCenter} /> Gérer
+                                                        <CIcon icon={cilMenu} /> Gérer
                                                     </button>
-                                                    <ul className="dropdown-menu rounded-md p-2 shadow-lg bg-white dark:bg-gray-700" aria-labelledby="dropdownMenuButton1">
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
 
                                                         {checkPermission('ecole.edit') ?
                                                             (<li><Link
-                                                                className='text-warning'
+                                                                className='btn text-warning'
                                                                 href={route('school.edit', school.id)}
                                                             >
                                                                 <CIcon icon={cilPencil} />  Modifier
@@ -164,7 +164,7 @@ export default function List({ schools }) {
 
                                                         {checkPermission('ecole.delete') ?
                                                             (<li><Link
-                                                                className='text-danger'
+                                                                className='btn text-danger'
                                                                 href={route('school.destroy', school.id)}
                                                             >
                                                                 <CIcon icon={cilDelete} />  Supprimer

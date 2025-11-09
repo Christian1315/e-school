@@ -24,7 +24,7 @@ class UserController extends Controller
     /**
      * Index
      */
-    function index(Request $request)
+    function index()
     {
         if (Auth::user()->school) {
             $users = User::with("roles")
@@ -52,7 +52,7 @@ class UserController extends Controller
     /**
      * Parents
      */
-    function parents(Request $request)
+    function parents()
     {
         $school = Auth::user()->school;
         if ($school) {

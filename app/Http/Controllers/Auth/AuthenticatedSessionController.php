@@ -29,13 +29,18 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         try {
             DB::beginTransaction();
 
             $request->authenticate();
             $request->session()->regenerate();
+
+            // 
+            if (Auth::user()->school_id && !Auth::user()->school->statut) {
+                throw new \Exception("L'école à laquelle vous appartenez a été désactivée. Vous ne pouvez plus vous connetez jusqu'à nouvel ordre!");
+            }
 
             DB::commit();
             return redirect()->intended(route('dashboard', absolute: false));

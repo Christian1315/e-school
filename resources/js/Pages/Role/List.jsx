@@ -44,7 +44,7 @@ export default function List({ roles }) {
                                 {
                                     roles.map((role, index) => (
                                         <tr key={role.id}>
-                                            <th scope="row">{index + 1}</th>
+                                            <th scope="row">{role.id} {index + 1}</th>
                                             <td >{role.name}</td>
                                             <td>
                                                 <Link href={route('role.permissions', role.id)}

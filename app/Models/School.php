@@ -4,10 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class School extends Model
 {
@@ -166,6 +163,13 @@ class School extends Model
 
         static::creating(function ($model) {
             $model->logo = $model->handleLogo();
+            // You can't set $model->numero here yet because the ID is not generated.
+        });
+
+        static::updating(function ($model) {
+            if (request()->hasFile("logo")) {
+                $model->logo = $model->handleLogo();
+            }
             // You can't set $model->numero here yet because the ID is not generated.
         });
     }

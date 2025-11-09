@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage, useForm} from '@inertiajs/react';
+import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil, cilMenu } from "@coreui/icons";
+import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil, cilMenu, cilLocationPin } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
@@ -113,13 +113,22 @@ export default function List({ schools }) {
                             <tbody>
                                 {
                                     schools.data.map((school, index) => (
+                                        // <tr key={school.id} className={!school.statut?'bg-danger':''}>
                                         <tr key={school.id}>
-                                            <th scope="row">{index + 1}</th>
+                                            <th scope="row">
+                                                {index + 1}
+                                                <CIcon icon={cilLocationPin} className={!school.statut ? 'text-danger' : 'text-success'} />
+                                                {/* {!school.statut ? <CIcon icon={cilLocationPin} /> : ""} */}
+                                            </th>
                                             <td>
-                                                <img src={school.logo}
-                                                    onClick={() => showImg(school)}
-                                                    className='img-fluid img-circle shadow' srcSet=""
-                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
+                                                {
+                                                    school.logo ?
+                                                        <img src={school.logo}
+                                                            onClick={() => showImg(school)}
+                                                            className='img-fluid img-circle shadow' srcSet=""
+                                                            style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} /> :
+                                                        '---'
+                                                }
                                             </td>
                                             <td>{school.raison_sociale}</td>
                                             <td>{school.adresse}</td>

@@ -59,13 +59,13 @@ export default function List({ apprenants, trimestre }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Moyennes</th>
                                     <th scope="col">Photo</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Parent</th>
                                     <th scope="col">Classe</th>
-                                    <th scope="col">Moyennes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,6 +73,10 @@ export default function List({ apprenants, trimestre }) {
                                     apprenants.map((apprenant, index) => (
                                         <tr key={apprenant.id}>
                                             <th scope="row">{index + 1}</th>
+                                            <td className='text-center'>
+                                                <button className="btn bg-light border rounded text-dark"
+                                                    onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} />
+                                                </button></td>
                                             <td>
                                                 <img src={apprenant.photo}
                                                     onClick={() => showImg(apprenant)}
@@ -84,10 +88,7 @@ export default function List({ apprenants, trimestre }) {
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
                                             <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-                                            <td className='text-center'>
-                                                <button className="btn bg-light border rounded text-dark"
-                                                    onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} />
-                                                </button></td>
+
                                         </tr>
                                     ))
                                 }

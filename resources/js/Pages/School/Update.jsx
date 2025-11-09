@@ -5,11 +5,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
 export default function Update({ school }) {
     const permissions = usePage().props.auth.permissions;
+
+    console.log("Ecole concernée :", school)
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -19,7 +21,7 @@ export default function Update({ school }) {
         data,
         setData,
         errors,
-        post,
+        patch,
         processing,
         progress
     } = useForm({
@@ -27,7 +29,8 @@ export default function Update({ school }) {
         adresse: school.adresse || "",
         email: school.email || "",
         phone: school.phone || "",
-        logo: school.logo || "",
+        logo: "",
+        statut: school.statut,
         ifu: school.ifu || "",
         rccm: school.rccm || "",
         slogan: school.slogan || "",
@@ -46,7 +49,7 @@ export default function Update({ school }) {
             },
         });
 
-        post(route('school.update', school.id, {
+        patch(route('school.update', school.id, {
             _method: 'patch'
         }), {
             onSuccess: () => {
@@ -54,7 +57,7 @@ export default function Update({ school }) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Opération réussie',
-                    text: 'Ecole crée avec succès',
+                    text: 'Ecole modifiée avec succès',
                 });
             },
             onError: (e) => {
@@ -70,11 +73,24 @@ export default function Update({ school }) {
         });
     };
 
+    const showImg = (school) => {
+        Swal.fire({
+            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
+            text: `Profile de : ${school.raison_sociale}`,
+            imageUrl: school.logo,
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: "Logo d'école'",
+            confirmButtonColor: '#1b5a38',
+            confirmButtonText: "Merci"
+        });
+    }
+
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des écoles
+                    <CIcon className='text-success' icon={cilPencil} /> Modification de l'école <span className="badge bg-light border rounded text-success">{school.raison_sociale}</span>
                 </h2>
             }
         >
@@ -91,7 +107,9 @@ export default function Update({ school }) {
                                 </div>) : null
                             }
 
+
                             <form onSubmit={submit} className="mt-6 space-y-6">
+
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div className='mb-3'>
@@ -100,7 +118,7 @@ export default function Update({ school }) {
                                             <TextInput
                                                 id="raison_sociale"
                                                 className="mt-1 block w-full"
-                                                value={data.lastname}
+                                                value={data.raison_sociale}
                                                 placeholder="COMPLEXE SCOLAIRE BILINGUE"
                                                 onChange={(e) => setData('raison_sociale', e.target.value)}
                                                 required
@@ -226,12 +244,21 @@ export default function Update({ school }) {
                                     </div>
                                 </div>
 
-                                <div className="col-12">
+                                {/*  */}
+                                {/* Logo actuel */}
+                                <div className="">
+                                    <span>Logo actuel</span>
+                                    <img src={school.logo}
+                                        onClick={() => showImg(school)}
+                                        className='img-fluid img-circle shadow' srcSet=""
+                                        style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
+                                </div>
+                                {/* <div className="col-12">
                                     <div className='mb-3'>
-                                        <InputLabel htmlFor="description" value="Logo de l'école" ><span className="text-danger">*</span></InputLabel>
+                                        <InputLabel htmlFor="logo" value="Logo de l'école" ></InputLabel>
 
                                         <TextInput
-                                            id="description"
+                                            id="logo"
                                             type="file"
                                             className="mt-1 block w-full"
                                             required
@@ -247,6 +274,19 @@ export default function Update({ school }) {
 
                                         <InputError className="mt-2" message={errors.logo} />
                                     </div>
+                                </div> */}
+
+                                <div className="mb-1">
+                                    <InputLabel htmlFor="statut" value="Statut de l'école" >  <span className="text-danger">*</span> </InputLabel>
+                                    <TextInput
+                                        id="statut"
+                                        type="checkbox"
+                                        className="mt-1"
+                                        // required
+                                        checked={data.statut}
+                                        onChange={(e) => setData('statut', e.target.checked)}
+                                        autoComplete="statut"
+                                    />
                                 </div>
 
                                 <div className="flex items-center gap-4">

@@ -39,7 +39,7 @@ export default function Login({ status, canResetPassword }) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Connexion échouée',
-                    text: 'Veuillez vérifier vos informations et réessayer.',
+                    text: `${e.error ?? 'Veuillez vérifier vos informations et réessayer.'}`,
                 });
                 console.log(e);
             },
@@ -133,7 +133,7 @@ export default function Login({ status, canResetPassword }) {
                         </div>
 
                         <div className="mt-4 flex items-center justify-end">
-                            <button disabled={processing} className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> {processing?'Connexion ...':' Se connecter'}</button>
+                            <button disabled={processing} className="btn btn-sm w-100 bg-success text-white bg-hover rounded"><i className="bi bi-check2-circle"></i> {processing ? 'Connexion ...' : ' Se connecter'}</button>
                         </div>
                     </form>
                 </div>

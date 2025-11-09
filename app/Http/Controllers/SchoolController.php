@@ -104,14 +104,75 @@ class SchoolController extends Controller
     /**
      * Update
      */
-    function update(Request $request, School $school)
+    public function update(Request $request, School $school)
     {
-        $schools = School::all();
+        Log::debug("Les datas entrantes", ["data" => $request->all()]);
 
-        return Inertia::render('School/Create', [
-            'schools' => $schools,
-        ]);
+        try {
+            $validated = $request->validate([
+                "raison_sociale" => "required|string|max:255",
+                "adresse" => "nullable|string|max:255",
+                "email" => "required|email|unique:schools,email," . $school->id,
+                "phone" => "required|string|max:20",
+                "logo" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
+                "ifu" => "nullable|string|max:50",
+                "rccm" => "nullable|string|max:50",
+                "slogan" => "required|string|max:255",
+                "description" => "required|string",
+                "statut" => "nullable|boolean"
+            ], [
+                "raison_sociale.required" => "Le nom est requis.",
+                "email.required" => "Le mail est requis.",
+                "email.unique" => "Ce mail est déjà utilisé.",
+                "phone.required" => "Le numéro de téléphone est requis.",
+                "slogan.required" => "Le slogan est requis.",
+                "description.required" => "La description est requise.",
+
+                // 🖼️ Messages d'erreurs du logo :
+                "logo.image" => "Le fichier du logo doit être une image.",
+                "logo.mimes" => "Le logo doit être au format : jpeg, png, jpg, gif ou svg.",
+                "logo.max" => "La taille du logo ne doit pas dépasser 2 Mo.",
+            ]);
+
+            DB::beginTransaction();
+
+            $validated["statut"] = $request->statut ? true : false;
+
+            $school->update($validated);
+
+            /**
+             * Modification des rôles
+             */
+            $roles = $school->roles;
+
+            $roles->each(function ($role) use ($school) {
+                $role->update(["name" => $role->name . ' (' . $school->raison_sociale . ')']);
+            });
+
+            DB::commit();
+
+            return redirect()
+                ->route("school.index")
+                ->with("success", "L'école a été mise à jour avec succès !");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error("Erreur de validation lors de la mise à jour de l'école", [
+                "errors" => $e->errors()
+            ]);
+            return back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur lors de la mise à jour de l'école", [
+                "error" => $e->getMessage()
+            ]);
+            return back()
+                ->withErrors(["exception" => "Une erreur est survenue : " . $e->getMessage()])
+                ->withInput();
+        }
     }
+
 
     /**
      * Destroy

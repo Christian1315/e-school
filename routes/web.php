@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     // Apprenants
     Route::resource("apprenant", ApprenantController::class);
     Route::post("apprenant/import", [ApprenantController::class, "importApprenants"])->name("apprenant.import");
+    Route::patch("apprenant/{id}/profile-update", [ApprenantController::class, "updateProfil"])->name("apprenant.profile-update");
 
     // Inscriptions
     Route::resource("inscription", InscriptionController::class);

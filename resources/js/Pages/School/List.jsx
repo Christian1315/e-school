@@ -99,6 +99,7 @@ export default function List({ schools }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Action</th>
                                     <th scope="col">Logo</th>
                                     <th scope="col">Libelle</th>
                                     <th scope="col">Adresse</th>
@@ -107,7 +108,6 @@ export default function List({ schools }) {
                                     <th scope="col">Ifu</th>
                                     <th scope="col">Rccm</th>
                                     <th scope="col">Statut</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,8 +118,38 @@ export default function List({ schools }) {
                                             <th scope="row">
                                                 {index + 1}
                                                 <CIcon icon={cilLocationPin} className={!school.statut ? 'text-danger' : 'text-success'} />
-                                                {/* {!school.statut ? <CIcon icon={cilLocationPin} /> : ""} */}
                                             </th>
+                                            <td>
+                                                <div className="dropstart">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilMenu} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {checkPermission('ecole.edit') ?
+                                                            (<li><Link
+                                                                className='btn text-warning'
+                                                                href={route('school.edit', school.id)}
+                                                            >
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>) : null
+                                                        }
+
+                                                        {checkPermission('ecole.delete') ?
+                                                            (<li><Link
+                                                                className='btn text-danger'
+                                                            // href={route('school.destroy', school.id)}
+                                                            >
+                                                                <CIcon icon={cilDelete} />  Supprimer
+                                                            </Link></li>) : null
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </td>
                                             <td>
                                                 {
                                                     school.logo ?
@@ -151,37 +181,7 @@ export default function List({ schools }) {
                                                     )}
                                                 </span>
                                             </td>
-                                            <td>
-                                                <div className="dropstart">
-                                                    <button
-                                                        type="button"
-                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                        data-bs-toggle="dropdown" aria-expanded="false"
-                                                    >
-                                                        <CIcon icon={cilMenu} /> Gérer
-                                                    </button>
-                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
 
-                                                        {checkPermission('ecole.edit') ?
-                                                            (<li><Link
-                                                                className='btn text-warning'
-                                                                href={route('school.edit', school.id)}
-                                                            >
-                                                                <CIcon icon={cilPencil} />  Modifier
-                                                            </Link></li>) : null
-                                                        }
-
-                                                        {checkPermission('ecole.delete') ?
-                                                            (<li><Link
-                                                                className='btn text-danger'
-                                                                href={route('school.destroy', school.id)}
-                                                            >
-                                                                <CIcon icon={cilDelete} />  Supprimer
-                                                            </Link></li>) : null
-                                                        }
-                                                    </ul>
-                                                </div>
-                                            </td>
                                         </tr>
                                     ))
                                 }

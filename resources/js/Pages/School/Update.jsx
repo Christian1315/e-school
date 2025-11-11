@@ -107,7 +107,6 @@ export default function Update({ school }) {
                                 </div>) : null
                             }
 
-
                             <form onSubmit={submit} className="mt-6 space-y-6">
 
                                 <div className="row">
@@ -248,10 +247,15 @@ export default function Update({ school }) {
                                 {/* Logo actuel */}
                                 <div className="">
                                     <span>Logo actuel</span>
-                                    <img src={school.logo}
-                                        onClick={() => showImg(school)}
-                                        className='img-fluid img-circle shadow' srcSet=""
-                                        style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
+                                    {
+                                        school.logo ?
+                                            (<img src={school.logo}
+                                                onClick={() => showImg(school)}
+                                                className='img-fluid img-circle shadow' srcSet=""
+                                                style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />) :
+                                            'Pas de logo'
+                                    }
+
                                 </div>
                                 {/* <div className="col-12">
                                     <div className='mb-3'>

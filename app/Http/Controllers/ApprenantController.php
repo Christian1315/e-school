@@ -189,27 +189,163 @@ class ApprenantController extends Controller
     }
 
     /**
+     * Modification de l'image
+     */
+    function updateProfil(Request $request, Apprenant $apprenant)
+    {
+        Log::debug("Debut de la modification du profil", ["data" => $request->all()]);
+
+        try {
+            if (!$apprenant) {
+                throw new \Exception("Cet apprenant n'existe pas!");
+            }
+
+            // 
+            $request->validate(
+                [
+                    "photo"          => "nullable|image|max:2048",
+                ],
+                [
+                    "photo.required"          => "La photo est obligatoire.",
+                    "photo.image"             => "Le fichier doit être une image (jpeg, png, jpg...).",
+                    "photo.max"               => "La photo ne doit pas dépasser 2 Mo.",
+                ]
+            );
+
+            $apprenant->update(["photo" => $apprenant->handlePhoto()]);
+
+            DB::beginTransaction();
+
+            DB::commit();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error("Erreur de validation lors de la modification du profil", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur générale lors de la modification du profil", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(Request $request, Apprenant $apprenant)
     {
-        $schools = Apprenant::all();
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
+        $parentsQuery = User::query();
+        $classesQuery = Classe::query();
+        $seriesQuery = Serie::query();
+
+        if (Auth::user()->school_id) {
+            $parentsQuery->where('school_id', Auth::user()->school_id);
+            $classesQuery->where('school_id', Auth::user()->school_id);
+            $seriesQuery->where('school_id', Auth::user()->school_id);
+        }
+
+        $parents = $parentsQuery->whereHas('roles', function ($query) {
+            if (Auth::user()->school_id) {
+                $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
+            } else {
+                $query->where('name', 'Parent');
+            }
+        })->get();
+
+        return Inertia::render('Apprenant/Update', [
+            "parents" => $parents,
+            "schools" => Auth::user()->school_id ?
+                School::where("id", Auth::user()->school_id)->get() :
+                School::all(),
+            "classes" => $classesQuery->get(),
+            "series" => $seriesQuery->get(),
+            "apprenant" => $apprenant,
         ]);
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, Apprenant $apprenant)
     {
-        $schools = Apprenant::all();
+        Log::info("Les datas", ["data" => $request->all()]);
+        try {
+            if (!$apprenant) {
+                throw new \Exception("Cet apprennat n'existe pas");
+            }
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            $validated = $request->validate([
+                "parent_id"      => "required|integer",
+                "school_id"      => "required|integer",
+                "classe_id"      => "nullable|integer",
+                "serie_id"      => "nullable|integer",
+                "firstname"      => "required|string",
+                "lastname"       => "required|string",
+                "adresse"        => "required|string",
+                "email"          => "nullable|email",
+                "phone"          => "nullable",
+                "date_naissance" => "nullable|date",
+                "lieu_naissance" => "nullable|string",
+                "sexe"           => "required|in:Masculin,Féminin",
+                "photo"          => "nullable|image|max:2048",
+                "educ_master"          => "nullable",
+            ], [
+                "parent_id.required"      => "Le parent est obligatoire.",
+                "parent_id.integer"       => "Le parent doit être un identifiant valide.",
+
+                "school_id.required"      => "L'école est obligatoire.",
+                "school_id.integer"       => "L'école doit être un identifiant valide.",
+
+                "classe_id.required"      => "La classe est obligatoire.",
+                "classe_id.integer"       => "La classe doit être un identifiant valide.",
+
+                "serie_id.integer"       => "La serie doit être un identifiant valide.",
+
+
+                "firstname.required"      => "Le prénom de l'apprenant est obligatoire.",
+                "lastname.required"       => "Le nom de l'apprenant est obligatoire.",
+
+                "adresse.required"        => "L'adresse est obligatoire.",
+
+                "email.required"          => "L'adresse email est obligatoire.",
+                "email.email"             => "Veuillez fournir une adresse email valide.",
+
+                "phone.required"          => "Le numéro de téléphone est obligatoire.",
+
+                "date_naissance.required" => "La date de naissance est obligatoire.",
+                "date_naissance.date"     => "Veuillez fournir une date de naissance valide.",
+
+                "lieu_naissance.required" => "Le lieu de naissance est obligatoire.",
+
+                "sexe.required"           => "Le sexe est obligatoire.",
+                "sexe.in"                 => "Le sexe doit être soit Masculin (M) soit Féminin (F).",
+
+                "photo.required"          => "La photo est obligatoire.",
+                "photo.image"             => "Le fichier doit être une image (jpeg, png, jpg...).",
+                "photo.max"               => "La photo ne doit pas dépasser 2 Mo.",
+            ]);
+
+            DB::beginTransaction();
+
+            $apprenant->update($validated);
+
+            DB::commit();
+            return redirect()->route("apprenant.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de création de l4qpprenant", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de création de l4qpprenant", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**

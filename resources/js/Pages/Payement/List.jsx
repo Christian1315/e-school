@@ -110,11 +110,11 @@ export default function List({ payements }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Action</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Montant versé</th>
                                     <th scope="col">Inséré par</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,10 +122,6 @@ export default function List({ payements }) {
                                     payements.data.map((paiement, index) => (
                                         <tr key={paiement.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
-                                            <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
-                                            <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
-                                            <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
                                             <td>
                                                 <div className="dropstart">
                                                     <button
@@ -153,6 +149,11 @@ export default function List({ payements }) {
                                                     </ul>
                                                 </div>
                                             </td>
+
+                                            <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
+                                            <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
+                                            <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
 
                                         </tr>
                                     ))

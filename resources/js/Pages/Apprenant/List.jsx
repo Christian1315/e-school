@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCloudDownload, cilInfo, cilLibraryAdd, cilList, cilSend } from "@coreui/icons";
+import { cilCloudDownload, cilDelete, cilInfo, cilLibraryAdd, cilList, cilMenu, cilPencil, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import InputLabel from '@/Components/InputLabel';
@@ -14,6 +14,9 @@ import { useState } from 'react';
 export default function List({ apprenants }) {
     const permissions = usePage().props.auth.permissions;
     const [showModal, setShowModal] = useState(false)
+
+    const [showImgModal, setShowImgModal] = useState(false)
+    const [currentApprenant, setCurrentApprenant] = useState(null)
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -33,8 +36,15 @@ export default function List({ apprenants }) {
 
     }
 
-    const confirmShowModal = (e) => {
+    const showImgUpdating = (e, apprenant) => {
         e.preventDefault();
+        setCurrentApprenant(apprenant)
+        setShowImgModal(true);
+    }
+
+    const confirmShowModal = (e, apprenant) => {
+        e.preventDefault();
+        setCurrentApprenant(apprenant)
         setShowModal(true);
     }
 
@@ -42,8 +52,13 @@ export default function List({ apprenants }) {
         setShowModal(false);
     };
 
-    const { data, setData, errors, processing, post } = useForm({
-        parents: '',
+    const closeImgModal = ()=>{
+        setShowImgModal(false);
+    }
+
+    const { data, setData, errors, processing, post,patch } = useForm({
+        photo: '',
+        apprenants: '',
     })
 
     const submit = (e) => {
@@ -80,6 +95,41 @@ export default function List({ apprenants }) {
         });
     };
 
+    // updating img
+    const submitImg = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        patch(route('apprenant.profile-update',currentApprenant?.id), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: `Profile mis à jour avec succès`,
+                });
+                setShowImgModal(false)
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                setShowImgModal(false)
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -106,6 +156,7 @@ export default function List({ apprenants }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Action</th>
                                     <th scope="col">Photo</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
@@ -127,12 +178,50 @@ export default function List({ apprenants }) {
                                         <tr key={apprenant.id}>
                                             <th scope="row">{index + 1}</th>
                                             <td>
-                                                {apprenant.photo ?
-                                                    (<img src={apprenant.photo}
-                                                        onClick={() => showImg(apprenant)}
+                                                <div className="dropstart">
+                                                    <button
+                                                        type="button"
+                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                                    >
+                                                        <CIcon icon={cilMenu} /> Gérer
+                                                    </button>
+                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {checkPermission('apprenant.edit') ?
+                                                            (<li><Link
+                                                                className='btn text-warning'
+                                                                href={route('apprenant.edit', apprenant.id)}
+                                                            >
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>) : null
+                                                        }
+
+                                                        {checkPermission('apprenant.delete') ?
+                                                            (<li><Link
+                                                                className='btn text-danger'
+                                                            // href={route('school.destroy', apprenant.id)}
+                                                            >
+                                                                <CIcon icon={cilDelete} />  Supprimer
+                                                            </Link></li>) : null
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="badge bg-light rounded border shadow" style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }}>
+                                                    <img src={apprenant.photo}
+                                                        onClick={(e) => showImg(e, apprenant)}
                                                         className='img-fluid img-circle shadow' srcSet=""
-                                                        style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />) : '---'
-                                                }
+                                                    />
+
+                                                    {/*  */}
+                                                    <CIcon className='text-success'
+                                                        style={{ cursor: 'pointer' }}
+                                                        icon={cilPencil}
+                                                        onClick={(e) => showImgUpdating(e, apprenant)} />
+                                                </div>
+
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>
@@ -155,7 +244,40 @@ export default function List({ apprenants }) {
                 </div>
             </div>
 
-            {/*  */}
+            {/*  Update image */}
+            <Modal show={showImgModal} onClose={closeImgModal}>
+                <form onSubmit={submitImg} className="p-6">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Modifier le profil de l'apprenant <em className='text-success'>{`${currentApprenant?.firstname} - ${currentApprenant?.lastname}`}</em>
+                    </h2>
+
+                    <div className="my-2">
+                        <InputLabel htmlFor="photo" value="Les apprenants en fichier excel" > <span className="text-danger">*</span>  </InputLabel>
+                        <TextInput
+                            type="file"
+                            name="photo"
+                            id="photo"
+                            required
+                            className='form-control mt-1 block w-full'
+                            onChange={(e) => setData('photo', e.target.files[0])}
+                        />
+
+                        <InputError className="mt-2" message={errors.photo} />
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={closeModal}>
+                            Abandonner
+                        </SecondaryButton>
+
+                        <PrimaryButton disabled={processing}>
+                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
+
+            {/* Importation */}
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">

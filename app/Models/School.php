@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class School extends Model
 {
@@ -53,14 +54,14 @@ class School extends Model
     {
         $photoPath = null;
         $request = request();
-
+        Log::info("La photo de l'école", ["logo" => $request->logo]);
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $name = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('school_logos'), $name);
             $photoPath = asset('school_logos/' . $name);
         }
-
+        Log::info("Le path du logo de l'école", ["path" => $photoPath]);
         return $photoPath;
     }
 
@@ -166,11 +167,11 @@ class School extends Model
             // You can't set $model->numero here yet because the ID is not generated.
         });
 
-        static::updating(function ($model) {
-            if (request()->hasFile("logo")) {
-                $model->logo = $model->handleLogo();
-            }
-            // You can't set $model->numero here yet because the ID is not generated.
-        });
+        // static::updating(function ($model) {
+        //     if (request()->hasFile("logo")) {
+        //         $model->logo = $model->handleLogo();
+        //     }
+        //     // You can't set $model->numero here yet because the ID is not generated.
+        // });
     }
 }

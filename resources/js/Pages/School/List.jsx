@@ -1,48 +1,58 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage, useForm } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil, cilMenu, cilLocationPin } from "@coreui/icons";
+import { cilCheck, cilDelete, cilAlignCenter, cilLibraryAdd, cilList, cilPencil, cilMenu, cilLocationPin, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
+import InputLabel from '@/Components/InputLabel';
+import TextInput from '@/Components/TextInput';
+import InputError from '@/Components/InputError';
+import SecondaryButton from '@/Components/SecondaryButton';
+import PrimaryButton from '@/Components/PrimaryButton';
 
 
 export default function List({ schools }) {
     const permissions = usePage().props.auth.permissions;
-    const [showModal, setShowModal] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+
+    const [showImgModal, setShowImgModal] = useState(false)
+    const [currentSchool, setCurrentSchool] = useState(null)
 
     // Vérifier si l'utilisateur a la permission
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
 
-    const showImg = (school) => {
+    const showImg = (e, school) => {
+        e.preventDefault();
         Swal.fire({
-            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
-            text: `Profile de : ${school.raison_sociale}`,
+            text: `Profile de : ${school?.raison_sociale}`,
             imageUrl: school.logo,
             imageWidth: 400,
             imageHeight: 200,
-            imageAlt: "Logo d'école'",
+            imageAlt: "Photo de profil",
             confirmButtonColor: '#1b5a38',
             confirmButtonText: "Merci"
         });
     }
 
-    const confirmShowModal = (e) => {
+    const showImgUpdating = (e, school) => {
         e.preventDefault();
-        setShowModal(true);
+        setCurrentSchool(school)
+        setShowImgModal(true);
     }
 
-    const closeModal = () => {
-        setShowModal(false);
-    };
+    const closeImgModal = () => {
+        setShowImgModal(false);
+    }
 
     const { data, setData, errors, processing, post } = useForm({
-        parents: '',
+        logo: null,
     })
 
-    const submit = (e) => {
+    // updating img
+    const submitImg = (e) => {
         e.preventDefault();
 
         Swal.fire({
@@ -54,15 +64,16 @@ export default function List({ schools }) {
             },
         });
 
-        post(route('school.update'), {
+        post(route('school.profile-update', currentSchool?.id), {
+            forceFormData: true, // 👈 this is the key line
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Opération réussie',
-                    text: `Importation effectuée avec succès`,
+                    text: `Profile mis à jour avec succès`,
                 });
-                setShowModal(false)
+                setShowImgModal(false)
             },
             onError: (e) => {
                 Swal.close();
@@ -71,7 +82,7 @@ export default function List({ schools }) {
                     title: 'Opération échouée',
                     text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
                 });
-                setShowModal(false)
+                setShowImgModal(false)
             },
         });
     };
@@ -151,14 +162,21 @@ export default function List({ schools }) {
                                                 </div>
                                             </td>
                                             <td>
-                                                {
-                                                    school.logo ?
-                                                        <img src={school.logo}
-                                                            onClick={() => showImg(school)}
-                                                            className='img-fluid img-circle shadow' srcSet=""
-                                                            style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} /> :
-                                                        '---'
-                                                }
+                                                <div className="badge bg-light d-flex rounded border shadow" >
+                                                    <img src={school.logo}
+                                                        onClick={(e) => showImg(e, school)}
+                                                        className='img-fluid img-circle shadow' srcSet=""
+                                                        style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }}
+                                                    />
+
+                                                    {checkPermission('apprenant.edit') ?
+                                                        <CIcon className='text-success'
+                                                            style={{ cursor: 'pointer', width: 500 }}
+                                                            icon={cilPencil}
+                                                            onClick={(e) => showImgUpdating(e, school)} /> : '---'
+                                                    }
+
+                                                </div>
                                             </td>
                                             <td>{school.raison_sociale}</td>
                                             <td>{school.adresse}</td>
@@ -190,6 +208,39 @@ export default function List({ schools }) {
                     </div>
                 </div>
             </div>
+
+            {/*  Update image */}
+            <Modal show={showImgModal} onClose={closeImgModal}>
+                <form onSubmit={submitImg} className="p-6" encType="multipart/form-data">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Modifier le profil de l'école <em className='text-success'>{`${currentSchool?.raison_sociale}`}</em>
+                    </h2>
+
+                    <div className="my-2">
+                        <InputLabel htmlFor="logo" value="Le logo de l'école" > <span className="text-danger">*</span>  </InputLabel>
+                        <TextInput
+                            type="file"
+                            name="logo"
+                            id="logo"
+                            required
+                            className='form-control mt-1 block w-full'
+                            onChange={(e) => setData('logo', e.target.files[0])}
+                        />
+
+                        <InputError className="mt-2" message={errors.logo} />
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={closeImgModal}>
+                            Abandonner
+                        </SecondaryButton>
+
+                        <PrimaryButton disabled={processing}>
+                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
 
         </AuthenticatedLayout>
     );

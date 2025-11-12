@@ -22,9 +22,9 @@ export default function List({ apprenants }) {
         return permissions.some(per => per.name == name);
     }
 
-    const showImg = (apprenant) => {
+    const showImg = (e, apprenant) => {
+        e.preventDefault();
         Swal.fire({
-            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
             text: `Profile de : ${apprenant.parent?.firstname} - ${apprenant.parent?.lastname}`,
             imageUrl: apprenant.photo,
             imageWidth: 400,
@@ -52,11 +52,11 @@ export default function List({ apprenants }) {
         setShowModal(false);
     };
 
-    const closeImgModal = ()=>{
+    const closeImgModal = () => {
         setShowImgModal(false);
     }
 
-    const { data, setData, errors, processing, post,patch } = useForm({
+    const { data, setData, errors, processing, post, patch } = useForm({
         photo: '',
         apprenants: '',
     })
@@ -82,6 +82,7 @@ export default function List({ apprenants }) {
                     text: `Importation effectuée avec succès`,
                 });
                 setShowModal(false)
+
             },
             onError: (e) => {
                 Swal.close();
@@ -108,7 +109,8 @@ export default function List({ apprenants }) {
             },
         });
 
-        patch(route('apprenant.profile-update',currentApprenant?.id), {
+        post(route('apprenant.profile-update', currentApprenant?.id), {
+            forceFormData: true, // 👈 this is the key line
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
@@ -117,6 +119,7 @@ export default function List({ apprenants }) {
                     text: `Profile mis à jour avec succès`,
                 });
                 setShowImgModal(false)
+                console.log("Success", data.photo);
             },
             onError: (e) => {
                 Swal.close();
@@ -126,6 +129,7 @@ export default function List({ apprenants }) {
                     text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
                 });
                 setShowImgModal(false)
+                console.log("Error", data.photo);
             },
         });
     };
@@ -209,19 +213,21 @@ export default function List({ apprenants }) {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className="badge bg-light rounded border shadow" style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }}>
+                                                <div className="badge bg-light d-flex rounded border shadow" >
                                                     <img src={apprenant.photo}
                                                         onClick={(e) => showImg(e, apprenant)}
                                                         className='img-fluid img-circle shadow' srcSet=""
+                                                        style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }}
                                                     />
 
-                                                    {/*  */}
-                                                    <CIcon className='text-success'
-                                                        style={{ cursor: 'pointer' }}
-                                                        icon={cilPencil}
-                                                        onClick={(e) => showImgUpdating(e, apprenant)} />
+                                                    {
+                                                        checkPermission('apprenant.edit') ?
+                                                            < CIcon className='text-success'
+                                                                style={{ cursor: 'pointer', width: 500 }}
+                                                                icon={cilPencil}
+                                                                onClick={(e) => showImgUpdating(e, apprenant)} /> : '---'
+                                                    }
                                                 </div>
-
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>
@@ -266,7 +272,7 @@ export default function List({ apprenants }) {
                     </div>
 
                     <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
+                        <SecondaryButton onClick={closeImgModal}>
                             Abandonner
                         </SecondaryButton>
 
@@ -284,14 +290,14 @@ export default function List({ apprenants }) {
                         Importation de nouveaux <em className='text-success'>apprenants</em>
                     </h2>
 
-                    <p className="alert alert-success">
+                    <div className="alert alert-success">
                         <CIcon className='text-success' icon={cilInfo} />
                         <ul className="">
                             <li className="">Télecharger le modèle</li>
                             <li className="">Remplissez le modèle</li>
                             <li className="">Uploader le fichier remplit</li>
                         </ul>
-                    </p>
+                    </div>
 
                     <div className="my-2">
                         <a

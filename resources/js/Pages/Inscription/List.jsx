@@ -10,7 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilMenu } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
     const permissions = usePage().props.auth.permissions;
@@ -38,21 +38,6 @@ export default function List({ inscriptions }) {
         // clearErrors();
         reset();
     };
-
-
-    const showTransfertDossier = (inscription) => {
-        Swal.fire({
-            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
-            text: `Dossier de transfert de : ${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
-            imageUrl: inscription.dossier_transfert,
-            imageWidth: 400,
-            imageHeight: 200,
-            imageAlt: "Dossier de transfert",
-            confirmButtonColor: '#1b5a38',
-            confirmButtonText: "Merci"
-        });
-
-    }
 
     const generateReceit = (e) => {
         e.preventDefault();
@@ -112,12 +97,13 @@ export default function List({ inscriptions }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Numero Educ Master</th>
                                     <th scope="col">Dossier Transfert</th>
                                     <th scope="col">Frais d'inscription</th>
                                     <th scope="col">Inséré par</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,19 +111,6 @@ export default function List({ inscriptions }) {
                                     inscriptions.data.map((inscription, index) => (
                                         <tr key={inscription.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td>{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</td>
-                                            <td>{inscription.numero_educ_master}</td>
-                                            <td>
-                                                <a target='__blank'
-                                                    href={inscription.dossier_transfert}
-                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                // onClick={() => showTransfertDossier(inscription)}
-                                                >
-                                                    <CIcon icon={cilCenterFocus} />
-                                                </a>
-                                            </td>
-                                            <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>
-                                            <td>{`${inscription.createdBy?.firstname} - ${inscription.createdBy?.lastname}`}</td>
                                             <td>
                                                 <div className="dropstart">
                                                     <button
@@ -153,18 +126,52 @@ export default function List({ inscriptions }) {
                                                             (
                                                                 <li>
                                                                     <Link
+                                                                        className='btn btn-light'
                                                                         href="#"
                                                                         onClick={(e) => confirmShowModal(e, inscription)}
                                                                     >
-                                                                        <CIcon icon={cilUserX} />  Generer un reçu
+                                                                        <CIcon icon={cilCloudDownload} />  Generer un reçu
                                                                     </Link>
                                                                 </li>
                                                             ) : null
                                                         }
-                                                        
+
+                                                        {checkPermission('inscription.edit') ?
+                                                            (<li><Link
+                                                                className='btn text-warning'
+                                                                href={route('inscription.edit', inscription.id)}
+                                                            >
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>) : null
+                                                        }
+
+                                                        {checkPermission('inscription.delete') ?
+                                                            (<li><Link
+                                                                className='btn text-danger'
+                                                            // href={route('school.destroy', school.id)}
+                                                            >
+                                                                <CIcon icon={cilDelete} />  Supprimer
+                                                            </Link></li>) : null
+                                                        }
+
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td><span className="badge bg-light rounded border text-dark">{inscription?.school?.raison_sociale}</span></td>
+                                            <td>{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</td>
+                                            <td>{inscription.numero_educ_master}</td>
+                                            <td>
+                                                <a target='__blank'
+                                                    href={inscription.dossier_transfert}
+                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                // onClick={() => showTransfertDossier(inscription)}
+                                                >
+                                                    <CIcon icon={cilCenterFocus} />
+                                                </a>
+                                            </td>
+                                            <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>
+                                            <td>{`${inscription.createdBy?.firstname} - ${inscription.createdBy?.lastname}`}</td>
+
                                         </tr>
                                     ))
                                 }

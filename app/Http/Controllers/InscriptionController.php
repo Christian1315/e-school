@@ -128,11 +128,14 @@ class InscriptionController extends Controller
     function generateReceit(Inscription $inscription, $reste)
     {
         $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
+        $logoPath = explode(env("APP_URL"),$inscription->school->logo);
 
+        // return $logoPath;
         set_time_limit(0);
         $pdf = Pdf::loadView("pdfs.souscriptions.receit", [
             "inscription" => $inscription,
-            "reste" => $reste
+            "reste" => $reste,
+            "logo"=>$logoPath[1]
         ]);
 
         // Set PDF orientation to landscape

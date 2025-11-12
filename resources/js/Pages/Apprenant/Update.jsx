@@ -234,7 +234,7 @@ export default function update({ schools, classes, parents, series, apprenant })
                                                 id="date_naissance"
                                                 type="date"
                                                 className="mt-1 block w-full"
-                                                placeholder="01/03/2025"
+                                                // placeholder="01/03/2025"
                                                 // required
                                                 value={data.date_naissance}
                                                 onChange={(e) => setData('date_naissance', e.target.value)}

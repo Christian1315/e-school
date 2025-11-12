@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Apprenant extends Model
 {
@@ -114,6 +115,7 @@ class Apprenant extends Model
     {
         $photoPath = null;
         $request = request();
+        Log::info("La photo de l'apprennant", ["photo" => $request->photo]);
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -121,10 +123,10 @@ class Apprenant extends Model
             $file->move(public_path('profiles'), $name);
             $photoPath = asset('profiles/' . $name);
         }
+        Log::info("Le path de l'apprennant", ["path" => $photoPath]);
 
         return $photoPath;
     }
-
 
     /**
      * Interrogations 

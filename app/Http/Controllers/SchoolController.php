@@ -92,6 +92,56 @@ class SchoolController extends Controller
     }
 
     /**
+     * Modification de l'image
+     */
+    function updateProfil(Request $request, School $school)
+    {
+        Log::debug("Debut de la modification du profil", ["data" => $request->all()]);
+
+        try {
+            DB::beginTransaction();
+
+            if (!$school) {
+                throw new \Exception("Cette école n'existe pas!");
+            }
+
+            $request->validate(
+                [
+                    "logo"          => "required|image|max:2048",
+                ],
+                [
+                    "logo.required"          => "Le logo est obligatoire.",
+                    "logo.image"             => "Le fichier doit être une image (jpeg, png, jpg...).",
+                    "logo.max"               => "Le logo ne doit pas dépasser 2 Mo.",
+                ]
+            );
+
+            $photoPath = $school->handleLogo() ;
+
+            Log::debug("L-url du logo",["url"=>$photoPath]);
+            $school->update(["logo" => $photoPath]);
+
+            DB::commit();
+
+            return redirect()->route("school.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error("Erreur de validation lors de la modification de l'école", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur générale lors de la modification de l'école", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Edit
      */
     function edit(School $school)

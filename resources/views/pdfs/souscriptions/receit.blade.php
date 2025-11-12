@@ -83,10 +83,11 @@
                     <tr>
                         <!-- Logo gauche -->
                         <td style="width: 25%; text-align: left;">
-                            <img src="{{ public_path('fichiers/images/logo.png') }}"
+                            <img src="{{ public_path($logo) }}"
                                 id="logo"
                                 alt="Logo de l'école"
-                                style="max-width: 100px; height: auto;">
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
                         </td>
 
                         <!-- Texte centre -->

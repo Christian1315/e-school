@@ -96,6 +96,7 @@ class ApprenantController extends Controller
             Excel::import(new ApprenantImport, $apprenants);
 
             DB::commit();
+            return redirect()->route("apprenant.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::error("Erreur de validation lors de l'import", [
@@ -195,15 +196,17 @@ class ApprenantController extends Controller
     {
         Log::debug("Debut de la modification du profil", ["data" => $request->all()]);
 
+        // dd($apprenant);
         try {
+            DB::beginTransaction();
+
             if (!$apprenant) {
                 throw new \Exception("Cet apprenant n'existe pas!");
             }
 
-            // 
             $request->validate(
                 [
-                    "photo"          => "nullable|image|max:2048",
+                    "photo"          => "required|image|max:2048",
                 ],
                 [
                     "photo.required"          => "La photo est obligatoire.",
@@ -212,11 +215,13 @@ class ApprenantController extends Controller
                 ]
             );
 
-            $apprenant->update(["photo" => $apprenant->handlePhoto()]);
-
-            DB::beginTransaction();
+            $urlPath = $apprenant->handlePhoto();
+            // dd($urlPath);
+            $apprenant->update(["photo" => $urlPath]);
 
             DB::commit();
+
+            return redirect()->route("apprenant.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::error("Erreur de validation lors de la modification du profil", [

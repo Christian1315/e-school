@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
 
     // Schools
     Route::resource("school", SchoolController::class);
+    Route::post("school/{school}/profile-update", [SchoolController::class, "updateProfil"])->name("school.profile-update");
 
     // Users
     Route::resource("user", UserController::class);
@@ -83,7 +84,7 @@ Route::middleware('auth')->group(function () {
     // Apprenants
     Route::resource("apprenant", ApprenantController::class);
     Route::post("apprenant/import", [ApprenantController::class, "importApprenants"])->name("apprenant.import");
-    Route::patch("apprenant/{id}/profile-update", [ApprenantController::class, "updateProfil"])->name("apprenant.profile-update");
+    Route::post("apprenant/{apprenant}/profile-update", [ApprenantController::class, "updateProfil"])->name("apprenant.profile-update");
 
     // Inscriptions
     Route::resource("inscription", InscriptionController::class);

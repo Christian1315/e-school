@@ -87,11 +87,11 @@ class InscriptionController extends Controller
             return redirect()->route("inscription.index");
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
-            Log::debug("Erreure lors de création de l'école", ["error" => $e->errors()]);
+            Log::debug("Erreure lors de la modification de l'inscription", ["error" => $e->errors()]);
             return back()->withErrors($e->errors());
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::debug("Erreure lors de création de l'école", ["error" => $e->getMessage()]);
+            Log::debug("Erreure lors de la modification de l'inscription", ["error" => $e->getMessage()]);
             return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
@@ -100,25 +100,80 @@ class InscriptionController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(Request $request, Inscription $inscription)
     {
-        $schools = Inscription::all();
+        try {
+            if (!$inscription) {
+                throw new \Exception("Cette inscription n'existe pas!");
+            }
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            $inscription->load(["school","apprenant"]);
+
+            return Inertia::render('Inscription/Update', [
+                'inscription' => $inscription,
+                "apprenants" => Auth::user()->school_id ?
+                    Apprenant::where("id", Auth::user()->school_id)->get() :
+                    Apprenant::all(),
+                "schools" => Auth::user()->school_id ?
+                    School::where("id", Auth::user()->school_id)->get() :
+                    School::all(),
+            ]);
+        } catch (\Exception $e) {
+            Log::debug("Erreure de modification", ["exception" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, Inscription $inscription)
     {
-        $schools = Inscription::all();
+        Log::info("Les datas", ["data" => $request->all()]);
+        try {
+            if (!$inscription) {
+                throw new \Exception("Cette inscription n'existe pas!");
+            }
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            $validated = $request->validate([
+                "school_id"          => "required|integer",
+                "apprenant_id"       => "required|integer",
+                "numero_educ_master" => "required|string",
+                "frais_inscription"  => "required|numeric",
+                "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
+            ], [
+                "school_id.required"      => "L'école est obligatoire.",
+                "school_id.integer"       => "L'école doit être un identifiant valide.",
+
+                "apprenant_id.required"   => "L'apprenant est obligatoire.",
+                "apprenant_id.integer"    => "L'apprenant doit être un identifiant valide.",
+
+                "numero_educ_master.required" => "Le numéro éduc master est obligatoire.",
+
+                "frais_inscription.required" => "Les frais d’inscription sont obligatoires.",
+                "frais_inscription.numeric"  => "Les frais doivent être un nombre valide.",
+
+                "dossier_transfert.file"     => "Le dossier de transfert doit être un fichier.",
+                "dossier_transfert.mimes"    => "Le dossier doit être un fichier PDF ou Word (pdf, doc, docx).",
+                "dossier_transfert.max"      => "Le dossier de transfert ne doit pas dépasser 2 Mo.",
+            ]);
+
+            DB::beginTransaction();
+
+            $validated["dossier_transfert"] = $inscription->handlePhoto() ?? $inscription->dossier_transfert;
+            $inscription->update($validated);
+
+            DB::commit();
+            return redirect()->route("inscription.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'inscription", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'inscription", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
@@ -128,14 +183,14 @@ class InscriptionController extends Controller
     function generateReceit(Inscription $inscription, $reste)
     {
         $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
-        $logoPath = explode(env("APP_URL"),$inscription->school->logo);
+        $logoPath = explode(env("APP_URL"), $inscription->school->logo);
 
         // return $logoPath;
         set_time_limit(0);
         $pdf = Pdf::loadView("pdfs.souscriptions.receit", [
             "inscription" => $inscription,
             "reste" => $reste,
-            "logo"=>$logoPath[1]
+            "logo" => $logoPath[1]
         ]);
 
         // Set PDF orientation to landscape

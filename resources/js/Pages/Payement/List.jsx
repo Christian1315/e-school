@@ -6,7 +6,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu } from "@coreui/icons";
+import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
 
 export default function List({ payements }) {
     const permissions = usePage().props.auth.permissions;
@@ -111,6 +111,7 @@ export default function List({ payements }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Action</th>
+                                    <th scope="col">Reference</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Montant versé</th>
@@ -137,19 +138,37 @@ export default function List({ payements }) {
                                                             (
                                                                 <li>
                                                                     <Link
+                                                                    className='btn btn-light'
                                                                         href="#"
                                                                         onClick={(e) => confirmShowModal(e, paiement)}
                                                                     >
-                                                                        <CIcon icon={cilUserX} />  Generer un reçu
+                                                                        <CIcon icon={cilCloudDownload} />  Generer un reçu
                                                                     </Link>
                                                                 </li>
                                                             ) : null
                                                         }
 
+                                                        {checkPermission('paiement.edit') ?
+                                                            (<li><Link
+                                                                className='btn text-warning'
+                                                                href={route('paiement.edit', paiement.id)}
+                                                            >
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>) : null
+                                                        }
+
+                                                        {checkPermission('paiement.delete') ?
+                                                            (<li><Link
+                                                                className='btn text-danger'
+                                                            >
+                                                                <CIcon icon={cilDelete} />  Supprimer
+                                                            </Link></li>) : null
+                                                        }
+
                                                     </ul>
                                                 </div>
                                             </td>
-
+                                            <td className="text-center"><span className="badge bg-light border rounded text-dark">{paiement.numero}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>

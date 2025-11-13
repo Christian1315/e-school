@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Payement extends Model
 {
@@ -16,7 +17,9 @@ class Payement extends Model
     /**
      * fillbale
      */
-    protected $fillable = [
+    protected  $fillable = [
+        "numero",
+
         "school_id",
         "apprenant_id",
 
@@ -31,6 +34,8 @@ class Payement extends Model
      * Casts
      */
     protected $casts = [
+        "numero" => 'string',
+
         "school_id"      => "integer",
         "apprenant_id"      => "integer",
 
@@ -104,14 +109,16 @@ class Payement extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            $model->created_by = Auth::id();
             // $model->school_id = Auth::user()->school_id;
         });
 
         // 
         static::created(function ($model) {
-            $model->paiement_receit = $model->handlePaiementReceit();
+            $model->numero = "000" . $model->id;
+            // Save once, no update inside update loop
+            $model->saveQuietly(); // avoids triggering events again
         });
+
 
         // updating
         static::updating(function ($model) {

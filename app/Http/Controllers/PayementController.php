@@ -42,7 +42,7 @@ class PayementController extends Controller
         try {
             $paiement->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
 
-            // return response()->json($paiement);
+            $logoPath = explode(env("APP_URL"), $paiement->school->logo);
 
             /**
              * Reste à payer
@@ -52,7 +52,8 @@ class PayementController extends Controller
             set_time_limit(0);
             $pdf = Pdf::loadView("pdfs.paiements.receit", [
                 "paiement" => $paiement,
-                "reste" => $reste
+                "reste" => $reste,
+                "logo" => $logoPath[1]
             ]);
 
             // Set PDF orientation to landscape
@@ -125,25 +126,76 @@ class PayementController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(Request $request, Payement $paiement)
     {
-        $schools = Apprenant::all();
+        try {
+            if (!$paiement) {
+                throw new \Exception("Ce paiement n'existe pas!");
+            }
 
-        return Inertia::render('Payement/Create', [
-            'schools' => $schools,
-        ]);
+            $paiement->load(["school", "apprenant"]);
+
+            return Inertia::render('Payement/Update', [
+                "apprenants" => Auth::user()->school_id ?
+                    Apprenant::where("school_id", Auth::user()->school_id)->get() :
+                    Apprenant::all(),
+                "schools" => Auth::user()->school_id ?
+                    School::where("id", Auth::user()->school_id)->get() :
+                    School::all(),
+                "paiement" => $paiement
+            ]);
+        } catch (\Exception $e) {
+            Log::debug("Erreure de modification", ["exception" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, Payement $paiement)
     {
-        $schools = Apprenant::all();
+        Log::info("Les datas", ["data" => $request->all()]);
+        try {
+            if (!$paiement) {
+                throw new \Exception("Ce paiement n'existe pas!");
+            }
 
-        return Inertia::render('Payement/Create', [
-            'schools' => $schools,
-        ]);
+            $validated = $request->validate([
+                "school_id"      => "required|integer",
+                "apprenant_id"      => "required|integer",
+                "montant"      => "required|numeric",
+                "paiement_receit"          => "nullable|file",
+            ], [
+                "apprenant_id.required"      => "L'apprenant est obligatoire.",
+                "apprenant_id.integer"       => "L'apprenant doit être un identifiant valide.",
+
+                "school_id.required"      => "L'école est obligatoire.",
+                "school_id.integer"       => "L'école doit être un identifiant valide.",
+
+                "montant.required" => "Le montant est obligatoires.",
+                "montant.numeric"  => "Le montant doit être un nombre valide.",
+
+                "paiement_receit.file"             => "Le fichier est invalide",
+                "paiement_receit.max"               => "La photo ne doit pas dépasser 2 Mo.",
+            ]);
+
+            DB::beginTransaction();
+
+            $validated["dossier_transfert"] = $paiement->handlePaiementReceit() ?? $paiement->paiement_receit;
+            $paiement->update($validated);
+
+            DB::commit();
+            return redirect()->route("paiement.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la mis à jour du paiement", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la mis à jour du paiment", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**

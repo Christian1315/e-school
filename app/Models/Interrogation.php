@@ -104,6 +104,7 @@ class Interrogation extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
+            $model->is_validated = false;
         });
 
         // updating

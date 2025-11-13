@@ -126,25 +126,123 @@ class InterrogationController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(Request $request, Interrogation $interrogation)
     {
-        $schools = Interrogation::all();
+        try {
+            if (!$interrogation) {
+                throw new \Exception("Cette interrogation n'existe pas!");
+            }
 
-        return Inertia::render('Interrogation/Create', [
-            'schools' => $schools,
-        ]);
+            $interrogation->load(["apprenant"]);
+
+            if (Auth::user()->school) {
+                $schools = School::latest()
+                    ->where("id", Auth::user()->school_id)->get();
+
+                $apprenants = Apprenant::latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+
+                $trimestres = Trimestre::latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+
+                $matieres = Matiere::latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+            } else {
+                $schools = School::latest()->get();
+
+                $apprenants = Apprenant::latest()->get();
+
+                $trimestres = Trimestre::latest()->get();
+
+                $matieres = Matiere::latest()->get();
+            }
+
+            return Inertia::render('Interrogation/Update', [
+                "schools" => SchoolResource::collection($schools),
+                "apprenants" => ApprenantResource::collection($apprenants),
+                "trimestres" => TrimestreResource::collection($trimestres),
+                "matieres" => MatiereResource::collection($matieres),
+                "interrogation" => $interrogation
+            ]);
+        } catch (\Exception $e) {
+            Log::debug("Erreure survenue lors de la modification de l'interrogation", ["error" => $e->getMessage()]);
+            return redirect()->back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**Valider une interrogation */
+    function validate(Request $request, Interrogation $interrogation)
+    {
+        try {
+            DB::beginTransaction();
+
+            if (!$interrogation) {
+                throw new \Exception("Cette intérrogation n'existe pas!");
+            }
+
+            $interrogation->update(["is_validated" => true]);
+            DB::commit();
+
+            return redirect()->route("interrogation.index");
+        } catch (\Exception $e) {
+            Log::debug("Erreure survenue lors de la validation de l'interrogation", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, Interrogation $interrogation)
     {
-        $schools = Interrogation::all();
+        try {
 
-        return Inertia::render('Interrogation/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$interrogation) {
+                throw new \Exception("Cette intérrogation n'existe pas!");
+            }
+
+            DB::beginTransaction();
+
+            Log::debug("Donnees entrees", ["data" => $request->all()]);
+
+            $validated = $request->validate([
+                "school_id"     => "required|integer",
+                "apprenant_id"  => "required|integer",
+                "trimestre_id"  => "required|integer",
+                "matiere_id"    => "required|integer",
+                "note"          => "required|numeric",
+            ], [
+                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
+                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
+
+                "apprenant_id.required" => "L'identifiant de l'apprenant est obligatoire.",
+                "apprenant_id.integer"  => "L'identifiant de l'apprenant doit être un nombre entier.",
+
+                "trimestre_id.required" => "L'identifiant du trimestre est obligatoire.",
+                "trimestre_id.integer"  => "L'identifiant du trimestre doit être un nombre entier.",
+
+                "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
+                "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
+
+                "note.required"         => "La note est obligatoire.",
+                "note.numeric"          => "La note doit être un nombre.",
+            ]);
+
+            $interrogation->update($validated);
+
+            Log::debug("Donnees validées", ["data" => $validated]);
+            DB::commit();
+
+            return redirect()->route("interrogation.index");
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure de validation lors de la modification de l'interrogation ", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'interrogation ", ["exception" => $e->getMessage()]);
+            return back()->withErrors($e->getMessage());
+        }
     }
 
     /**

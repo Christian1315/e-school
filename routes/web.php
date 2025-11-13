@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
 
     // Interrogations d'apprenants
     Route::resource("interrogation", InterrogationController::class);
+    Route::patch("interrogation/{interrogation}/valide", [InterrogationController::class, "validate"])->name("interrogation.valide");
 
     // Schools
     Route::resource("school", SchoolController::class);

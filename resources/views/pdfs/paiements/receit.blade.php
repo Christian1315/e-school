@@ -83,10 +83,11 @@
                     <tr>
                         <!-- Logo gauche -->
                         <td style="width: 25%; text-align: left;">
-                            <img src="{{ public_path('fichiers/images/logo.png') }}"
+                            <img src="{{ public_path($logo) }}"
                                 id="logo"
                                 alt="Logo de l'école"
-                                style="max-width: 100px; height: auto;">
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
                         </td>
 
                         <!-- Texte centre -->
@@ -142,7 +143,7 @@
                         <!-- Colonne droite -->
                         <td style="width: 30%; text-align: right; vertical-align: top;">
                             <div id="resteBlock">
-                                <h3 class="souscription">N° souscription : <strong class="souscription_number">{{$paiement->montant}}</strong></h3>
+                                <h3 class="souscription">N° souscription : <strong class="souscription_number">{{$paiement->numero}}</strong></h3>
                                 <h3 class="souscription">Reste à payer : <strong class="souscription_number">{{$reste}} {{ env('CURRENCY') }}</strong></h3>
                             </div>
                             <p style="text-align: center;" class="">Service comptabilité</p>

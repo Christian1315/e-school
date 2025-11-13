@@ -17,6 +17,7 @@ class PayementResource extends JsonResource
         // return parent::toArray($request);
         return [
             "id" => $this->id,
+            "numero" => $this->numero,
             "school" => $this->school, //SchoolResource::collection($this->school),
             "apprenant" => $this->apprenant, //ApprenantResource::collection($this->apprenant),
             "montant" => $this->montant,

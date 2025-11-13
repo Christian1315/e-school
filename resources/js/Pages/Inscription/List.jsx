@@ -10,7 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
+import { cilCenterFocus, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
     const permissions = usePage().props.auth.permissions;

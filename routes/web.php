@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get("/{roleId}/affect-permissions", function ($roleId) {
-    
+
     $role = Role::findOrFail($roleId);
 
     if (!$role) {
@@ -69,8 +69,11 @@ Route::middleware('auth')->group(function () {
     Route::resource("devoir", DevoirController::class);
 
     // Interrogations d'apprenants
+    Route::get("interrogation/get-store-multiple", [InterrogationController::class, "getStoreMultiple"])->name("interrogation.get-store-multiple");
     Route::resource("interrogation", InterrogationController::class);
     Route::patch("interrogation/{interrogation}/valide", [InterrogationController::class, "validate"])->name("interrogation.valide");
+    Route::post("interrogation/post-store-multiple", [InterrogationController::class, "postStoreMultiple"])->name("interrogation.post-store-multiple");
+    Route::post("interrogation/validate-multiple", [InterrogationController::class, "validateMultiple"])->name("interrogation.validate-multiple");
 
     // Schools
     Route::resource("school", SchoolController::class);

@@ -66,7 +66,11 @@ Route::middleware('auth')->group(function () {
     Route::resource("matiere", MatiereController::class);
 
     // Devoirs d'apprenants
+    Route::get("devoir/get-store-multiple", [DevoirController::class, "getStoreMultiple"])->name("devoir.get-store-multiple");
     Route::resource("devoir", DevoirController::class);
+    Route::patch("devoir/{devoir}/valide", [DevoirController::class, "validate"])->name("devoir.valide");
+    Route::post("devoir/post-store-multiple", [DevoirController::class, "postStoreMultiple"])->name("devoir.post-store-multiple");
+    Route::post("devoir/validate-multiple", [DevoirController::class, "validateMultiple"])->name("devoir.validate-multiple");
 
     // Interrogations d'apprenants
     Route::get("interrogation/get-store-multiple", [InterrogationController::class, "getStoreMultiple"])->name("interrogation.get-store-multiple");

@@ -150,14 +150,13 @@ export default function List({ schools }) {
                                                             </Link></li>) : null
                                                         }
 
-                                                        {checkPermission('ecole.delete') ?
+                                                        {/* {checkPermission('ecole.delete') ?
                                                             (<li><Link
                                                                 className='btn text-danger'
-                                                            // href={route('school.destroy', school.id)}
                                                             >
                                                                 <CIcon icon={cilDelete} />  Supprimer
                                                             </Link></li>) : null
-                                                        }
+                                                        } */}
                                                     </ul>
                                                 </div>
                                             </td>

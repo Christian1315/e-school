@@ -38,7 +38,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     const [_classes, setClasses] = useState(classes.data);
 
 
-    const { data, get, post, errors, processing, setData, reset } = useForm({
+    const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
         school_id: "",
         trimestre_id: "",
         classe_id: "",
@@ -194,6 +194,50 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
         });
     };
 
+    // suppression d'interrogation
+    const deleteInterrogation = (e, interro) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: '<span style="color: #facc15;">⚠️ Êtes-vous sûr ?</span>', // yellow text
+            text: `L'interrogation sera supprimée de façon permanente !`,
+            showCancelButton: true,
+            confirmButtonColor: '#2a7348',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '😇 Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '<span style="color: #facc15;">🫠 Suppression en cours...</span>', // yellow text
+                    text: 'Veuillez patienter pendant que nous traitons vos données.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                destroy(route('interrogation.destroy', interro.id), {
+                    onSuccess: () => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #2a7348;">👌Suppression réussie </span>',
+                            text: `L'interrogation a été supprimée avec succès.`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                    onError: (e) => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #facc15;">🤦‍♂️ Suppression échouée </span>', // yellow text
+                            text: `${e.exception ?? 'Veuillez réessayer.'}`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                })
+            }
+        });
+    }
+
     return (
         <AuthenticatedLayout
             header={
@@ -238,13 +282,16 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                             <tr key={interrogation.id} className={`bg-${interrogation.is_validated ? 'success' : 'danger'}`}>
                                                 <th scope="row">
                                                     {index + 1}
-                                                    <br />
+
                                                     {
-                                                        !interrogation.is_validated?
-                                                        <TextInput
-                                                            type="checkbox"
-                                                            className="form-control mt-1 block w-full"
-                                                            onChange={(e) => checkedLine(index, e, interrogation)} />:null
+                                                        checkPermission('interrogation.edit') ?
+                                                            (
+                                                                !interrogation.is_validated ?
+                                                                    <TextInput
+                                                                        type="checkbox"
+                                                                        className="form-control mt-1 block w-full"
+                                                                        onChange={(e) => checkedLine(index, e, interrogation)} /> : null
+                                                            ) : null
                                                     }
                                                 </th>
                                                 <td className='text-center'>
@@ -264,7 +311,6 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                                         (<li><Link
                                                                             className='btn btn-success text-white w-100'
                                                                             onClick={(e) => validateInterrogation(e, interrogation)}
-                                                                        // href={route('interrogation.edit', interrogation.id)}
                                                                         >
                                                                             <CIcon icon={cilCheck} />  Valider
                                                                         </Link></li>
@@ -284,6 +330,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                                     {checkPermission('interrogation.delete') ?
                                                                         (<li><Link
                                                                             className='btn text-danger'
+                                                                            onClick={(e) => deleteInterrogation(e, interrogation)}
                                                                         >
                                                                             <CIcon icon={cilDelete} />  Supprimer
                                                                         </Link></li>) : null

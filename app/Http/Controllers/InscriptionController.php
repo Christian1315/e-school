@@ -202,12 +202,26 @@ class InscriptionController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(Request $request,Inscription $inscription)
     {
-        $schools = Inscription::all();
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$inscription) {
+                throw new \Exception("Cette inscription n'existe pas");
+            }
+            $inscription->delete();
+
+            DB::commit();
+            return redirect()->route("inscription.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'inscription", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'inscription", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

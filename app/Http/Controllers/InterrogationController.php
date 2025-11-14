@@ -418,12 +418,26 @@ class InterrogationController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(Request $request, Interrogation $interrogation)
     {
-        $schools = Interrogation::all();
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Interrogation/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$interrogation) {
+                throw new \Exception("Cette interrogation n'existe pas");
+            }
+            $interrogation->delete();
+
+            DB::commit();
+            return redirect()->route("interrogation.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'interrogation", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'interrogation", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

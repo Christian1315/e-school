@@ -22,7 +22,7 @@ export default function List({ inscriptions }) {
     const [showModal, setShowModal] = useState(false);
     const [currentInscription, setCurrentInscription] = useState(null);
 
-    const { reset, setData, data, reste, errors, processing } = useForm({
+    const { reset, setData, data, reste, errors, processing, delete: destroy } = useForm({
         reste: null,
     })
 
@@ -71,6 +71,49 @@ export default function List({ inscriptions }) {
                 `,
                 showConfirmButton: false
             })
+        });
+    }
+
+    const deleteInscription = (e, inscription) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: '<span style="color: #facc15;">⚠️ Êtes-vous sûr ?</span>', // yellow text
+            text: `L'inscription sera supprimée de façon permanente !`,
+            showCancelButton: true,
+            confirmButtonColor: '#2a7348',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '😇 Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '<span style="color: #facc15;">🫠 Suppression en cours...</span>', // yellow text
+                    text: 'Veuillez patienter pendant que nous traitons vos données.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                destroy(route('inscription.destroy', inscription.id), {
+                    onSuccess: () => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #2a7348;">👌Suppression réussie </span>',
+                            text: `L'inscription a été supprimé avec succès.`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                    onError: (e) => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #facc15;">🤦‍♂️ Suppression échouée </span>', // yellow text
+                            text: `${e.exception ?? 'Veuillez réessayer.'}`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                })
+            }
         });
     }
 
@@ -148,6 +191,7 @@ export default function List({ inscriptions }) {
                                                         {checkPermission('inscription.delete') ?
                                                             (<li><Link
                                                                 className='btn text-danger'
+                                                                onClick={(e) => deleteInscription(e, inscription)}
                                                             // href={route('school.destroy', school.id)}
                                                             >
                                                                 <CIcon icon={cilDelete} />  Supprimer

@@ -29,7 +29,12 @@ class MoyenneDevoirController extends Controller
 
             $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre) {
                 $matiere_devoirs = $apprenant->devoirs()
-                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])->get();
+                    ->where([
+                        "matiere_id" => $matiere->id,
+                        "trimestre_id" => $trimestre->id,
+                        "is_validated" => true,
+                    ])
+                    ->get();
 
                 /** */
                 return [
@@ -42,7 +47,6 @@ class MoyenneDevoirController extends Controller
 
             return $apprenant;
         });
-
 
         // return response()->json($apprenants);
         return Inertia::render('MoyennesDevoir/List', [

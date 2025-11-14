@@ -56,7 +56,7 @@ export default function List({ apprenants }) {
         setShowImgModal(false);
     }
 
-    const { data, setData, errors, processing, post, patch } = useForm({
+    const { data, setData, errors, processing, post, patch, delete: destroy } = useForm({
         photo: '',
         apprenants: '',
     })
@@ -134,6 +134,49 @@ export default function List({ apprenants }) {
         });
     };
 
+    const deleteApprenant = (e, apprenant) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: '<span style="color: #facc15;">⚠️ Êtes-vous sûr ?</span>', // yellow text
+            text: `L'apprenant sera supprimé de façon permanente !`,
+            showCancelButton: true,
+            confirmButtonColor: '#2a7348',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '😇 Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '<span style="color: #facc15;">🫠 Suppression en cours...</span>', // yellow text
+                    text: 'Veuillez patienter pendant que nous traitons vos données.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                destroy(route('apprenant.destroy', apprenant.id), {
+                    onSuccess: () => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #2a7348;">👌Suppression réussie </span>',
+                            text: `L'apprenant a été supprimé avec succès.`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                    onError: (e) => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #facc15;">🤦‍♂️ Suppression échouée </span>', // yellow text
+                            text: `${e.exception ?? 'Veuillez réessayer.'}`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                })
+            }
+        });
+    }
+
     return (
         <AuthenticatedLayout
             header={
@@ -204,6 +247,7 @@ export default function List({ apprenants }) {
                                                         {checkPermission('apprenant.delete') ?
                                                             (<li><Link
                                                                 className='btn text-danger'
+                                                                onClick={(e) => deleteApprenant(e, apprenant)}
                                                             // href={route('school.destroy', apprenant.id)}
                                                             >
                                                                 <CIcon icon={cilDelete} />  Supprimer

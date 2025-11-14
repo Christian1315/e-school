@@ -17,7 +17,7 @@ export default function List({ payements }) {
     const [showModal, setShowModal] = useState(false);
     const [currentPayement, setCurrentPayement] = useState(null);
 
-    const { reset, setData, data, reste, errors, processing } = useForm({
+    const { reset, setData, data, reste, errors, processing, delete: destroy } = useForm({
         reste: null,
     })
 
@@ -34,21 +34,6 @@ export default function List({ payements }) {
         // clearErrors();
         reset();
     };
-
-
-    const showPayementReceit = (paiement) => {
-        Swal.fire({
-            // title: `${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`,
-            text: `Dossier de transfert de : ${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`,
-            imageUrl: paiement.paiement_receit,
-            imageWidth: 400,
-            imageHeight: 200,
-            imageAlt: "Dossier de transfert",
-            confirmButtonColor: '#1b5a38',
-            confirmButtonText: "Merci"
-        });
-
-    }
 
     const generateReceit = (e) => {
         e.preventDefault();
@@ -83,6 +68,50 @@ export default function List({ payements }) {
                 `,
                 showConfirmButton: false
             })
+        });
+    }
+
+    // suppression du paiement
+    const deletePaiement = (e, paiement) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: '<span style="color: #facc15;">⚠️ Êtes-vous sûr ?</span>', // yellow text
+            text: `Le paiement sera supprimé de façon permanente !`,
+            showCancelButton: true,
+            confirmButtonColor: '#2a7348',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '😇 Oui, supprimer !',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '<span style="color: #facc15;">🫠 Suppression en cours...</span>', // yellow text
+                    text: 'Veuillez patienter pendant que nous traitons vos données.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                destroy(route('paiement.destroy', paiement.id), {
+                    onSuccess: () => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #2a7348;">👌Suppression réussie </span>',
+                            text: `Le paiement a été supprimé avec succès.`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                    onError: (e) => {
+                        Swal.close();
+                        Swal.fire({
+                            title: '<span style="color: #facc15;">🤦‍♂️ Suppression échouée </span>', // yellow text
+                            text: `${e.exception ?? 'Veuillez réessayer.'}`,
+                            confirmButtonText: '😇 Fermer'
+                        });
+                    },
+                })
+            }
         });
     }
 
@@ -138,7 +167,7 @@ export default function List({ payements }) {
                                                             (
                                                                 <li>
                                                                     <Link
-                                                                    className='btn btn-light'
+                                                                        className='btn btn-light'
                                                                         href="#"
                                                                         onClick={(e) => confirmShowModal(e, paiement)}
                                                                     >
@@ -160,6 +189,7 @@ export default function List({ payements }) {
                                                         {checkPermission('paiement.delete') ?
                                                             (<li><Link
                                                                 className='btn text-danger'
+                                                                onClick={(e) => deletePaiement(e, paiement)}
                                                             >
                                                                 <CIcon icon={cilDelete} />  Supprimer
                                                             </Link></li>) : null

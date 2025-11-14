@@ -73,7 +73,6 @@ class UserController extends Controller
         ]);
     }
 
-
     /**
      * Create
      */
@@ -272,25 +271,127 @@ class UserController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request)
+    function edit(Request $request, User $user)
     {
-        $schools = Apprenant::all();
+        $user->load("roles");
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
+        if (Auth::user()->school) {
+            $schools = School::where("id", Auth::user()->school_id)->get();
+            $roles = Auth::user()->school->roles()->with("school")->get();
+        } else {
+            $schools = School::latest()->get();
+            $roles = Role::with("school")->where("id", "!=", 1)->get();
+        }
+
+        return Inertia::render('User/Update', [
+            "schools" => $schools,
+            "roles" => $roles,
+            "user" => $user,
+            "role" => $user->roles->first()
         ]);
     }
 
     /**
      * Update
      */
-    function update(Request $request)
+    function update(Request $request, User $user)
     {
-        $schools = Apprenant::all();
+        Log::info("Les datas", ["data" => $request->all()]);
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+        try {
+
+            if (!$user) {
+                throw new \Exception("Cet utilisateur n'existe pas!");
+            }
+
+            $validated = $request->validate([
+                'firstname'   => 'required|string',
+                'lastname'    => 'required|string',
+                'school_id'   => 'required|integer',
+                'role_id'   => 'required|integer',
+
+                'email'       => 'required|string|lowercase|email|max:255|unique:users,email,'.$user->id,
+                // 'password'    => ['required', 'confirmed', Rules\Password::defaults()],
+
+                'phone'       => 'required|string',
+                // 'profile_img' => 'nullable|image|mimes:png,jpeg',
+            ], [
+                // 🔹 Messages personnalisés
+                'firstname.required'   => 'Le prénom est obligatoire.',
+                'firstname.string'     => 'Le prénom doit être une chaîne de caractères.',
+
+                'lastname.required'    => 'Le nom est obligatoire.',
+                'lastname.string'      => 'Le nom doit être une chaîne de caractères.',
+
+                // 'school_id.required'   => "L'identifiant de l'école est obligatoire.",
+                // 'school_id.integer'    => "L'identifiant de l'école doit être un nombre.",
+
+                'role_id.required'   => "Le rôle est obligatoire.",
+                'role_id.integer'    => "Le rôle doit être un nombre.",
+
+                'email.required'       => "L'adresse email est obligatoire.",
+                'email.string'         => "L'adresse email doit être une chaîne de caractères.",
+                'email.lowercase'      => "L'adresse email doit être en minuscules.",
+                'email.email'          => "L'adresse email n'est pas valide.",
+                'email.max'            => "L'adresse email ne doit pas dépasser 255 caractères.",
+                'email.unique'         => "Cette adresse email est déjà utilisée.",
+
+                // 'password.required'    => "Le mot de passe est obligatoire.",
+                // 'password.confirmed'   => "La confirmation du mot de passe ne correspond pas.",
+                // 'password.min'         => "Le mot de passe doit contenir au moins 8 caractères.",
+
+                'phone.required'       => "Le numéro de téléphone est obligatoire.",
+                'phone.string'         => "Le numéro de téléphone doit être une chaîne de caractères.",
+
+                // 'profile_img.image'    => "Le fichier doit être une image.",
+                // 'profile_img.mimes'    => "L'image doit être au format PNG ou JPEG.",
+            ]);
+
+            DB::beginTransaction();
+
+            $user->update($validated);
+
+            if ($user->detail) {
+                # code...
+                $user->detail()->update(["phone" => $validated["phone"] ?? null]);
+            }else{
+                $user->detail()->create(["phone" => $validated["phone"] ?? null]);
+            }
+
+            /**
+             * Affectation de role
+             */
+            $role = Role::find($validated["role_id"]);
+            if (!$role) {
+                throw new \Exception("Ce rôle n'existe pas");
+            }
+
+            /**
+             *  On supprime tous les anciens liens et on garde seulement ceux envoyés
+             * */
+            DB::table('model_has_roles')
+                ->where('model_id', $user->id)
+                ->delete();
+
+            /**
+             * Affectation
+             */
+            $user->assignRole($role);
+
+            event(new Registered($user));
+
+
+            DB::commit();
+            return redirect()->route("user.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'utilisateur", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'utilisateur", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**

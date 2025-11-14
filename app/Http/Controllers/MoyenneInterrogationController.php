@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InterrogationResource;
 use App\Models\Apprenant;
-use App\Models\School;
 use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +29,12 @@ class MoyenneInterrogationController extends Controller
 
             $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre) {
                 $matiere_interros = $apprenant->interrogations()
-                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])->get();
+                    ->where([
+                        "matiere_id" => $matiere->id,
+                        "trimestre_id" => $trimestre->id,
+                        "is_validated" => true,
+                    ])
+                    ->get();
 
                 /** */
                 return [

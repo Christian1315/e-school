@@ -3,7 +3,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu, cilPencil } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
@@ -67,7 +67,7 @@ export default function List({ users, roles }) {
         'checked': false
     })))
 
-    const { data, errors, setData, processing, post } = useForm({
+    const { data, errors, setData, processing, post, delete: destroy } = useForm({
         role_id: '',
         user_id: currentUser?.id,
     })
@@ -184,13 +184,14 @@ export default function List({ users, roles }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
+                                    <th scope="col">Action</th>
                                     <th scope="col">Profile</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
-                                    <th scope="col">Email/Phone</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone</th>
                                     <th scope="col">Rôles</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -198,26 +199,6 @@ export default function List({ users, roles }) {
                                     users.data.map((user, index) => (
                                         <tr key={user.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td>
-                                                <button
-                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                    onClick={() => showUserProfile(user)}
-                                                >
-                                                    <CIcon icon={cilCenterFocus} />
-                                                </button>
-                                            </td>
-                                            <td>{user.school?.raison_sociale || '---'}</td>
-                                            <td>{user.firstname}</td>
-                                            <td>{user.lastname}</td>
-                                            <td>{user.email}/{user.detail?.phone || '---'}</td>
-                                            <td className='text-center'>
-                                                {
-                                                    user.roles?.length > 0 ?
-                                                        user.roles.map((role, index) => (
-                                                            <span key={index} className="m-1  bg-light text-dark border rounded">{role.name}</span>
-                                                        )) : '---'
-                                                }
-                                            </td>
                                             <td>
                                                 <div className="dropstart">
                                                     <button
@@ -228,6 +209,16 @@ export default function List({ users, roles }) {
                                                         <CIcon icon={cilMenu} /> Gérer
                                                     </button>
                                                     <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                        {checkPermission('utilisateur.edit') ?
+                                                            (<li><Link
+                                                                className='btn text-warning  w-100'
+                                                                href={route("user.edit",user.id)}
+                                                            >
+                                                                <CIcon icon={cilPencil} />  Modifier
+                                                            </Link></li>
+                                                            ) : null
+                                                        }
 
                                                         {/* Un user ne peuut pas s'affceter un role */}
                                                         {checkPermission('affect.role') && authUser.id != user.id ?
@@ -245,6 +236,28 @@ export default function List({ users, roles }) {
                                                     </ul>
                                                 </div>
                                             </td>
+                                            <td>
+                                                <button
+                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                    onClick={() => showUserProfile(user)}
+                                                >
+                                                    <CIcon icon={cilCenterFocus} />
+                                                </button>
+                                            </td>
+                                            <td>{user.school?.raison_sociale || '---'}</td>
+                                            <td>{user.firstname}</td>
+                                            <td>{user.lastname}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.detail?.phone ?? '--'}</td>
+                                            <td className='text-center'>
+                                                {
+                                                    user.roles?.length > 0 ?
+                                                        user.roles.map((role, index) => (
+                                                            <span key={index} className="m-1  bg-light text-dark border rounded">{role.name}</span>
+                                                        )) : '---'
+                                                }
+                                            </td>
+
                                         </tr>
                                     ))
                                 }

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApprenantResource;
+use App\Http\Resources\ClasseResource;
 use App\Http\Resources\DevoirResource;
 use App\Http\Resources\MatiereResource;
 use App\Http\Resources\SchoolResource;
 use App\Http\Resources\TrimestreResource;
 use App\Models\Apprenant;
+use App\Models\Classe;
 use App\Models\Devoir;
 use App\Models\Matiere;
 use App\Models\School;
@@ -29,12 +31,44 @@ class DevoirController extends Controller
         if (Auth::user()->school) {
             $devoirs = Devoir::orderByDesc("id")
                 ->where("school_id", Auth::user()->school_id)->get();
+
+            // 
+            $schools = School::with("trimestres")->latest()
+                ->where("id", Auth::user()->school_id)->get();
+
+            $apprenants = Apprenant::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
+
+            $trimestres = Trimestre::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
+
+            $matieres = Matiere::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
+
+            $classes = Classe::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
         } else {
             $devoirs = Devoir::orderByDesc("id")->get();
+
+            // 
+            $schools = School::with("trimestres")->latest()->get();
+
+            $apprenants = Apprenant::latest()->get();
+
+            $trimestres = Trimestre::latest()->get();
+
+            $matieres = Matiere::latest()->get();
+            $classes = Classe::latest()->get();
         }
 
         return Inertia::render("Devoir/List", [
             "devoirs" => DevoirResource::collection($devoirs),
+
+            "schools" => SchoolResource::collection($schools),
+            "apprenants" => ApprenantResource::collection($apprenants),
+            "trimestres" => TrimestreResource::collection($trimestres),
+            "matieres" => MatiereResource::collection($matieres),
+            "classes" => ClasseResource::collection($classes),
         ]);
     }
 
@@ -125,6 +159,115 @@ class DevoirController extends Controller
     }
 
     /**
+     * Get form to Store multiples interrogations
+     */
+    function getStoreMultiple(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            Log::debug("Donnees entrees", ["data" => $request->all()]);
+
+            $request->validate([
+                "school_id"     => "required|integer",
+                "trimestre_id"  => "required|integer",
+                "matiere_id"    => "required|integer",
+                "classe_id"          => "required|integer",
+            ], [
+                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
+                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
+
+                "classe_id.required" => "La classe doit être obligatoire.",
+                "classe_id.integer"  => "La classe doit  être un nombre entier.",
+
+                "trimestre_id.required" => "L'identifiant du trimestre est obligatoire.",
+                "trimestre_id.integer"  => "L'identifiant du trimestre doit être un nombre entier.",
+
+                "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
+                "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
+            ]);
+
+            $Query = Apprenant::where("classe_id", $request->classe_id)
+                ->latest();
+            if (Auth::user()->school) {
+                $apprenants = $Query
+                    ->where("school_id", Auth::user()->school_id)->get();
+            } else {
+                $apprenants = $Query->get();
+            }
+
+            return Inertia::render("Devoir/StoreMultiple", [
+                "school" => School::find($request->school_id),
+                "trimestre" => Trimestre::find($request->trimestre_id),
+                "matiere" => Matiere::find($request->matiere_id),
+                "classe" => Classe::find($request->classe_id),
+                "apprenants" => ApprenantResource::collection($apprenants),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la création du de voir ", ["exception" => $e->getMessage()]);
+            return back()->withErrors($e->getMessage());
+        }
+    }
+
+    /**
+     * Store multiples interrogations
+     */
+    function postStoreMultiple(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            Log::debug("Donnees entrees", ["data" => $request->all()]);
+
+            $validated = $request->validate([
+                "school_id"     => "required|integer",
+                "trimestre_id"  => "required|integer",
+                "matiere_id"    => "required|integer",
+                "classe_id"          => "required|integer",
+                "apprenants" => "array",
+                "apprenants*apprenant_id" => "required|integer",
+                "apprenants*note" => "required|numeric",
+            ], [
+                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
+                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
+
+                "classe_id.required" => "La classe doit être obligatoire.",
+                "classe_id.integer"  => "La classe doit  être un nombre entier.",
+
+                "trimestre_id.required" => "L'identifiant du trimestre est obligatoire.",
+                "trimestre_id.integer"  => "L'identifiant du trimestre doit être un nombre entier.",
+
+                "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
+                "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
+            ]);
+
+            // 
+            foreach ($request->apprenants as $ligne) {
+                Devoir::create([
+                    "apprenant_id" => $ligne["id"],
+                    "school_id" => $validated["school_id"],
+                    "trimestre_id" => $validated["trimestre_id"],
+                    "matiere_id" => $validated["matiere_id"],
+                    "classe_id" => $validated["classe_id"],
+                    "note" => $ligne["note"]
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route("devoir.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la création de l'interrogation ", ["errors" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la création de l'interrogation ", ["exception" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Edit
      */
     function edit(Request $request)
@@ -134,6 +277,54 @@ class DevoirController extends Controller
         return Inertia::render('Devoir/Create', [
             'schools' => $schools,
         ]);
+    }
+
+
+    /**Valider une interrogation */
+    function validate(Request $request, Devoir $devoir)
+    {
+        try {
+            DB::beginTransaction();
+
+            if (!$devoir) {
+                throw new \Exception("Ce devoir n'existe pas!");
+            }
+
+            $devoir->update(["is_validated" => true]);
+            DB::commit();
+
+            return redirect()->route("devoir.index");
+        } catch (\Exception $e) {
+            Log::debug("Erreure survenue lors de la validation du devoir", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**Valider une interrogation */
+    function validateMultiple(Request $request)
+    {
+        try {
+            Log::debug("Donnees entrees", ["data" => $request->all()]);
+
+            DB::beginTransaction();
+
+            $request->validate([
+                "devoirscheckeds" => "array",
+            ]);
+
+            // 
+            foreach ($request->devoirscheckeds as $ligne) {
+                $devoir = Devoir::find($ligne["id"]);
+                $devoir->update(["is_validated" => true]);
+            }
+
+            DB::commit();
+
+            return redirect()->route("devoir.index");
+        } catch (\Exception $e) {
+            Log::debug("Erreure survenue lors de la validation du devoir", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
@@ -151,12 +342,26 @@ class DevoirController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(Request $request, Devoir $devoir)
     {
-        $schools = Devoir::all();
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Devoir/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$devoir) {
+                throw new \Exception("Ce devoir n'existe pas");
+            }
+            $devoir->delete();
+
+            DB::commit();
+            return redirect()->route("devoir.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression du devoir", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression du devoir", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

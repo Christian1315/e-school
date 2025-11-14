@@ -76,34 +76,36 @@ export default function StoreMultiple({ school, trimestre, matiere, classe, appr
     const submit = (e) => {
         e.preventDefault();
 
-        Swal.fire({
-            title: 'Opération en cours...',
-            text: 'Veuillez patienter pendant que nous traitons vos données.',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        });
+        let checkeds = _apprenants.filter((a) => a.checked)
 
-        post(route('interrogation.post-store-multiple'), {
-            onSuccess: () => {
-                Swal.close();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Opération réussie',
-                    text: 'Interrogation(s) créee(s) avec succès',
-                });
-            },
-            onError: (e) => {
-                Swal.close();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Opération échouée',
-                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
-                });
-                console.log(e);
-            },
-        });
+        if (checkeds.length == 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Opération échouée",
+                text: "Renseignez au moins une note d'interrogation"
+            })
+            return
+        } else {
+            post(route('interrogation.post-store-multiple'), {
+                onSuccess: () => {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Opération réussie',
+                        text: 'Interrogation(s) créee(s) avec succès',
+                    });
+                },
+                onError: (e) => {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Opération échouée',
+                        text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                    });
+                    console.log(e);
+                },
+            });
+        }
     };
 
     return (

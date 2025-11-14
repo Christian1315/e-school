@@ -73,7 +73,8 @@
             color: #000 !important
         }
 
-        #notes_table td,#notes_table th {
+        #notes_table td,
+        #notes_table th {
             border: solid 2px #f6f6f6 !important;
             border-radius: 10px !important;
             text-align: center !important
@@ -13964,10 +13965,19 @@
                     <tr>
                         <!-- Logo gauche -->
                         <td style="width: 25%; text-align: left;">
-                            <img src="{{ public_path('fichiers/images/logo.png') }}"
+                            @if($logo)
+                            <img src="{{ public_path($logo) }}"
                                 id="logo"
                                 alt="Logo de l'école"
-                                style="max-width: 100px; height: auto;">
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                            @else
+                            <img src="https://placehold.jp/150x150.png"
+                                id="logo"
+                                alt="Logo de l'apprenant"
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                            @endif
                         </td>
 
                         <!-- Texte centre -->
@@ -13982,10 +13992,19 @@
 
                         <!-- Logo reçu -->
                         <td style="width: 25%; text-align: right;">
-                            <img src="{{ public_path('fichiers/images/logo.png') }}"
+                            @if($apprenantProfil)
+                            <img src="{{ public_path($apprenantProfil) }}"
                                 id="logo"
-                                alt="Logo de l'école"
-                                style="max-width: 100px; height: auto;">
+                                alt="Logo de l'apprenant"
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                            @else
+                            <img src="https://placehold.jp/150x150.png"
+                                id="logo"
+                                alt="Logo de l'apprenant"
+                                class="shadow"
+                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                            @endif
                         </td>
                     </tr>
                 </table>
@@ -14009,7 +14028,7 @@
                             <div class="border rounded p-2">
                                 <p class="apprenant-name"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->libelle}} - {{$apprenant->serie?->libelle}}</strong></p>
                                 <p class="apprenant-name"><strong class="badge"> Effectif</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->apprenants->count()}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Statut</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->statut}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Statut</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> </strong></p>
                             </div>
                         </td>
 
@@ -14042,29 +14061,68 @@
                         <tr>
                             <th scope="col">DISCIPLINES</th>
                             <th scope="col">Coef</th>
+                            <th scope="col">Nbre Interro</th>
+                            <th scope="col">Interro n° 1</th>
+                            <th scope="col">Interro n° 2</th>
+                            <th scope="col">Interro n° 3</th>
                             <th scope="col">Moy Inter</th>
-                            <th scope="col">Devoir n° 1</th>
-                            <th scope="col">Devoir n° 2</th>
+                            <th scope="col">Nbre Devoir</th>
+                            <th scope="col">Devoir 1</th>
+                            <th scope="col">Devoir 2</th>
+                            <th scope="col">Devoir 3</th>
                             <th scope="col">Moy/20</th>
                             <th scope="col">Moy Coef</th>
                             <th scope="col">Moy faible</th>
                             <th scope="col">Moy forte</th>
+                            <th scope="col">Rang</th>
                             <th scope="col">Appréciation du prof</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($apprenant->matieres as $matiere)
+                        @php
+                        $notes = $matiere->interrogations->take(3);
+                        $interros_count = $notes->count();
+
+                        $devoirs = $matiere->devoirs->take(3);
+                        $devoirs_count = $devoirs->count();
+                        @endphp
+
                         <tr>
                             <th scope="row"> <span class="badge bg-light text-dark shadow">{{$matiere->libelle}} </span> </th>
                             <td>{{$matiere->coefficient}}</td>
-                            <td>{{$matiere->moyenne_interro}}</td>
-                            @foreach($matiere->devoirs as $devoir)
-                            <td>{{$devoir->note}}</td>
+
+                            <!-- les interrogations -->
+                            <td class="text-danger">{{$interros_count}}</td>
+                            {{-- Affichage des notes existantes --}}
+                            @foreach($notes as $interro)
+                            <td>{{ $interro->note }}</td>
                             @endforeach
-                            <td>{{number_format($matiere->moyenne,2,","," ")}}</td>
-                            <td>{{$matiere->moyenne_coefficie}}</td>
-                            <td>{{$matiere->moyenne_failble??10}}</td>
-                            <td>{{$matiere->moyenne_forte??10}}</td>
+
+                            {{-- Compléter avec des 0.00 s'il manque des colonnes --}}
+                            @for($i = $interros_count; $i < 3; $i++)
+                            <td>0.00</td>
+                            @endfor
+                            <td class="text-success">{{$matiere->moyenne_interro}}</td>
+
+                            <!-- les devoirs -->
+                            <td class="text-danger">{{$devoirs_count}}</td>
+                            {{-- Affichage des notes existantes --}}
+                            @foreach($devoirs as $devoir)
+                            <td>{{ $devoir->note }}</td>
+                            @endforeach
+
+                            {{-- Compléter avec des 0.00 s'il manque des colonnes --}}
+                            @for($i = $devoirs_count; $i < 3; $i++)
+                            <td>0.00</td>
+                            @endfor
+                            <td class="text-success">{{number_format($matiere->moyenne,2,","," ")}}</td>
+
+                            <!-- les autres  -->
+                            <td><span class="badge border rounded text-danger shadow"> {{number_format($matiere->moyenne_coefficie,2,","," ")}} </span> </td>
+                            <td>{{number_format($matiere->moyenne_faible,2,","," ")}}</td>
+                            <td>{{number_format($matiere->moyenne_forte,2,","," ")}}</td>
+                            <td><span class="badge border rounded text-danger shadow"> {{$matiere->rang}} .ième </span> </td>
                             <td>
                                 <p></p>
                             </td>

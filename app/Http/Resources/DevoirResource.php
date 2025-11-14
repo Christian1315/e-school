@@ -19,6 +19,7 @@ class DevoirResource extends JsonResource
         return [
             "id" => $this->id,
             "school" => $this->school,
+            "is_validated" => $this->is_validated,
             "apprenant" => $this->apprenant,
             "trimestre" => $this->trimestre,
             "matiere" => $this->matiere,

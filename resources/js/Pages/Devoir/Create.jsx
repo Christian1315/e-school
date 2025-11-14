@@ -64,7 +64,6 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                 });
                 console.log(e);
             },
-            // onFinish: () => reset('password'),
         });
     };
 
@@ -72,11 +71,11 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des dévoirs d'école
+                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des devoirs d'école
                 </h2>
             }
         >
-            <Head title="Ajouter une classe" />
+            <Head title="Ajouter un devoir" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
@@ -85,7 +84,7 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('devoir.view') ?
                                 (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("interrogation.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des intérrogations</Link>
                                 </div>) : null
                             }
 

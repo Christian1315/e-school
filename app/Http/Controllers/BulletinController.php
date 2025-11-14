@@ -63,18 +63,28 @@ class BulletinController extends Controller
         try {
             $apprenant->load(["school", "parent", "classe.apprenants", "serie"]);
 
-            // Log::info("Les données entrantes", ["data" => $apprenant]);
+            $logoPath = explode(env("APP_URL"), $apprenant->school->logo);
+            $apprenantProfilPath = explode(env("APP_URL"), $apprenant->photo);
 
             /**
              * Moyennes formatage
              */
             $matieres = $apprenant->school->matieres->map(function ($matiere) use ($apprenant, $trimestre) {
+
                 $matiere_interros = $apprenant->interrogations()
-                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])
+                    ->where([
+                        "matiere_id" => $matiere->id,
+                        "trimestre_id" => $trimestre->id,
+                        "is_validated" => true
+                    ])
                     ->get();
 
                 $matiere_devoirs = $apprenant->devoirs()
-                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])
+                    ->where([
+                        "matiere_id" => $matiere->id,
+                        "trimestre_id" => $trimestre->id,
+                        "is_validated" => true
+                    ])
                     ->get();
 
                 $moyenne_interro = !$matiere_interros->isEmpty()
@@ -85,22 +95,58 @@ class BulletinController extends Controller
                 $moyenne = ($moyenne_interro + $sommeDevoirsNote) / 3;
                 $moyenneCoefficie = $moyenne * $matiere->coefficient;
 
+                // 2️⃣ Calculer la moyenne faible & forte pour la matière
+                $allMoyennes = $apprenant->school->apprenants->map(function ($eleve) use ($matiere, $trimestre) {
+
+                    $interros = $eleve->interrogations()
+                        ->where([
+                            "matiere_id" => $matiere->id,
+                            "trimestre_id" => $trimestre->id,
+                            "is_validated" => true
+                        ])
+                        ->get();
+
+                    $devoirs = $eleve->devoirs()
+                        ->where([
+                            "matiere_id" => $matiere->id,
+                            "trimestre_id" => $trimestre->id,
+                            "is_validated" => true
+                        ])
+                        ->get();
+
+                    $m_interro = $interros->isEmpty()
+                        ? 0
+                        : $interros->avg("note");
+
+                    return ($m_interro + $devoirs->sum("note")) / 3;
+                });
+
+                // 3️⃣ Moyenne faible / forte
+                $moyenne_faible = $allMoyennes->min();
+                $moyenne_forte = $allMoyennes->max();
+
+                // 4️⃣ Calcul du RANG
+                $sorted = $allMoyennes->sortDesc()->values(); // tri du plus grand au plus petit
+                $rang = $sorted->search($moyenne) + 1;         // position + 1
+
                 return (object) [
                     "id" => $matiere->id,
                     "libelle" => $matiere->libelle,
                     "coefficient" => $matiere->coefficient,
-                    "interrogations" => InterrogationResource::collection($matiere_interros),
-                    "devoirs" => DevoirResource::collection($matiere_devoirs),
+                    "interrogations" => $matiere_interros,
+                    "devoirs" => $matiere_devoirs,
                     "moyenne_interro" => $moyenne_interro,
                     "moyenne" => $moyenne,
                     "moyenne_coefficie" => $moyenneCoefficie,
 
-                    "moyenne_failble" => 10,
-                    "moyenne_forte" => 18,
+                    "moyenne_faible" => $moyenne_faible,
+                    "moyenne_forte" => $moyenne_forte,
 
-                    "rang" => 3,
+                    "rang" => $rang,
                 ];
             });
+
+            // return $matieres;
 
             $apprenant->matieres = $matieres;
             $apprenant->rang = 3;
@@ -111,6 +157,8 @@ class BulletinController extends Controller
             $pdf = Pdf::loadView("pdfs.bulletins.bulletin", [
                 "apprenant" => $apprenant,
                 "trimestre" => $trimestre,
+                "logo" => $logoPath[1] ?? null,
+                "apprenantProfil" => $apprenantProfilPath[1] ?? null
             ]);
 
             // Set PDF orientation to landscape
@@ -118,8 +166,12 @@ class BulletinController extends Controller
 
             return $pdf->stream();
         } catch (\Exception $e) {
-            Log::debug("Eureure lors de la generation du bulletin", ["error" => $e->getMessage()]);
-            return back()->withErrors(["exception" => $e->getMessage()]);
+            Log::debug("Eureure lors de la generation du bulletin", [
+                "error" => $e->getMessage(),
+                "line" => $e->getLine()
+            ]);
+            return "Eureure lors de la generation du bulletin : " . $e->getMessage();
+            // return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 }

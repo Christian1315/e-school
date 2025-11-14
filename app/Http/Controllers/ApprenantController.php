@@ -356,12 +356,26 @@ class ApprenantController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(Request $request,Apprenant $apprenant)
     {
-        $schools = Apprenant::all();
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$apprenant) {
+                throw new \Exception("Cet apprenant n'existe pas");
+            }
+            $apprenant->delete();
+
+            DB::commit();
+            return redirect()->route("apprenant.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'apprenant", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression de l'apprenant", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

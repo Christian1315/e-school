@@ -201,12 +201,26 @@ class PayementController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(Request $request, Payement $paiement)
     {
-        $schools = Apprenant::all();
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Payement/Create', [
-            'schools' => $schools,
-        ]);
+            if (!$paiement) {
+                throw new \Exception("Ce paiement n'existe pas");
+            }
+            $paiement->delete();
+
+            DB::commit();
+            return redirect()->route("paiement.index");
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression du paiement", ["error" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la suppression du paiement", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

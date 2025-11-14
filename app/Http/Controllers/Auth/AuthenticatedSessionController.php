@@ -31,8 +31,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
+
         try {
-            DB::beginTransaction();
+           DB::beginTransaction();
 
             $request->authenticate();
             $request->session()->regenerate();
@@ -45,13 +46,21 @@ class AuthenticatedSessionController extends Controller
             DB::commit();
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // dd("errorrr Validation");
             DB::rollBack();
             Log::debug("Erreure de Validation: ", ["error" => $e->errors()]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Erreur lors de la tentative de connexion: " . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Une erreur est survenue lors de la tentative de connexion. Veuillez réessayer plus tard.'])->withInput();
+
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            // return redirect('/login');
+            
+            return redirect("/login")->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
 

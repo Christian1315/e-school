@@ -33,9 +33,10 @@ export default function List({ classes }) {
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
-                                    <th scope="col">Ecole</th>
                                     <th scope="col">Libelle</th>
-                                    <th scope="col">SColarité</th>
+                                    <th scope="col">Effectif</th>
+                                    <th scope="col">Scolarité</th>
+                                    <th scope="col">Ecole</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,9 +44,10 @@ export default function List({ classes }) {
                                     classes.data.map((classe, index) => (
                                         <tr key={classe.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td>{classe.school?.raison_sociale ?? '---'}</td>
                                             <td>{classe.libelle}</td>
+                                            <td><span className="badge bg-light border rounded text-dark shadow"> {classe.apprenants.length}</span></td>
                                             <td><span className="badge bg-light text-dark border rounded"> {classe.scolarite ?? '00'} FCFA</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark shadow">{classe.school?.raison_sociale ?? '---'}</span></td>
                                         </tr>
                                     ))
                                 }

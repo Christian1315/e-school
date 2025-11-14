@@ -20,6 +20,7 @@ class ClasseResource extends JsonResource
             "libelle" => $this->libelle,
             "school" => $this->school,
             "scolarite" => $this->scolarite,
+            "apprenants" => $this->apprenants
         ];
     }
 }

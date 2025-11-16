@@ -21,14 +21,13 @@ export default function Create({ schools }) {
         data,
         setData,
         errors,
-        put,
         post,
-        reset,
         processing,
-        progress
     } = useForm({
-        libelle: "",
-        school_id: "",
+        libelle: libelle,
+        classe_id: classe_id,
+        professeur_id: professeur_id,
+        scolarite: scolarite
     });
 
     const submit = (e) => {

@@ -105,6 +105,25 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
+                        {/* professeurs */}
+                        {checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ?
+                            (<CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Professeurs
+                                    </>
+                                }
+                            >
+                                {checkPermission('utilisateur.view') ?
+                                    (<Link href={route('professeur.index')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet text-danger"></span>
+                                        </span>
+                                        Liste des professeurs
+                                    </Link>) : null}
+                            </CNavGroup>) : null
+                        }
+
                         {/* apprenants */}
                         {checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
                             (<CNavGroup

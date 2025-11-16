@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::resource("user", UserController::class);
     Route::post("user/import", [UserController::class, "importUsers"])->name("user.import");
     Route::get("parent", [UserController::class, "parents"])->name("parent.index");
+    Route::get("professeurs", [UserController::class, "professeurs"])->name("professeur.index");
     Route::post("parent/import", [UserController::class, "importParents"])->name("parent.import");
 
     // Apprenants

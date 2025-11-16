@@ -74,6 +74,30 @@ class UserController extends Controller
     }
 
     /**
+     * Professeurs
+     */
+    function professeurs()
+    {
+        $school = Auth::user()->school;
+        if ($school) {
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur" . ' (' . $school->raison_sociale . ')'));
+            $parentsQuery->where("school_id",  $school->id);
+        } else {
+            $schoolsName = School::get()->pluck("raison_sociale");
+            $nameArray = $schoolsName->map(function ($name) {
+                return "Professeur" . ' (' . $name . ')';
+            })->concat(["Professeur"])->toArray();
+
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
+        }
+
+        return Inertia::render('Apprenant/Professeur', [
+            'users' => UserResource::collection($parentsQuery->get()),
+            'roles' => Role::where("id", "!=", 1)->get(),
+        ]);
+    }
+
+    /**
      * Create
      */
     function create(Request $request)

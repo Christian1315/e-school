@@ -45,7 +45,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const [visible, setVisible] = useState(true)
 
     useEffect(() => {
-        const table = new DataTable('#myTable', {
+        const table = new DataTable('#myTable,#modalTable', {
             pagingType: 'full_numbers', // Affiche "First, Prev, Next, Last" + numéros
             responsive: true,
             dom: `

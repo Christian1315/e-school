@@ -7,7 +7,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked, cilWc } from '@coreui/icons'
 import { Link, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 
@@ -110,7 +110,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Professeurs
+                                        <CIcon customClassName="nav-icon text-success" icon={cilWc} /> Les Professeurs
                                     </>
                                 }
                             >

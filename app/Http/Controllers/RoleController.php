@@ -176,12 +176,14 @@ class RoleController extends Controller
      */
     public function updatePermissions(Request $request, $id)
     {
+        // dd("gogoooooo");
         try {
             $role = Role::find($id);
 
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas!");
             }
+
             DB::beginTransaction();
 
             /**
@@ -229,6 +231,7 @@ class RoleController extends Controller
      * Actualisation 
      * des users d'un rôle
      */
+    
     public function updateUsers(Request $request, $id)
     {
         try {

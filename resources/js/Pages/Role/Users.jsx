@@ -59,7 +59,7 @@ export default function List({ role }) {
             },
         });
 
-        patch(route('role.update.users', role.id), {
+        post(route('role.update.users', role.id), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({

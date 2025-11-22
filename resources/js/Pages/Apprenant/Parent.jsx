@@ -154,14 +154,14 @@ export default function List({ users }) {
                         Importation de nouveaux  <em className='text-success'> parents </em>
                     </h2>
 
-                    <p className="alert alert-success">
+                    <div className="alert alert-success">
                         <CIcon className='text-success' icon={cilInfo} />
                         <ol className="">
                             <li className="">Télecharger le modèle</li>
                             <li className="">Remplissez le modèle</li>
                             <li className="">Uploader le fichier remplit</li>
                         </ol>
-                    </p>
+                    </div>
 
                     <div className="my-2">
                         <a

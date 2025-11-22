@@ -83,12 +83,17 @@ Route::middleware('auth')->group(function () {
     Route::resource("school", SchoolController::class);
     Route::post("school/{school}/profile-update", [SchoolController::class, "updateProfil"])->name("school.profile-update");
 
-    // Users
+    //Utilisateurs
     Route::resource("user", UserController::class);
     Route::post("user/import", [UserController::class, "importUsers"])->name("user.import");
+
+    // Parents
     Route::get("parent", [UserController::class, "parents"])->name("parent.index");
-    Route::get("professeurs", [UserController::class, "professeurs"])->name("professeur.index");
     Route::post("parent/import", [UserController::class, "importParents"])->name("parent.import");
+    
+    // Professeurs
+    Route::get("professeur", [UserController::class, "professeurs"])->name("professeur.index");
+    Route::post("professeur/import", [UserController::class, "importProfesseurs"])->name("professeur.import");
 
     // Apprenants
     Route::resource("apprenant", ApprenantController::class);
@@ -126,8 +131,8 @@ Route::middleware('auth')->group(function () {
     Route::get("role/{id}/users", [RoleController::class, 'getUsers'])->name("role.users");
     Route::post("role/affect", [RoleController::class, 'affectRole'])->name("affect.role");
 
-    Route::patch("role/{id}/update-permissions", [RoleController::class, 'updatePermissions'])->name("role.update.permissions");
-    Route::patch("role/{id}/update-users", [RoleController::class, 'updateUsers'])->name("role.update.users");
+    Route::post("role/{id}/update-permissions", [RoleController::class, 'updatePermissions'])->name("role.update.permissions");
+    Route::post("role/{id}/update-users", [RoleController::class, 'updateUsers'])->name("role.update.users");
 });
 
 require __DIR__ . '/auth.php';

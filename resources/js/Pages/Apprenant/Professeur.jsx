@@ -17,7 +17,10 @@ export default function List({ users }) {
     const authUser = usePage().props.auth.user;
 
     const permissions = usePage().props.auth.permissions;
+
     const [showModal, setShowModal] = useState(false)
+    const [showClasseModal, setShowClasseModal] = useState(false)
+    const [currentProf, setCurrentProf] = useState(null)
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -30,6 +33,16 @@ export default function List({ users }) {
 
     const closeModal = () => {
         setShowModal(false);
+    };
+
+    const confirmShowClasseModal = (e, prof) => {
+        e.preventDefault();
+        setShowClasseModal(true);
+        setCurrentProf(prof)
+    }
+
+    const closeClasseModal = () => {
+        setShowClasseModal(false);
     };
 
     const showUserProfile = (user) => {
@@ -60,7 +73,7 @@ export default function List({ users }) {
             },
         });
 
-        post(route('parent.import'), {
+        post(route('professeur.import'), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
@@ -90,17 +103,17 @@ export default function List({ users }) {
                 </h2>
             }
         >
-            <Head title="Les Parents" />
+            <Head title="Les Professeurs" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-                        {/* {checkPermission('utilisateur.create') ?
+                        {checkPermission('utilisateur.create') ?
                             (<div className="items-center gap-4">
                                 <button className="btn btn-sm bg-success bg-hover text-white"
-                                    onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilCloudDownload} /> Importer des parents</button>
+                                    onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilCloudDownload} /> Importer des professeurs</button>
                             </div>) : null
-                        } */}
+                        }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
@@ -110,6 +123,7 @@ export default function List({ users }) {
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email/Phone</th>
+                                    <th scope='col'>Les classes</th>
                                     <th scope="col">Rôles</th>
                                 </tr>
                             </thead>
@@ -130,6 +144,8 @@ export default function List({ users }) {
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
                                             <td>{user.email}/{user.detail?.phone || '---'}</td>
+                                            <td><button className="badge bg-light border rounded text-dark shadow"
+                                                onClick={(e) => confirmShowClasseModal(e, user)}> {classe.professeurs.length} <CIcon icon={cilList} className='text-success' /> </button></td>
                                             <td className='text-center'>
                                                 {
                                                     user.roles?.length > 0 ?
@@ -147,26 +163,66 @@ export default function List({ users }) {
                 </div>
             </div>
 
-            {/*  */}
+            {/* Modal des Classes */}
+            <Modal show={showClasseModal} onClose={closeClasseModal}>
+                {({ tableRef }) =>
+                    <div className="p-3">
+                        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Liste des classes  du professeur: <em className='text-success'>{`${currentProf?.lastname}-${currentProf?.firstname}`} </em>
+                        </h2>
+
+                        <table className="table table-striped min-w-full" id='modalTable' ref={tableRef} >
+                            <thead>
+                                <tr>
+                                    <th scope="col">N°</th>
+                                    <th scope="col">Libelle</th>
+                                    <th scope="col">Scolarité</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    currentProf?.classes.length > 0 ?
+                                        currentProf?.classes.map((classe, index) => (
+                                            <tr key={classe.id}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{`${classe.libelle}`}</td>
+                                                <td>{`${classe.scolarite}`}</td>
+                                            </tr>
+                                        )) :
+                                        <tr className='text-center'>Aucun element trouvé</tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div className="mt-6 flex justify-end">
+                            <SecondaryButton onClick={closeClasseModal}>
+                                Fermer
+                            </SecondaryButton>
+                        </div>
+                    </div>
+                }
+            </Modal>
+
+            {/* Importation modal */}
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Importation de nouveaux  <em className='text-success'> parents </em>
+                        Importation de nouveaux  <em className='text-success'> professeurs </em>
                     </h2>
 
-                    <p className="alert alert-success">
+                    <div className="alert alert-success">
                         <CIcon className='text-success' icon={cilInfo} />
                         <ol className="">
                             <li className="">Télecharger le modèle</li>
                             <li className="">Remplissez le modèle</li>
                             <li className="">Uploader le fichier remplit</li>
                         </ol>
-                    </p>
+                    </div>
 
                     <div className="my-2">
                         <a
                             target="_blank"
-                            href="/parents-model.xlsx"
+                            href="/professeurs-model.xlsx"
                             className="w-100 text-white btn btn-sm bg-success btn-hover"
                         >
                             <CIcon icon={cilCloudDownload} />
@@ -176,17 +232,17 @@ export default function List({ users }) {
 
 
                     <div className="my-2">
-                        <InputLabel htmlFor="parents" value="Les parents en fichier excel" > <span className="text-danger">*</span>  </InputLabel>
+                        <InputLabel htmlFor="professeurs" value="Les professeurs en fichier excel" > <span className="text-danger">*</span>  </InputLabel>
                         <TextInput
                             type="file"
-                            name="parents"
-                            id="parents"
+                            name="professeurs"
+                            id="professeurs"
                             required
                             className='form-control mt-1 block w-full'
-                            onChange={(e) => setData('parents', e.target.files[0])}
+                            onChange={(e) => setData('professeurs', e.target.files[0])}
                         />
 
-                        <InputError className="mt-2" message={errors.parents} />
+                        <InputError className="mt-2" message={errors.professeurs} />
                     </div>
 
                     <div className="mt-6 flex justify-end">

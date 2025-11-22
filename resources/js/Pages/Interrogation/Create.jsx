@@ -75,7 +75,7 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                 </h2>
             }
         >
-            <Head title="Ajouter une classe" />
+            <Head title="Ajouter une interrogation" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">

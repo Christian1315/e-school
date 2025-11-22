@@ -176,7 +176,7 @@ export default function List({ classes }) {
                 </div>
             </div>
 
-             {/* Modal des professeurs */}
+            {/* Modal des professeurs */}
             <Modal show={showProfModal} onClose={closeProfModal}>
                 {({ tableRef }) =>
                     <div className="p-3">

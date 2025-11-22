@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Imports\ParentImport;
+use App\Imports\ProfesseurImport;
 use App\Imports\UsersImport;
 use App\Models\Apprenant;
 use App\Models\Role;
@@ -255,6 +256,44 @@ class UserController extends Controller
     }
 
     /**
+     * Importation des professeurs
+     */
+    function importProfesseurs(Request $request)
+    {
+        try {
+            $request->validate(
+                [
+                    'professeurs' => 'required|file|mimes:xlsx,xls|max:5120',
+                ],
+                [
+                    'professeurs.required' => 'Le fichier est obligatoire.',
+                    'professeurs.file'     => 'Vous devez envoyer un fichier valide.',
+                    'professeurs.mimes'    => 'Le fichier doit être au format : .xlsx ou .xls.',
+                    'professeurs.max'      => 'Le fichier ne doit pas dépasser 5 Mo.',
+                ]
+            );
+
+            $professeurs = $request->file('professeurs');
+
+            DB::beginTransaction();
+
+            Excel::import(new ProfesseurImport, $professeurs);
+
+            DB::commit();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Erreur générale lors de l'import", [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Importation des utilisateurs
      */
     function importUsers(Request $request)
@@ -334,7 +373,7 @@ class UserController extends Controller
                 'school_id'   => 'required|integer',
                 'role_id'   => 'required|integer',
 
-                'email'       => 'required|string|lowercase|email|max:255|unique:users,email,'.$user->id,
+                'email'       => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
                 // 'password'    => ['required', 'confirmed', Rules\Password::defaults()],
 
                 'phone'       => 'required|string',
@@ -378,7 +417,7 @@ class UserController extends Controller
             if ($user->detail) {
                 # code...
                 $user->detail()->update(["phone" => $validated["phone"] ?? null]);
-            }else{
+            } else {
                 $user->detail()->create(["phone" => $validated["phone"] ?? null]);
             }
 

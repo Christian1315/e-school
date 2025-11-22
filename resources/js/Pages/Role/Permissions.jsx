@@ -23,7 +23,7 @@ export default function List({ role, permissions }) {
         'checked': checkPermission(per.name)
     })))
 
-    const { data, setData, processing, patch } = useForm({
+    const { data, setData, processing, post } = useForm({
         name: role.name,
         permissions: ckeckPermissions
     })
@@ -65,7 +65,7 @@ export default function List({ role, permissions }) {
             },
         });
 
-        patch(route('role.update.permissions', role.id), {
+        post(route('role.update.permissions', role.id), {
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },

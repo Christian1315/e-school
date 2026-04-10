@@ -17,13 +17,13 @@ class Interrogation extends Model
      * fillbale
      */
     protected $fillable = [
+        "numero",
         "school_id",
         "apprenant_id",
         "trimestre_id",
         "matiere_id",
         "created_by",
         "updated_by",
-
         "note",
         "is_validated"
     ];
@@ -91,12 +91,9 @@ class Interrogation extends Model
         return $this->belongsTo(User::class, "updated_by");
     }
 
-
-
     /**
      * Boot
      */
-
     static protected function boot()
     {
         parent::boot();
@@ -104,7 +101,12 @@ class Interrogation extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            $model->is_validated = false;
+            $model->school_id = Auth::user()->school_id ?? 1;
+        });
+
+        static::created(function ($model) {
+            $model->numero = "INT-" . date("y-m-d") . "-" . $model->id;
+            $model->saveQuietly();
         });
 
         // updating

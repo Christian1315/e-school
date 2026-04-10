@@ -9,7 +9,7 @@ import { cilSend, cilArrowCircleLeft, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 
-export default function StoreMultiple({ school, trimestre, matiere, classe, apprenants }) {
+export default function StoreMultiple({ trimestre, matiere, classe, apprenants }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -25,7 +25,7 @@ export default function StoreMultiple({ school, trimestre, matiere, classe, appr
         post,
         processing,
     } = useForm({
-        school_id: school.id || "",
+        // school_id: school.id || "",
         apprenant_id: "",
         trimestre_id: trimestre.id || "",
         matiere_id: matiere.id || "",
@@ -131,23 +131,10 @@ export default function StoreMultiple({ school, trimestre, matiere, classe, appr
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
-
-                                            <TextInput
-                                                className="form-control mt-1 block w-full"
-                                                readOnly
-                                                value={school.raison_sociale} />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-                                    </div>
-
                                     {/*  */}
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" >  <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" ></InputLabel>
 
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
@@ -159,7 +146,7 @@ export default function StoreMultiple({ school, trimestre, matiere, classe, appr
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="matiere_id" value="La matière concernée" > </InputLabel>
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
                                                 readOnly
@@ -170,7 +157,7 @@ export default function StoreMultiple({ school, trimestre, matiere, classe, appr
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="classe_id" value="La classe concernée" ></InputLabel>
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
                                                 readOnly

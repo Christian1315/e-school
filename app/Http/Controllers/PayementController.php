@@ -6,7 +6,6 @@ use App\Http\Resources\PayementResource;
 use App\Models\Apprenant;
 use App\Models\Payement;
 use App\Models\School;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +18,7 @@ class PayementController extends Controller
     /**
      * Index
      */
-    function index(Request $request)
+    function index()
     {
         if (Auth::user()->school) {
             $payements = Payement::latest()
@@ -40,6 +39,7 @@ class PayementController extends Controller
     function generateReceit(Payement $paiement)
     {
         try {
+            DB::beginTransaction();
             $paiement->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
 
             $logoPath = explode(env("APP_URL"), $paiement->school->logo);
@@ -56,9 +56,13 @@ class PayementController extends Controller
                 "logo" => $logoPath[1]
             ]);
 
+            // marquer l'inscription comme reçu generé
+            $paiement->update(["receipted" => true]);
+            
             // Set PDF orientation to landscape
             $pdf->setPaper('a4', 'landscape');
 
+            DB::commit();
             return $pdf->stream();
         } catch (\Exception $e) {
             return back()->withErrors(["exception" => $e->getMessage()]);
@@ -68,7 +72,7 @@ class PayementController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         return Inertia::render('Payement/Create', [
             "apprenants" => Auth::user()->school_id ?
@@ -88,22 +92,23 @@ class PayementController extends Controller
         Log::info("Les datas", ["data" => $request->all()]);
         try {
             $validated = $request->validate([
-                "school_id"      => "required|integer",
                 "apprenant_id"      => "required|integer",
                 "montant"      => "required|numeric",
                 "paiement_receit"          => "nullable|file",
+                "annee_scolaire" => "required|integer|min:2000|max:2030",
             ], [
                 "apprenant_id.required"      => "L'apprenant est obligatoire.",
                 "apprenant_id.integer"       => "L'apprenant doit être un identifiant valide.",
-
-                "school_id.required"      => "L'école est obligatoire.",
-                "school_id.integer"       => "L'école doit être un identifiant valide.",
 
                 "montant.required" => "Le montant est obligatoires.",
                 "montant.numeric"  => "Le montant doit être un nombre valide.",
 
                 "paiement_receit.file"             => "Le fichier est invalide",
                 "paiement_receit.max"               => "La photo ne doit pas dépasser 2 Mo.",
+                "annee_scolaire.required" => "L'année scolaire est obligatoire.",
+                "annee_scolaire.integer" => "L'année scolaire doit être un nombre valide.",
+                "annee_scolaire.min" => "L'année scolaire doit être comprise entre 2000 et 2030.",
+                "annee_scolaire.max" => "L'année scolaire doit être comprise entre 2000 et 2030.",
             ]);
 
             DB::beginTransaction();
@@ -126,12 +131,9 @@ class PayementController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request, Payement $paiement)
+    function edit(Payement $paiement)
     {
         try {
-            if (!$paiement) {
-                throw new \Exception("Ce paiement n'existe pas!");
-            }
 
             $paiement->load(["school", "apprenant"]);
 
@@ -201,7 +203,7 @@ class PayementController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request, Payement $paiement)
+    function destroy(Payement $paiement)
     {
         try {
             DB::beginTransaction();

@@ -18,6 +18,7 @@ class InterrogationResource extends JsonResource
         // return parent::toArray($request);
         return [
             "id" => $this->id,
+            "numero" => $this->numero,
             "school" => $this->school,
             "is_validated" => $this->is_validated,
             "apprenant" => $this->apprenant,

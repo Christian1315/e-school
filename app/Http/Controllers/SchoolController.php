@@ -70,13 +70,7 @@ class SchoolController extends Controller
             /**
              * Generation des rôles
              */
-            $defaultRoles = Role::whereNull("school_id")
-                ->where('id', '!=', 1)
-                ->pluck("name");
-
-            $defaultRoles->each(function ($name) use ($school) {
-                $school->roles()->create(["name" => $name . ' (' . $school->raison_sociale . ')']);
-            });
+            $school->roles()->attach(Role::where('id', '!=', 1)->get()->pluck("id")->toArray());
 
             DB::commit();
             return redirect()->route("school.index");
@@ -87,56 +81,6 @@ class SchoolController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::debug("Erreure lors de création de l'école", ["error" => $e->getMessage()]);
-            return back()->withErrors(["exception" => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Modification de l'image
-     */
-    function updateProfil(Request $request, School $school)
-    {
-        Log::debug("Debut de la modification du profil", ["data" => $request->all()]);
-
-        try {
-            DB::beginTransaction();
-
-            if (!$school) {
-                throw new \Exception("Cette école n'existe pas!");
-            }
-
-            $request->validate(
-                [
-                    "logo"          => "required|image|max:2048",
-                ],
-                [
-                    "logo.required"          => "Le logo est obligatoire.",
-                    "logo.image"             => "Le fichier doit être une image (jpeg, png, jpg...).",
-                    "logo.max"               => "Le logo ne doit pas dépasser 2 Mo.",
-                ]
-            );
-
-            $photoPath = $school->handleLogo() ;
-
-            Log::debug("L-url du logo",["url"=>$photoPath]);
-            $school->update(["logo" => $photoPath]);
-
-            DB::commit();
-
-            return redirect()->route("school.index");
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollBack();
-            Log::error("Erreur de validation lors de la modification de l'école", [
-                'erreur' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return back()->withErrors($e->errors());
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Erreur générale lors de la modification de l'école", [
-                'erreur' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
@@ -190,15 +134,6 @@ class SchoolController extends Controller
 
             $school->update($validated);
 
-            /**
-             * Modification des rôles
-             */
-            $roles = $school->roles;
-
-            $roles->each(function ($role) use ($school) {
-                $role->update(["name" => $role->name . ' (' . $school->raison_sociale . ')']);
-            });
-
             DB::commit();
 
             return redirect()
@@ -222,7 +157,6 @@ class SchoolController extends Controller
                 ->withInput();
         }
     }
-
 
     /**
      * Destroy

@@ -1,6 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Modal from '@/Components/Modal';
@@ -32,10 +31,10 @@ export default function List({ inscriptions }) {
 
         setCurrentInscription(inscription)
     };
+
     const closeModal = () => {
         setShowModal(false);
 
-        // clearErrors();
         reset();
     };
 
@@ -63,7 +62,7 @@ export default function List({ inscriptions }) {
                             <strong>le lien</strong> ci-dessous pour le récupérer :
                         </p>
                         <p>
-                            <a target="_blank" href="${route('inscription.generate-receit', { inscription: currentInscription?.id, reste: data.reste })}">
+                            <a target="_blank"  href="${route('inscription.generate-receit', { inscription: currentInscription?.id, reste: data.reste })}">
                             📥 Télécharger le reçu
                             </a>
                         </p>
@@ -141,6 +140,7 @@ export default function List({ inscriptions }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Action</th>
+                                    <th scope="col">Reference</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Numero Educ Master</th>
@@ -154,55 +154,60 @@ export default function List({ inscriptions }) {
                                     inscriptions.data.map((inscription, index) => (
                                         <tr key={inscription.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td>
-                                                <div className="dropstart">
-                                                    <button
-                                                        type="button"
-                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                        data-bs-toggle="dropdown" aria-expanded="false"
-                                                    >
-                                                        <CIcon icon={cilMenu} /> Gérer
-                                                    </button>
-                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+                                            <td className='text-center'>
+                                                {!inscription.receipted ?
+                                                    <>
+                                                        <div className="dropstart">
+                                                            <button
+                                                                type="button"
+                                                                className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                            >
+                                                                <CIcon icon={cilMenu} /> Gérer
+                                                            </button>
+                                                            <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
 
-                                                        {checkPermission('inscription.imprimer.receit') ?
-                                                            (
-                                                                <li>
-                                                                    <Link
-                                                                        className='btn btn-light'
-                                                                        href="#"
-                                                                        onClick={(e) => confirmShowModal(e, inscription)}
+                                                                {checkPermission('inscription.imprimer.receit') ?
+                                                                    (
+                                                                        <li>
+                                                                            <Link
+                                                                                className='btn btn-light'
+                                                                                href="#"
+                                                                                onClick={(e) => confirmShowModal(e, inscription)}
+                                                                            >
+                                                                                <CIcon icon={cilCloudDownload} />  Generer un reçu
+                                                                            </Link>
+                                                                        </li>
+                                                                    ) : null
+                                                                }
+
+                                                                {checkPermission('inscription.edit') ?
+                                                                    (<li><Link
+                                                                        className='btn text-warning'
+                                                                        href={route('inscription.edit', inscription.id)}
                                                                     >
-                                                                        <CIcon icon={cilCloudDownload} />  Generer un reçu
-                                                                    </Link>
-                                                                </li>
-                                                            ) : null
-                                                        }
+                                                                        <CIcon icon={cilPencil} />  Modifier
+                                                                    </Link></li>) : null
+                                                                }
 
-                                                        {checkPermission('inscription.edit') ?
-                                                            (<li><Link
-                                                                className='btn text-warning'
-                                                                href={route('inscription.edit', inscription.id)}
-                                                            >
-                                                                <CIcon icon={cilPencil} />  Modifier
-                                                            </Link></li>) : null
-                                                        }
+                                                                {checkPermission('inscription.delete') ?
+                                                                    (<li><Link
+                                                                        className='btn text-danger'
+                                                                        onClick={(e) => deleteInscription(e, inscription)}
+                                                                    // href={route('school.destroy', school.id)}
+                                                                    >
+                                                                        <CIcon icon={cilDelete} />  Supprimer
+                                                                    </Link></li>) : null
+                                                                }
 
-                                                        {checkPermission('inscription.delete') ?
-                                                            (<li><Link
-                                                                className='btn text-danger'
-                                                                onClick={(e) => deleteInscription(e, inscription)}
-                                                            // href={route('school.destroy', school.id)}
-                                                            >
-                                                                <CIcon icon={cilDelete} />  Supprimer
-                                                            </Link></li>) : null
-                                                        }
-
-                                                    </ul>
-                                                </div>
+                                                            </ul>
+                                                        </div>
+                                                    </> : '---'
+                                                }
                                             </td>
-                                            <td><span className="badge bg-light rounded border text-dark">{inscription?.school?.raison_sociale}</span></td>
-                                            <td>{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</td>
+                                            <td><span className="badge bg-light rounded border text-dark">{inscription.numero}</span></td>
+                                            <td><span className="badge bg-light rounded border text-dark">{inscription?.school?.raison_sociale ?? '---'}</span></td>
+                                            <td><span className="badge bg-light text-dark border rounded shadow"> {`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`} </span></td>
                                             <td>{inscription.numero_educ_master}</td>
                                             <td>
                                                 <a target='__blank'
@@ -233,7 +238,7 @@ export default function List({ inscriptions }) {
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Une fois le reçu generé, un lien vous ai renvoyé via alert! Cliquez dessus pour télécharger le reçu.
+                        Une fois le reçu generé, un lien vous est renvoyé via alert! Cliquez dessus pour télécharger le reçu.
                     </p>
 
                     <div className="mt-6">

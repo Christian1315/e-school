@@ -12,8 +12,6 @@ import Select from 'react-select'
 export default function update({ schools, classes, parents, series, apprenant }) {
     const permissions = usePage().props.auth.permissions;
 
-    console.log("Apprenant concerné :", apprenant)
-
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
@@ -31,6 +29,7 @@ export default function update({ schools, classes, parents, series, apprenant })
         setData,
         errors,
         patch,
+        post,
         processing,
         progress
     } = useForm({
@@ -47,10 +46,8 @@ export default function update({ schools, classes, parents, series, apprenant })
         lieu_naissance: apprenant.lieu_naissance || "",
         sexe: apprenant.sexe || "",
         photo: apprenant.photo || "",
-        educ_master: 'apprenant.educ_master || '
+        educ_master: ''
     });
-
-    console.log("les dats", data)
 
     const submit = (e) => {
         e.preventDefault();
@@ -64,7 +61,9 @@ export default function update({ schools, classes, parents, series, apprenant })
             },
         });
 
-        patch(route('apprenant.update', apprenant.id), {
+        post(route('apprenant.update', apprenant.id, {
+            forceFormData: true,
+        }), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
@@ -234,8 +233,6 @@ export default function update({ schools, classes, parents, series, apprenant })
                                                 id="date_naissance"
                                                 type="date"
                                                 className="mt-1 block w-full"
-                                                // placeholder="01/03/2025"
-                                                // required
                                                 value={data.date_naissance}
                                                 onChange={(e) => setData('date_naissance', e.target.value)}
                                                 autoComplete="date_naissance"
@@ -371,7 +368,7 @@ export default function update({ schools, classes, parents, series, apprenant })
                                             <InputError className="mt-2" message={errors.educ_master} />
                                         </div>
                                     </div>
-                                    {/* <div className="col-12">
+                                    <div className="col-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="photo" value="Photo de l'apprenant" ></InputLabel>
 
@@ -392,7 +389,7 @@ export default function update({ schools, classes, parents, series, apprenant })
 
                                             <InputError className="mt-2" message={errors.photo} />
                                         </div>
-                                    </div> */}
+                                    </div>
                                 </div>
 
 

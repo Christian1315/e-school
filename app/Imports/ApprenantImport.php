@@ -53,16 +53,13 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         $isSerieExiste = isset($row[3]) ?
             Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
 
-        // if (!$isSerieExiste) {
-        //     throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La dérie $row[3] n'existe pas!");
-        // }
 
         /**Parent */
         $parentColumn = explode('-', $row[2]);
         $firstName = isset($parentColumn[0]) ? $parentColumn[0] : null;
         $lastName = isset($parentColumn[1]) ? $parentColumn[1] : null;
 
-        $isParentExiste = User::where("school_id", Auth::user()->school_id)
+        $isParentExiste = User::where("school_id", Auth::user()->school_id ?? 1)
             ->where(["firstname" => $firstName, "lastname" => $lastName])
             ->orWhere(["firstname" => $lastName, "lastname" => $firstName])
             ->first();
@@ -80,7 +77,7 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
             'parent_id' => $isParentExiste?->id,
             'classe_id' => $isClasseExiste?->id,
             'serie_id' => $isSerieExiste?->id,
-            'school_id' => Auth::user()->school_id,
+            'school_id' => Auth::user()->school_id ?? 1,
         ]);
     }
 }

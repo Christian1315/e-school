@@ -144,6 +144,8 @@ export default function List({ payements }) {
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
                                     <th scope="col">Montant versé</th>
+                                    <th scope="col">Date de paiement </th>
+                                    <th scope="col">Année scolaire</th>
                                     <th scope="col">Inséré par</th>
                                 </tr>
                             </thead>
@@ -153,6 +155,7 @@ export default function List({ payements }) {
                                         <tr key={paiement.id}>
                                             <th scope="row">{index + 1}</th>
                                             <td>
+                                                {!paiement.receipted?
                                                 <div className="dropstart">
                                                     <button
                                                         type="button"
@@ -196,14 +199,16 @@ export default function List({ payements }) {
                                                         }
 
                                                     </ul>
-                                                </div>
+                                                </div>: '---'
+                                                }
                                             </td>
                                             <td className="text-center"><span className="badge bg-light border rounded text-dark">{paiement.numero}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{paiement.date_paiement}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{paiement.annee_scolaire}</span></td>
                                             <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
-
                                         </tr>
                                     ))
                                 }

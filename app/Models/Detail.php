@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Detail extends Model
 {
@@ -39,6 +40,7 @@ class Detail extends Model
         $photoPath = null;
         $request = request();
 
+        Log::debug("Les datas du detail : ", $request->all());
         if ($request->hasFile('profile_img')) {
             $file = $request->file('profile_img');
             $name = time() . '_' . $file->getClientOriginalName();
@@ -63,10 +65,19 @@ class Detail extends Model
 
         static::created(function ($model) {
             $model->created_by = Auth::id();
+            $model->profile_img = $model->handlePhoto();
+            $model->saveQuietly();
         });
 
         static::updated(function ($model) {
             $model->updated_by = Auth::id();
+
+            if (request()->hasFile('profile_img')) {
+                $model->profile_img = $model->handlePhoto();
+            } else {
+                unset($model->profile_img);
+            }
+            $model->saveQuietly();
         });
     }
 }

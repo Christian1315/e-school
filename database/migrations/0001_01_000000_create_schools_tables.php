@@ -21,10 +21,11 @@ return new class extends Migration
 
             $table->string('slogan')->nullable();
             $table->string('description')->nullable();
-            
+
             $table->string('ifu')->nullable();
             $table->string('rccm')->nullable();
             $table->boolean('statut')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

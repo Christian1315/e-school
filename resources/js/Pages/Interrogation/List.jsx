@@ -13,7 +13,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
 export default function List({ interrogations, schools, trimestres, matieres, classes }) {
-    const permissions = usePage().props.auth.permissions;
+    const auth = usePage().props.auth;
+    const permissions = auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -37,9 +38,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     const [classe, setClasse] = useState(false);
     const [_classes, setClasses] = useState(classes.data);
 
+    const [selectedSchool, setSelectedSchool] = useState({})
+
 
     const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
-        school_id: "",
+        // school_id: "",
         trimestre_id: "",
         classe_id: "",
         matiere_id: "",
@@ -48,24 +51,30 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
 
     // Fields handling
     const changeSchool = (option) => {
-        setData('school_id', option.value)
+        // setData('school_id', option.value)
 
         const selectedSchool = schools.data.find((s) => s.id === option.value);
         console.log("École sélectionnée :", selectedSchool);
 
+        setSelectedSchool(selectedSchool)
+
         // Access trimestres directly
-        console.log("Trimestres :", selectedSchool.trimestres);
-        console.log("Matières :", selectedSchool.matieres);
-        console.log("Classes :", selectedSchool.classes);
+        console.log("Trimestres :", trimestres.data);
+        console.log("Matières :", matieres.data);
+        console.log("Classes :", classes.data);
 
-        setTrimestres(selectedSchool.trimestres)
-        setTrimestre(true)
+        // setTrimestres(selectedSchool.trimestres ?? trimestres.data)
+        // setTrimestre(true)
 
-        setMatieres(selectedSchool.matieres)
-        setMatiere(true)
+        // setMatieres(selectedSchool.matieres ?? matieres.data)
+        // setMatiere(true)
 
-        setClasses(selectedSchool.classes)
-        setClasse(true)
+        // setClasses(selectedSchool.classes ?? classes.data)
+        // setClasse(true)
+
+        console.log("Trimestres après sélection :", trimestre, _trimestres);
+        console.log("Matières après sélection :", matiere, _matieres);
+        console.log("Classes après sélection :", classe, _classes);
     }
 
     // validation d'une intérrogation
@@ -118,24 +127,26 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
         console.log("Finals dats to send :", interroscheckeds)
     }, [interros])
 
-    const checkedLine = (index, e, interrogation) => {
-        e.preventDefault();
-
-        let updated = [...interros]
-        if (e.target.checked) {
-            updated[index].checked = true
-            console.log("updated true....: ", updated)
-            setInterros(updated)
-        } else {
-            updated[index].checked = false
-            console.log("updated false....: ", updated)
-            setInterros(updated)
-        }
+    const checkedLine = (index, e) => {
+        const updated = interros.map((interro, i) =>
+            i === index ? { ...interro, checked: e.target.checked } : interro
+        );
+        setInterros(updated);
     }
 
     // validation des interrogations selectionnées
     const validate = (e) => {
         e.preventDefault()
+
+        if (data.interroscheckeds.length <= 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Aucune interrogation sélectionnée',
+                text: 'Veuillez sélectionner au moins une interrogation à valider.'
+            });
+            return;
+        }
+
         Swal.fire({
             title: 'Opération en cours...',
             text: 'Veuillez patienter pendant que nous traitons vos données.',
@@ -249,7 +260,6 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
             <Head title="Les Interrogations d'écoles" />
 
             <div className="row py-12 justify-content-center">
-
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('interrogation.create') ?
@@ -266,7 +276,9 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                 <thead>
                                     <tr>
                                         <th scope="col">N°</th>
+                                        <th scope='col'>Validée</th>
                                         <th scope='col'>Action</th>
+                                        <th scope='col'>Reference</th>
                                         <th scope='col'>Statut</th>
                                         <th scope="col">Ecole</th>
                                         <th scope="col">Apprenant</th>
@@ -280,17 +292,19 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                     {
                                         interrogations.data.map((interrogation, index) => (
                                             <tr key={interrogation.id} className={`bg-${interrogation.is_validated ? 'success' : 'danger'}`}>
+                                                <th>
+                                                    <span className="badge bg-light text-dark border rounded shadow">{index + 1}</span>
+                                                </th>
                                                 <th scope="row">
-                                                    {index + 1}
-
                                                     {
                                                         checkPermission('interrogation.edit') ?
                                                             (
                                                                 !interrogation.is_validated ?
                                                                     <TextInput
                                                                         type="checkbox"
-                                                                        className="form-control mt-1 block w-full"
-                                                                        onChange={(e) => checkedLine(index, e, interrogation)} /> : null
+                                                                        className=" mt-1 block _w-full"
+                                                                        checked={interros[index]?.checked || false}
+                                                                        onChange={(e) => checkedLine(index, e)} /> : '---'
                                                             ) : null
                                                     }
                                                 </th>
@@ -340,6 +354,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                             </div> : '--'
                                                     }
                                                 </td>
+                                                <td> <span className="badge bg-light text-dark border rounded shadow">{interrogation.numero ?? '---'}</span> </td>
                                                 <td>
                                                     <span
                                                         className={`btn btn-sm badge bg-${interrogation.is_validated ? 'success' : 'danger'} border rounded text-light`}
@@ -355,7 +370,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                         )}
                                                     </span>
                                                 </td>
-                                                <td>{interrogation.school?.raison_sociale ?? '---'}</td>
+                                                <td><span className="badge bg-light text-dark border rounded"> {interrogation.school?.raison_sociale ?? '---'}</span></td>
                                                 <td>{`${interrogation.apprenant?.firstname} - ${interrogation.apprenant?.lastname}`}</td>
                                                 <td>{interrogation.trimestre?.libelle}</td>
                                                 <td>{interrogation.matiere?.libelle}</td>
@@ -388,36 +403,39 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                     </h2>
 
                     <div className="row">
-                        <div className="col-md-12">
-                            <div className='mb-3'>
-                                <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+                        {!auth.school_id &&
+                            <div className="col-md-12">
+                                <div className='mb-3'>
+                                    <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                <Select
-                                    placeholder="Rechercher une école ..."
-                                    name="school_id"
-                                    id="school_id"
-                                    required
-                                    className="form-control mt-1 block w-full"
-                                    options={schools.data.map((school) => ({
-                                        value: school.id,
-                                        label: `${school.raison_sociale}`,
-                                    }))}
-                                    value={schools.data.map((school) => ({
-                                        value: school.id,
-                                        label: `${school.raison_sociale}`,
-                                        trimestres: school.trimestres
-                                    }))
-                                        .find((option) => option.value === data.school_id)} // set selected option
-                                    onChange={(option) => changeSchool(option)} // update state with id
-                                />
+                                    <Select
+                                        placeholder="Rechercher une école ..."
+                                        name="school_id"
+                                        id="school_id"
+                                        // required
+                                        className="form-control mt-1 block w-full"
+                                        cleanable
+                                        options={schools?.data.map((school) => ({
+                                            value: school.id,
+                                            label: `${school.raison_sociale}`,
+                                        }))}
+                                        value={schools.data.map((school) => ({
+                                            value: school.id,
+                                            label: `${school.raison_sociale}`,
+                                            trimestres: school.trimestres
+                                        }))
+                                            .find((option) => option.value === data.school_id)} // set selected option
+                                        onChange={(option) => changeSchool(option)} // update state with id
+                                    />
 
-                                <InputError className="mt-2" message={errors.school_id} />
+                                    <InputError className="mt-2" message={errors.school_id} />
+                                </div>
                             </div>
-                        </div>
+                        }
 
                         {/* Trimestre */}
                         {
-                            trimestre && _trimestres.length > 0 &&
+                            (selectedSchool.trimestres ?? trimestres.data).length > 0 &&
                             <div className="col-md-12">
                                 <div className='mb-3'>
                                     <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" >  <span className="text-danger">*</span> </InputLabel>
@@ -428,11 +446,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         id="trimestre_id"
                                         required
                                         className="form-control mt-1 block w-full"
-                                        options={_trimestres.map((trimestre) => ({
+                                        options={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
                                             label: `${trimestre.libelle}`,
                                         }))}
-                                        value={_trimestres.map((trimestre) => ({
+                                        value={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
                                             label: `${trimestre.libelle}`,
                                         }))
@@ -447,64 +465,61 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
 
                         {/* Matière */}
                         {
-                            matiere && _matieres.length > 0 && (
-                                <div className="col-md-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
+                            (selectedSchool.matieres ?? matieres.data).length > 0 &&
+                            <div className="col-md-12">
+                                <div className='mb-3'>
+                                    <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                        <Select
-                                            placeholder="Rechercher une matière ..."
-                                            name="matiere_id"
-                                            id="matiere_id"
-                                            required
-                                            className="form-control mt-1 block w-full"
-                                            options={_matieres.map((matiere) => ({
-                                                value: matiere.id,
-                                                label: `${matiere.libelle}`,
-                                            }))}
-                                            value={_matieres.map((matiere) => ({
-                                                value: matiere.id,
-                                                label: `${matiere.libelle}`,
-                                            }))
-                                                .find((option) => option.value === data.matiere_id)} // set selected option
-                                            onChange={(option) => setData('matiere_id', option.value)} // update state with id
-                                        />
+                                    <Select
+                                        placeholder="Rechercher une matière ..."
+                                        name="matiere_id"
+                                        id="matiere_id"
+                                        required
+                                        className="form-control mt-1 block w-full"
+                                        options={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
+                                            value: matiere.id,
+                                            label: `${matiere.libelle}`,
+                                        }))}
+                                        value={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
+                                            value: matiere.id,
+                                            label: `${matiere.libelle}`,
+                                        }))
+                                            .find((option) => option.value === data.matiere_id)} // set selected option
+                                        onChange={(option) => setData('matiere_id', option.value)} // update state with id
+                                    />
 
-                                        <InputError className="mt-2" message={errors.matiere_id} />
-                                    </div>
+                                    <InputError className="mt-2" message={errors.matiere_id} />
                                 </div>
-                            )
+                            </div>
                         }
 
                         {/* Les classes */}
-                        {
-                            classe && _classes.length > 0 && (
-                                <div className="col-md-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
+                        {(selectedSchool.classes ?? classes.data).length > 0 &&
+                            <div className="col-md-12">
+                                <div className='mb-3'>
+                                    <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                        <Select
-                                            placeholder="Rechercher une classe ..."
-                                            name="classe_id"
-                                            id="classe_id"
-                                            required
-                                            className="form-control mt-1 block w-full"
-                                            options={_classes.map((classe) => ({
-                                                value: classe.id,
-                                                label: `${classe.libelle}`,
-                                            }))}
-                                            value={_classes.map((classe) => ({
-                                                value: classe.id,
-                                                label: `${classe.libelle}`,
-                                            }))
-                                                .find((option) => option.value === data.classe_id)} // set selected option
-                                            onChange={(option) => setData('classe_id', option.value)} // update state with id
-                                        />
+                                    <Select
+                                        placeholder="Rechercher une classe ..."
+                                        name="classe_id"
+                                        id="classe_id"
+                                        required
+                                        className="form-control mt-1 block w-full"
+                                        options={(selectedSchool.classes ?? classes.data).map((classe) => ({
+                                            value: classe.id,
+                                            label: `${classe.libelle}`,
+                                        }))}
+                                        value={(selectedSchool.classes ?? classes.data).map((classe) => ({
+                                            value: classe.id,
+                                            label: `${classe.libelle}`,
+                                        }))
+                                            .find((option) => option.value === data.classe_id)} // set selected option
+                                        onChange={(option) => setData('classe_id', option.value)} // update state with id
+                                    />
 
-                                        <InputError className="mt-2" message={errors.classe_id} />
-                                    </div>
+                                    <InputError className="mt-2" message={errors.classe_id} />
                                 </div>
-                            )
+                            </div>
                         }
                     </div>
 

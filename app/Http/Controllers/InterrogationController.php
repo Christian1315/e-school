@@ -33,7 +33,7 @@ class InterrogationController extends Controller
                 ->where("school_id", Auth::user()->school_id)->get();
 
             // 
-            $schools = School::with("trimestres")->latest()
+            $schools = School::latest()
                 ->where("id", Auth::user()->school_id)->get();
 
             $apprenants = Apprenant::latest()
@@ -51,7 +51,7 @@ class InterrogationController extends Controller
             $interrogations = Interrogation::orderByDesc("id")->get();
 
             // 
-            $schools = School::with("trimestres")->latest()->get();
+            $schools = School::latest()->get();
 
             $apprenants = Apprenant::latest()->get();
 
@@ -61,7 +61,6 @@ class InterrogationController extends Controller
             $classes = Classe::latest()->get();
         }
 
-        // return SchoolResource::collection($schools);
         return Inertia::render("Interrogation/List", [
             "interrogations" => InterrogationResource::collection($interrogations),
             "schools" => SchoolResource::collection($schools),
@@ -75,12 +74,9 @@ class InterrogationController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         if (Auth::user()->school) {
-            $schools = School::latest()
-                ->where("id", Auth::user()->school_id)->get();
-
             $apprenants = Apprenant::latest()
                 ->where("school_id", Auth::user()->school_id)->get();
 
@@ -90,8 +86,6 @@ class InterrogationController extends Controller
             $matieres = Matiere::latest()
                 ->where("school_id", Auth::user()->school_id)->get();
         } else {
-            $schools = School::latest()->get();
-
             $apprenants = Apprenant::latest()->get();
 
             $trimestres = Trimestre::latest()->get();
@@ -100,7 +94,6 @@ class InterrogationController extends Controller
         }
 
         return Inertia::render('Interrogation/Create', [
-            "schools" => SchoolResource::collection($schools),
             "apprenants" => ApprenantResource::collection($apprenants),
             "trimestres" => TrimestreResource::collection($trimestres),
             "matieres" => MatiereResource::collection($matieres),
@@ -118,14 +111,11 @@ class InterrogationController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id"     => "required|integer",
                 "apprenant_id"  => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "note"          => "required|numeric",
             ], [
-                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
 
                 "apprenant_id.required" => "L'identifiant de l'apprenant est obligatoire.",
                 "apprenant_id.integer"  => "L'identifiant de l'apprenant doit être un nombre entier.",
@@ -168,13 +158,13 @@ class InterrogationController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $request->validate([
-                "school_id"     => "required|integer",
+                // "school_id"     => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
             ], [
-                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
+                // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
+                // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
 
                 "classe_id.required" => "La classe doit être obligatoire.",
                 "classe_id.integer"  => "La classe doit  être un nombre entier.",
@@ -196,7 +186,7 @@ class InterrogationController extends Controller
             }
 
             return Inertia::render("Interrogation/StoreMultiple", [
-                "school" => School::find($request->school_id),
+                // "school" => School::find($request->school_id),
                 "trimestre" => Trimestre::find($request->trimestre_id),
                 "matiere" => Matiere::find($request->matiere_id),
                 "classe" => Classe::find($request->classe_id),
@@ -220,7 +210,7 @@ class InterrogationController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id"     => "required|integer",
+                // "school_id"     => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
@@ -228,8 +218,8 @@ class InterrogationController extends Controller
                 "apprenants*apprenant_id" => "required|integer",
                 "apprenants*note" => "required|numeric",
             ], [
-                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
+                // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
+                // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
 
                 "classe_id.required" => "La classe doit être obligatoire.",
                 "classe_id.integer"  => "La classe doit  être un nombre entier.",
@@ -245,7 +235,7 @@ class InterrogationController extends Controller
             foreach ($request->apprenants as $ligne) {
                 Interrogation::create([
                     "apprenant_id" => $ligne["id"],
-                    "school_id" => $validated["school_id"],
+                    // "school_id" => $validated["school_id"],
                     "trimestre_id" => $validated["trimestre_id"],
                     "matiere_id" => $validated["matiere_id"],
                     "classe_id" => $validated["classe_id"],
@@ -269,7 +259,7 @@ class InterrogationController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request, Interrogation $interrogation)
+    function edit(Interrogation $interrogation)
     {
         try {
             if (!$interrogation) {
@@ -279,8 +269,6 @@ class InterrogationController extends Controller
             $interrogation->load(["apprenant"]);
 
             if (Auth::user()->school) {
-                $schools = School::latest()
-                    ->where("id", Auth::user()->school_id)->get();
 
                 $apprenants = Apprenant::latest()
                     ->where("school_id", Auth::user()->school_id)->get();
@@ -291,7 +279,6 @@ class InterrogationController extends Controller
                 $matieres = Matiere::latest()
                     ->where("school_id", Auth::user()->school_id)->get();
             } else {
-                $schools = School::latest()->get();
 
                 $apprenants = Apprenant::latest()->get();
 
@@ -301,7 +288,6 @@ class InterrogationController extends Controller
             }
 
             return Inertia::render('Interrogation/Update', [
-                "schools" => SchoolResource::collection($schools),
                 "apprenants" => ApprenantResource::collection($apprenants),
                 "trimestres" => TrimestreResource::collection($trimestres),
                 "matieres" => MatiereResource::collection($matieres),
@@ -314,7 +300,7 @@ class InterrogationController extends Controller
     }
 
     /**Valider une interrogation */
-    function validate(Request $request, Interrogation $interrogation)
+    function validate(Interrogation $interrogation)
     {
         try {
             DB::beginTransaction();
@@ -418,7 +404,7 @@ class InterrogationController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request, Interrogation $interrogation)
+    function destroy(Interrogation $interrogation)
     {
         try {
             DB::beginTransaction();

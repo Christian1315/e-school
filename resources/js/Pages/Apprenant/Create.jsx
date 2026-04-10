@@ -9,7 +9,7 @@ import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Create({ parents, classes, schools, series }) {
+export default function Create({ parents, classes, series }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -26,7 +26,6 @@ export default function Create({ parents, classes, schools, series }) {
         processing,
         progress
     } = useForm({
-        parent_id: "",
         school_id: "",
         classe_id: "",
         serie_id: "",
@@ -39,7 +38,7 @@ export default function Create({ parents, classes, schools, series }) {
         lieu_naissance: "",
         sexe: "",
         photo: "",
-        educ_master:''
+        educ_master: ''
     });
 
     const submit = (e) => {
@@ -125,30 +124,6 @@ export default function Create({ parents, classes, schools, series }) {
                                             <InputError className="mt-2" message={errors.parent_id} />
                                         </div>
 
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools
-                                                    .map((school) => ({
-                                                        value: school.id,
-                                                        label: `${school.raison_sociale}`,
-                                                    }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
 
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="classe_id" value="Classe concernée" >  <span className="text-danger">*</span> </InputLabel>
@@ -218,6 +193,22 @@ export default function Create({ parents, classes, schools, series }) {
                                         </div>
 
                                         <div className='mb-3'>
+                                            <InputLabel htmlFor="lastname" value="Prénom" > <span className="text-danger">*</span></InputLabel>
+                                            <TextInput
+                                                id="lastname"
+                                                type="text"
+                                                className="mt-1 block w-full"
+                                                placeholder="Do"
+                                                value={data.lastname}
+                                                onChange={(e) => setData('lastname', e.target.value)}
+                                                required
+                                                autoComplete="lastname"
+                                            />
+
+                                            <InputError className="mt-2" message={errors.lastname} />
+                                        </div>
+
+                                        <div className='mb-3'>
                                             <InputLabel htmlFor="date_naissance" value="Date de naissance" />
 
                                             <TextInput
@@ -234,23 +225,9 @@ export default function Create({ parents, classes, schools, series }) {
                                             <InputError className="mt-2" message={errors.date_naissance} />
                                         </div>
 
+
                                     </div>
                                     <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="lastname" value="Prénom" > <span className="text-danger">*</span></InputLabel>
-                                            <TextInput
-                                                id="lastname"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                placeholder="Do"
-                                                value={data.lastname}
-                                                onChange={(e) => setData('lastname', e.target.value)}
-                                                required
-                                                autoComplete="lastname"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.lastname} />
-                                        </div>
 
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="adresse" value="Adresse" > <span className="text-danger">*</span></InputLabel>
@@ -345,24 +322,6 @@ export default function Create({ parents, classes, schools, series }) {
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="educ_master" value="N° EducMaster" ></InputLabel>
-
-                                            <TextInput
-                                                id="educ_master"
-                                                type="text"
-                                                className="mt-1 block w-full"
-                                                value={data.educ_master}
-                                                placeholder="##65TU7656"
-                                                // required
-                                                onChange={(e) => setData('educ_master', e.target.value)}
-                                                autoComplete="educ_master"
-                                            />
-
-                                            <InputError className="mt-2" message={errors.educ_master} />
-                                        </div>
-                                    </div>
-                                    <div className="col-12">
-                                        <div className='mb-3'>
                                             <InputLabel htmlFor="photo" value="Photo de l'apprenant" ></InputLabel>
 
                                             <TextInput
@@ -382,7 +341,25 @@ export default function Create({ parents, classes, schools, series }) {
 
                                             <InputError className="mt-2" message={errors.photo} />
                                         </div>
+
                                     </div>
+                                </div>
+
+                                <div className='mb-3 col-md-12'>
+                                    <InputLabel htmlFor="educ_master" value="N° EducMaster" ></InputLabel>
+
+                                    <TextInput
+                                        id="educ_master"
+                                        type="text"
+                                        className="mt-1 block w-full"
+                                        value={data.educ_master}
+                                        placeholder="##65TU7656"
+                                        // required
+                                        onChange={(e) => setData('educ_master', e.target.value)}
+                                        autoComplete="educ_master"
+                                    />
+
+                                    <InputError className="mt-2" message={errors.educ_master} />
                                 </div>
 
 

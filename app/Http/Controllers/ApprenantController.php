@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApprenantResource;
-use App\Http\Resources\UserResource;
 use App\Imports\ApprenantImport;
 use App\Models\Apprenant;
 use App\Models\Classe;
-use App\Models\Role;
 use App\Models\School;
 use App\Models\Serie;
 use App\Models\User;
@@ -23,7 +21,7 @@ class ApprenantController extends Controller
     /**
      * Index
      */
-    function index(Request $request)
+    function index()
     {
         if (Auth::user()->school) {
             $apprenants = Apprenant::latest()
@@ -40,7 +38,7 @@ class ApprenantController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         $parentsQuery = User::query();
         $classesQuery = Classe::query();
@@ -52,20 +50,13 @@ class ApprenantController extends Controller
             $seriesQuery->where('school_id', Auth::user()->school_id);
         }
 
-        $parents = $parentsQuery->whereHas('roles', function ($query) {
-            if (Auth::user()->school_id) {
-                $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
-            } else {
+        $parents = $parentsQuery
+            ->whereHas('roles', function ($query) {
                 $query->where('name', 'Parent');
-            }
-        })->get();
+            })->get();
 
         return Inertia::render('Apprenant/Create', [
             "parents" => $parents,
-
-            "schools" => Auth::user()->school_id ?
-                School::where("id", Auth::user()->school_id)->get() :
-                School::all(),
             "classes" => $classesQuery->get(),
             "series" => $seriesQuery->get(),
         ]);
@@ -123,7 +114,7 @@ class ApprenantController extends Controller
         try {
             $validated = $request->validate([
                 "parent_id"      => "required|integer",
-                "school_id"      => "required|integer",
+                // "school_id"      => "required|integer",
                 "classe_id"      => "nullable|integer",
                 "serie_id"      => "nullable|integer",
                 "firstname"      => "required|string",
@@ -140,8 +131,8 @@ class ApprenantController extends Controller
                 "parent_id.required"      => "Le parent est obligatoire.",
                 "parent_id.integer"       => "Le parent doit être un identifiant valide.",
 
-                "school_id.required"      => "L'école est obligatoire.",
-                "school_id.integer"       => "L'école doit être un identifiant valide.",
+                // "school_id.required"      => "L'école est obligatoire.",
+                // "school_id.integer"       => "L'école doit être un identifiant valide.",
 
                 "classe_id.required"      => "La classe est obligatoire.",
                 "classe_id.integer"       => "La classe doit être un identifiant valide.",
@@ -190,56 +181,6 @@ class ApprenantController extends Controller
     }
 
     /**
-     * Modification de l'image
-     */
-    function updateProfil(Request $request, Apprenant $apprenant)
-    {
-        Log::debug("Debut de la modification du profil", ["data" => $request->all()]);
-
-        // dd($apprenant);
-        try {
-            DB::beginTransaction();
-
-            if (!$apprenant) {
-                throw new \Exception("Cet apprenant n'existe pas!");
-            }
-
-            $request->validate(
-                [
-                    "photo"          => "required|image|max:2048",
-                ],
-                [
-                    "photo.required"          => "La photo est obligatoire.",
-                    "photo.image"             => "Le fichier doit être une image (jpeg, png, jpg...).",
-                    "photo.max"               => "La photo ne doit pas dépasser 2 Mo.",
-                ]
-            );
-
-            $urlPath = $apprenant->handlePhoto();
-            // dd($urlPath);
-            $apprenant->update(["photo" => $urlPath]);
-
-            DB::commit();
-
-            return redirect()->route("apprenant.index");
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollBack();
-            Log::error("Erreur de validation lors de la modification du profil", [
-                'erreur' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return back()->withErrors($e->errors());
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Erreur générale lors de la modification du profil", [
-                'erreur' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return back()->withErrors(["exception" => $e->getMessage()]);
-        }
-    }
-
-    /**
      * Edit
      */
     function edit(Request $request, Apprenant $apprenant)
@@ -255,13 +196,10 @@ class ApprenantController extends Controller
             $seriesQuery->where('school_id', Auth::user()->school_id);
         }
 
-        $parents = $parentsQuery->whereHas('roles', function ($query) {
-            if (Auth::user()->school_id) {
-                $query->where('name', "Parent" . ' (' . Auth::user()->school->raison_sociale . ')');
-            } else {
+        $parents = $parentsQuery
+            ->whereHas('roles', function ($query) {
                 $query->where('name', 'Parent');
-            }
-        })->get();
+            })->get();
 
         return Inertia::render('Apprenant/Update', [
             "parents" => $parents,
@@ -356,7 +294,7 @@ class ApprenantController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request,Apprenant $apprenant)
+    function destroy(Request $request, Apprenant $apprenant)
     {
         try {
             DB::beginTransaction();

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class Payement extends Model
 {
@@ -28,6 +27,10 @@ class Payement extends Model
 
         "montant",
         "paiement_receit",
+
+        'receipted',
+        'date_paiement',
+        'annee_scolaire',
     ];
 
     /**
@@ -35,6 +38,10 @@ class Payement extends Model
      */
     protected $casts = [
         "numero" => 'string',
+
+        "receipted" => "boolean",
+        "date_paiement" => "date",
+        "annee_scolaire" => "string",
 
         "school_id"      => "integer",
         "apprenant_id"      => "integer",
@@ -109,16 +116,15 @@ class Payement extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            // $model->school_id = Auth::user()->school_id;
+            $model->school_id = Auth::user()->school_id ?? 1;
         });
 
         // 
         static::created(function ($model) {
-            $model->numero = "000" . $model->id;
+            $model->numero = "PAY-" . date("y-m-d") . '-' . $model->id;
             // Save once, no update inside update loop
             $model->saveQuietly(); // avoids triggering events again
         });
-
 
         // updating
         static::updating(function ($model) {

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payements', function (Blueprint $table) {
             $table->id();
             $table->string("numero")->nullable();
+            $table->boolean("receipted")->default(false);
             $table->foreignId('school_id')
                 ->nullable()
                 ->constrained('schools')
@@ -38,6 +39,8 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->date("date_paiement")->nullable();
+            $table->string("annee_scolaire")->nullable();
             $table->decimal('montant', 10, 2)->nullable();
             $table->string("paiement_receit")->nullable();
             $table->softDeletes();

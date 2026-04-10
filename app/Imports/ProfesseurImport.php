@@ -47,8 +47,8 @@ class ProfesseurImport implements OnEachRow, WithSkipDuplicates
             'firstname' => $rowData[0],
             'lastname' => $rowData[1],
             'email' => $rowData[2],
-            'password' => Hash::make($rowData[0] . "@2025"),
-            'school_id' => Auth::user()->school_id,
+            'password' => Hash::make($rowData[2]),
+            'school_id' => Auth::user()->school_id ?? 1,
         ]);
 
         /**
@@ -59,25 +59,21 @@ class ProfesseurImport implements OnEachRow, WithSkipDuplicates
 
         $school = Auth::user()->school;
 
-        /**
-         * Affectation de role
-         */
-        $roleName = $school ? "Professeur" . ' (' . $school->raison_sociale . ')' : 'Parent';
-        $role = Role::firstWhere(["name" => $roleName]);
-        if (!$role) {
-            throw new \Exception("Le rôle professeur n'existe pas");
-        }
+        
+        // On cherche le role Professeur qui se trouve dans l'école concerné
+        $school = $user->school->load("roles");
+        if ($parentRole = $school->roles->firstWhere("name", "Professeur")) {
+            /**
+             *  On supprime tous les anciens liens et on garde seulement ceux envoyés
+             * */
+            DB::table('model_has_roles')
+                ->where('model_id', $user->id)
+                ->delete();
 
-        /**
-         *  On supprime tous les anciens liens et on garde seulement ceux envoyés
-         * */
-        DB::table('model_has_roles')
-            ->where('model_id', $user->id)
-            ->delete();
-
-        /**
-         * Affectation
-         */
-        $user->assignRole($roleName);
+            /**
+             * Affectation
+             */
+            $user->assignRole($parentRole);
+        };
     }
 }

@@ -40,6 +40,12 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le mail $row[2] existe déjà!");
         }
 
+        if ($row[2]) {
+            if (!filter_var($row[2], FILTER_VALIDATE_EMAIL)) {
+                throw new \Exception("Erreur de validation de la ligne: $rowIndex . Le format de l'email $row[2] est invalide!");
+            }
+        }
+
         /**
          * Creation du user
          */
@@ -47,8 +53,8 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             'firstname' => $rowData[0],
             'lastname' => $rowData[1],
             'email' => $rowData[2],
-            'password' => Hash::make($rowData[0] . "@2025"),
-            'school_id' => Auth::user()->school_id,
+            'password' => Hash::make($rowData[2]),
+            'school_id' => Auth::user()->school_id ?? 1,
         ]);
 
         /**
@@ -57,27 +63,21 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         $user->detail()
             ->create(["phone" => $row[3] ?? null]);
 
-        $school = Auth::user()->school;
 
-        /**
-         * Affectation de role
-         */
-        $roleName = $school ? "Parent" . ' (' . $school->raison_sociale . ')' : 'Parent';
-        $role = Role::firstWhere(["name" => $roleName]);
-        if (!$role) {
-            throw new \Exception("Le rôle parent n'existe pas");
-        }
+        // On cherche le role parent qui se trouve dans l'école concerné
+        $school = $user->school->load("roles");
+        if ($parentRole = $school->roles->firstWhere("name", "Parent")) {
+            /**
+             *  On supprime tous les anciens liens et on garde seulement ceux envoyés
+             * */
+            DB::table('model_has_roles')
+                ->where('model_id', $user->id)
+                ->delete();
 
-        /**
-         *  On supprime tous les anciens liens et on garde seulement ceux envoyés
-         * */
-        DB::table('model_has_roles')
-            ->where('model_id', $user->id)
-            ->delete();
-
-        /**
-         * Affectation
-         */
-        $user->assignRole($roleName);
+            /**
+             * Affectation
+             */
+            $user->assignRole($parentRole);
+        };
     }
 }

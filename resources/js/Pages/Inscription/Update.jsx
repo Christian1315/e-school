@@ -9,7 +9,7 @@ import { cilSend, cilArrowCircleLeft, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Create({ apprenants, schools, inscription }) {
+export default function Create({ apprenants, inscription }) {
     const permissions = usePage().props.auth.permissions;
     console.log("Inscription concernée", inscription)
 
@@ -26,11 +26,10 @@ export default function Create({ apprenants, schools, inscription }) {
         processing,
         progress
     } = useForm({
-        school_id: inscription.school_id || "",
         apprenant_id: inscription.apprenant_id || "",
         numero_educ_master: inscription.numero_educ_master || "",
         frais_inscription: inscription.frais_inscription || "",
-        // dossier_transfert: inscription.dossier_transfert || "",
+        dossier_transfert: "",
     });
 
     const submit = (e) => {
@@ -45,7 +44,7 @@ export default function Create({ apprenants, schools, inscription }) {
             },
         });
 
-        patch(route('inscription.update', inscription.id), {
+        post(route('inscription.update', inscription.id, { forceFormData: true }), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
@@ -91,32 +90,6 @@ export default function Create({ apprenants, schools, inscription }) {
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
                                     <div className="col-md-6">
-                                        {/* École */}
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools
-                                                    .map((school) => ({
-                                                        value: school.id,
-                                                        label: `${school.raison_sociale}`,
-                                                    }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-
 
                                         {/* Frais */}
                                         <div className='mb-3'>
@@ -132,6 +105,26 @@ export default function Create({ apprenants, schools, inscription }) {
                                                 required
                                             />
                                             <InputError className="mt-2" message={errors.frais_inscription} />
+                                        </div>
+
+                                        {/* Dossier de transfert */}
+                                        <div className="col-12">
+                                            <div className='mb-3'>
+                                                <InputLabel htmlFor="dossier_transfert" value="Dossier de transfert" />
+                                                <TextInput
+                                                    id="dossier_transfert"
+                                                    type="file"
+                                                    className="mt-1 block w-full"
+                                                    onChange={(e) => setData('dossier_transfert', e.target.files[0])}
+                                                    autoComplete="dossier_transfert"
+                                                />
+                                                {progress && (
+                                                    <progress value={progress.percentage} max="100">
+                                                        {progress.percentage}%
+                                                    </progress>
+                                                )}
+                                                <InputError className="mt-2" message={errors.dossier_transfert} />
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="col-md-6">
@@ -178,26 +171,6 @@ export default function Create({ apprenants, schools, inscription }) {
 
                                     </div>
                                 </div>
-
-                                {/* Dossier de transfert */}
-                                {/* <div className="col-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="dossier_transfert" value="Dossier de transfert" />
-                                        <TextInput
-                                            id="dossier_transfert"
-                                            type="file"
-                                            className="mt-1 block w-full"
-                                            onChange={(e) => setData('dossier_transfert', e.target.files[0])}
-                                            autoComplete="dossier_transfert"
-                                        />
-                                        {progress && (
-                                            <progress value={progress.percentage} max="100">
-                                                {progress.percentage}%
-                                            </progress>
-                                        )}
-                                        <InputError className="mt-2" message={errors.dossier_transfert} />
-                                    </div>
-                                </div> */}
 
                                 {/* Bouton */}
                                 <div className="flex items-center gap-4">

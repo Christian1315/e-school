@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 
 class School extends Model
 {
     /** @use HasFactory<\Database\Factories\SchoolFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * fillbale
@@ -68,9 +70,9 @@ class School extends Model
     /**
      * Roles
      */
-    function roles(): HasMany
+    function roles(): BelongsToMany
     {
-        return $this->hasMany(Role::class, "school_id");
+        return $this->belongsToMany(Role::class, "roles_schools", "school_id", "role_id");
     }
 
     /**
@@ -167,11 +169,13 @@ class School extends Model
             // You can't set $model->numero here yet because the ID is not generated.
         });
 
-        // static::updating(function ($model) {
-        //     if (request()->hasFile("logo")) {
-        //         $model->logo = $model->handleLogo();
-        //     }
-        //     // You can't set $model->numero here yet because the ID is not generated.
-        // });
+        static::updating(function ($model) {
+            if (request()->hasFile("logo")) {
+                $model->logo = $model->handleLogo();
+            } else {
+                unset($model->logo); // Empêche la mise à jour du logo si aucun nouveau fichier n'est téléchargé
+            }
+            // You can't set $model->numero here yet because the ID is not generated.
+        });
     }
 }

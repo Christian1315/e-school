@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'firstname' => 'Admin',
             'lastname' => 'E-school',
             'email' => 'admin@gmail.com',
-            'password' => bcrypt('admin@2025'), // mot de passe par défaut
+            'password' => bcrypt('admin@2026'), // mot de passe par défaut
         ]);
 
         $user->detail()->create([
@@ -80,9 +80,9 @@ class DatabaseSeeder extends Seeder
          * Trimestre
          */
         Trimestre::insert([
-            ["libelle" => "1 Trimestre"],
-            ["libelle" => "2 Trimestre"],
-            ["libelle" => "2 Trimestre"],
+            ["libelle" => "Trimestre 1"],
+            ["libelle" => "Trimestre 2"],
+            ["libelle" => "Trimestre 3"],
         ]);
 
         /**

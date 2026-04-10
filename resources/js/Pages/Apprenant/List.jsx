@@ -15,7 +15,6 @@ export default function List({ apprenants }) {
     const permissions = usePage().props.auth.permissions;
     const [showModal, setShowModal] = useState(false)
 
-    const [showImgModal, setShowImgModal] = useState(false)
     const [currentApprenant, setCurrentApprenant] = useState(null)
 
     const checkPermission = (name) => {
@@ -31,15 +30,9 @@ export default function List({ apprenants }) {
             imageHeight: 200,
             imageAlt: "Photo de profil",
             confirmButtonColor: '#1b5a38',
-            confirmButtonText: "Merci"
+            confirmButtonText: "Ok"
         });
 
-    }
-
-    const showImgUpdating = (e, apprenant) => {
-        e.preventDefault();
-        setCurrentApprenant(apprenant)
-        setShowImgModal(true);
     }
 
     const confirmShowModal = (e, apprenant) => {
@@ -52,11 +45,8 @@ export default function List({ apprenants }) {
         setShowModal(false);
     };
 
-    const closeImgModal = () => {
-        setShowImgModal(false);
-    }
 
-    const { data, setData, errors, processing, post, patch, delete: destroy } = useForm({
+    const { data, setData, errors, processing, post, delete: destroy } = useForm({
         photo: '',
         apprenants: '',
     })
@@ -92,44 +82,6 @@ export default function List({ apprenants }) {
                     text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
                 });
                 setShowModal(false)
-            },
-        });
-    };
-
-    // updating img
-    const submitImg = (e) => {
-        e.preventDefault();
-
-        Swal.fire({
-            title: 'Opération en cours...',
-            text: 'Veuillez patienter pendant que nous traitons vos données.',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        });
-
-        post(route('apprenant.profile-update', currentApprenant?.id), {
-            forceFormData: true, // 👈 this is the key line
-            onSuccess: () => {
-                Swal.close();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Opération réussie',
-                    text: `Profile mis à jour avec succès`,
-                });
-                setShowImgModal(false)
-                console.log("Success", data.photo);
-            },
-            onError: (e) => {
-                Swal.close();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Opération échouée',
-                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
-                });
-                setShowImgModal(false)
-                console.log("Error", data.photo);
             },
         });
     };
@@ -257,21 +209,13 @@ export default function List({ apprenants }) {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className="badge bg-light d-flex rounded border shadow" >
+                                                {apprenant.photo ?
                                                     <img src={apprenant.photo}
                                                         onClick={(e) => showImg(e, apprenant)}
                                                         className='img-fluid img-circle shadow' srcSet=""
                                                         style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }}
-                                                    />
-
-                                                    {
-                                                        checkPermission('apprenant.edit') ?
-                                                            < CIcon className='text-success'
-                                                                style={{ cursor: 'pointer', width: 500 }}
-                                                                icon={cilPencil}
-                                                                onClick={(e) => showImgUpdating(e, apprenant)} /> : '---'
-                                                    }
-                                                </div>
+                                                    /> : '---'
+                                                }
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>
@@ -293,39 +237,6 @@ export default function List({ apprenants }) {
                     </div>
                 </div>
             </div>
-
-            {/*  Update image */}
-            <Modal show={showImgModal} onClose={closeImgModal}>
-                <form onSubmit={submitImg} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Modifier le profil de l'apprenant <em className='text-success'>{`${currentApprenant?.firstname} - ${currentApprenant?.lastname}`}</em>
-                    </h2>
-
-                    <div className="my-2">
-                        <InputLabel htmlFor="photo" value="Les apprenants en fichier excel" > <span className="text-danger">*</span>  </InputLabel>
-                        <TextInput
-                            type="file"
-                            name="photo"
-                            id="photo"
-                            required
-                            className='form-control mt-1 block w-full'
-                            onChange={(e) => setData('photo', e.target.files[0])}
-                        />
-
-                        <InputError className="mt-2" message={errors.photo} />
-                    </div>
-
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeImgModal}>
-                            Abandonner
-                        </SecondaryButton>
-
-                        <PrimaryButton disabled={processing}>
-                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
-                        </PrimaryButton>
-                    </div>
-                </form>
-            </Modal>
 
             {/* Importation */}
             <Modal show={showModal} onClose={closeModal}>

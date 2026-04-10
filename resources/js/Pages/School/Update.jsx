@@ -7,6 +7,7 @@ import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
 import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
+import { useEffect } from 'react';
 
 export default function Update({ school }) {
     const permissions = usePage().props.auth.permissions;
@@ -22,6 +23,7 @@ export default function Update({ school }) {
         setData,
         errors,
         patch,
+        post,
         processing,
         progress
     } = useForm({
@@ -37,6 +39,11 @@ export default function Update({ school }) {
         description: school.description || ""
     });
 
+    useEffect(() => {
+        console.log("Données de l'école :", data);
+    }, [school]);
+
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -49,8 +56,8 @@ export default function Update({ school }) {
             },
         });
 
-        patch(route('school.update', school.id, {
-            _method: 'patch'
+        post(route('school.update', school.id, {
+            forceFormData: true,
         }), {
             onSuccess: () => {
                 Swal.close();
@@ -69,7 +76,6 @@ export default function Update({ school }) {
                 });
                 console.log(e);
             },
-            // onFinish: () => reset('password'),
         });
     };
 
@@ -82,7 +88,7 @@ export default function Update({ school }) {
             imageHeight: 200,
             imageAlt: "Logo d'école'",
             confirmButtonColor: '#1b5a38',
-            confirmButtonText: "Merci"
+            confirmButtonText: "OK"
         });
     }
 
@@ -162,7 +168,7 @@ export default function Update({ school }) {
                                             <InputLabel htmlFor="slogan" value="Slogan" ><span className="text-danger">*</span></InputLabel>
 
                                             <TextInput
-                                                id="rccm"
+                                                id="slogan"
                                                 type="text"
                                                 className="mt-1 block w-full"
                                                 value={data.slogan}
@@ -228,7 +234,7 @@ export default function Update({ school }) {
                                             <InputLabel htmlFor="description" value="Description" ><span className="text-danger">*</span></InputLabel>
 
                                             <TextInput
-                                                id="rccm"
+                                                id="description"
                                                 type="text"
                                                 className="mt-1 block w-full"
                                                 value={data.description}
@@ -245,40 +251,43 @@ export default function Update({ school }) {
 
                                 {/*  */}
                                 {/* Logo actuel */}
-                                <div className="">
-                                    <span>Logo actuel</span>
-                                    {
-                                        school.logo ?
-                                            (<img src={school.logo}
-                                                onClick={() => showImg(school)}
-                                                className='img-fluid img-circle shadow' srcSet=""
-                                                style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />) :
-                                            'Pas de logo'
-                                    }
-
-                                </div>
-                                {/* <div className="col-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="logo" value="Logo de l'école" ></InputLabel>
-
-                                        <TextInput
-                                            id="logo"
-                                            type="file"
-                                            className="mt-1 block w-full"
-                                            required
-                                            onChange={(e) => setData('logo', e.target.files[0])}
-                                            autoComplete="logo"
-                                        />
-
-                                        {progress && (
-                                            <progress value={progress.percentage} max="100">
-                                                {progress.percentage}%
-                                            </progress>
-                                        )}
-
-                                        <InputError className="mt-2" message={errors.logo} />
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        {
+                                            school.logo ?
+                                                (
+                                                    <>
+                                                        <span>Logo actuel</span>
+                                                        <img src={school.logo}
+                                                            onClick={() => showImg(school)}
+                                                            className='img-fluid img-circle shadow' srcSet=""
+                                                            style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} /> </>) :
+                                                null
+                                        }
                                     </div>
-                                </div> */}
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="logo" value="Changer de logo" ></InputLabel>
+
+                                            <TextInput
+                                                id="logo"
+                                                type="file"
+                                                className="mt-1 block w-full"
+                                                // required
+                                                onChange={(e) => setData('logo', e.target.files[0])}
+                                                autoComplete="logo"
+                                            />
+
+                                            {progress && (
+                                                <progress value={progress.percentage} max="100">
+                                                    {progress.percentage}%
+                                                </progress>
+                                            )}
+
+                                            <InputError className="mt-2" message={errors.logo} />
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div className="mb-1">
                                     <InputLabel htmlFor="statut" value="Statut de l'école" >  <span className="text-danger">*</span> </InputLabel>

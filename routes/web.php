@@ -6,6 +6,7 @@ use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevoirController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\InterrogationController;
 use App\Http\Controllers\MatiereController;
@@ -18,35 +19,14 @@ use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SerieController;
 use App\Http\Controllers\TrimestreController;
 use App\Http\Controllers\UserController;
-use App\Models\Permission;
-use App\Models\Role;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get("/{roleId}/affect-permissions", function ($roleId) {
 
-    $role = Role::findOrFail($roleId);
-
-    if (!$role) {
-        return "Ce role n'existe pas";
-    }
-    $permissions = Permission::all();
-    $role->syncPermissions($permissions->pluck("name"));
-    return "Permissions affectées avec succès";
-});
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
+/**Unprotected routes */
+Route::get('/', HomeController::class)->name('home');
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
+/**protected routes */
 Route::middleware('auth')->group(function () {
 
     /***
@@ -80,28 +60,30 @@ Route::middleware('auth')->group(function () {
     Route::post("interrogation/validate-multiple", [InterrogationController::class, "validateMultiple"])->name("interrogation.validate-multiple");
 
     // Schools
-    Route::resource("school", SchoolController::class);
-    Route::post("school/{school}/profile-update", [SchoolController::class, "updateProfil"])->name("school.profile-update");
+    Route::resource("school", SchoolController::class)->except("update");
+    Route::post("school/update/{school}", [SchoolController::class, "update"])->name("school.update");
 
     //Utilisateurs
-    Route::resource("user", UserController::class);
+    Route::resource("user", UserController::class)->except("update");
+    Route::post("user/update/{user}", [UserController::class, "update"])->name("user.update");
     Route::post("user/import", [UserController::class, "importUsers"])->name("user.import");
 
     // Parents
     Route::get("parent", [UserController::class, "parents"])->name("parent.index");
     Route::post("parent/import", [UserController::class, "importParents"])->name("parent.import");
-    
+
     // Professeurs
     Route::get("professeur", [UserController::class, "professeurs"])->name("professeur.index");
     Route::post("professeur/import", [UserController::class, "importProfesseurs"])->name("professeur.import");
 
     // Apprenants
-    Route::resource("apprenant", ApprenantController::class);
+    Route::resource("apprenant", ApprenantController::class)->except("update");
+    Route::post("apprenant/update/{apprenant}", [ApprenantController::class, "update"])->name("apprenant.update");
     Route::post("apprenant/import", [ApprenantController::class, "importApprenants"])->name("apprenant.import");
-    Route::post("apprenant/{apprenant}/profile-update", [ApprenantController::class, "updateProfil"])->name("apprenant.profile-update");
 
     // Inscriptions
-    Route::resource("inscription", InscriptionController::class);
+    Route::resource("inscription", InscriptionController::class)->except("update");
+    Route::post("inscription/update/{inscription}", [InscriptionController::class, "update"])->name("inscription.update");
     Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
 
     // Paiements

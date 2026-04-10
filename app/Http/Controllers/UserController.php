@@ -55,22 +55,16 @@ class UserController extends Controller
      */
     function parents()
     {
-        $school = Auth::user()->school;
+        $school = Auth::user()->school ?? School::with("roles")->first();
         if ($school) {
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent" . ' (' . $school->raison_sociale . ')'));
-            $parentsQuery->where("school_id",  $school->id);
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent"))
+                ->where("school_id",  $school->id);
         } else {
-            $schoolsName = School::get()->pluck("raison_sociale");
-            $nameArray = $schoolsName->map(function ($name) {
-                return "Parent" . ' (' . $name . ')';
-            })->concat(["Parent"])->toArray();
-
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", 'Parent'));
         }
 
         return Inertia::render('Apprenant/Parent', [
             'users' => UserResource::collection($parentsQuery->get()),
-            'roles' => Role::where("id", "!=", 1)->get(),
         ]);
     }
 
@@ -79,29 +73,23 @@ class UserController extends Controller
      */
     function professeurs()
     {
-        $school = Auth::user()->school;
+        $school = Auth::user()->school ?? School::with("roles")->first();
         if ($school) {
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur" . ' (' . $school->raison_sociale . ')'));
-            $parentsQuery->where("school_id",  $school->id);
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))
+                ->where("school_id",  $school->id);
         } else {
-            $schoolsName = School::get()->pluck("raison_sociale");
-            $nameArray = $schoolsName->map(function ($name) {
-                return "Professeur" . ' (' . $name . ')';
-            })->concat(["Professeur"])->toArray();
-
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
+            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", 'Professeur'));
         }
 
         return Inertia::render('Apprenant/Professeur', [
             'users' => UserResource::collection($parentsQuery->get()),
-            'roles' => Role::where("id", "!=", 1)->get(),
         ]);
     }
 
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
@@ -202,7 +190,6 @@ class UserController extends Controller
             $user->assignRole($role);
 
             event(new Registered($user));
-
 
             DB::commit();
             return redirect()->route("user.index");
@@ -334,7 +321,7 @@ class UserController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request, User $user)
+    function edit(User $user)
     {
         $user->load("roles");
 
@@ -370,14 +357,14 @@ class UserController extends Controller
             $validated = $request->validate([
                 'firstname'   => 'required|string',
                 'lastname'    => 'required|string',
-                'school_id'   => 'required|integer',
-                'role_id'   => 'required|integer',
+                'school_id'   => 'nullable|integer',
+                'role_id'   => 'nullable|integer',
 
                 'email'       => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
-                // 'password'    => ['required', 'confirmed', Rules\Password::defaults()],
+                'password'    => ['nullable', 'confirmed', Rules\Password::defaults()],
 
                 'phone'       => 'required|string',
-                // 'profile_img' => 'nullable|image|mimes:png,jpeg',
+                'profile_img' => 'nullable|image|mimes:png,jpeg',
             ], [
                 // 🔹 Messages personnalisés
                 'firstname.required'   => 'Le prénom est obligatoire.',
@@ -385,9 +372,6 @@ class UserController extends Controller
 
                 'lastname.required'    => 'Le nom est obligatoire.',
                 'lastname.string'      => 'Le nom doit être une chaîne de caractères.',
-
-                // 'school_id.required'   => "L'identifiant de l'école est obligatoire.",
-                // 'school_id.integer'    => "L'identifiant de l'école doit être un nombre.",
 
                 'role_id.required'   => "Le rôle est obligatoire.",
                 'role_id.integer'    => "Le rôle doit être un nombre.",
@@ -400,25 +384,25 @@ class UserController extends Controller
                 'email.unique'         => "Cette adresse email est déjà utilisée.",
 
                 // 'password.required'    => "Le mot de passe est obligatoire.",
-                // 'password.confirmed'   => "La confirmation du mot de passe ne correspond pas.",
-                // 'password.min'         => "Le mot de passe doit contenir au moins 8 caractères.",
+                'password.confirmed'   => "La confirmation du mot de passe ne correspond pas.",
+                'password.min'         => "Le mot de passe doit contenir au moins 8 caractères.",
 
                 'phone.required'       => "Le numéro de téléphone est obligatoire.",
                 'phone.string'         => "Le numéro de téléphone doit être une chaîne de caractères.",
 
-                // 'profile_img.image'    => "Le fichier doit être une image.",
-                // 'profile_img.mimes'    => "L'image doit être au format PNG ou JPEG.",
+                'profile_img.image'    => "Le fichier doit être une image.",
+                'profile_img.mimes'    => "L'image doit être au format PNG ou JPEG.",
             ]);
 
             DB::beginTransaction();
 
             $user->update($validated);
 
+            Log::debug("Les détails : ", ["details" => $user->detail]);
             if ($user->detail) {
-                # code...
-                $user->detail()->update(["phone" => $validated["phone"] ?? null]);
+                $user->detail()->update(["phone" => $validated["phone"] ?? null, "profile_img" => $user->detail->handlePhoto() ?? $user->detail->profile_img]);
             } else {
-                $user->detail()->create(["phone" => $validated["phone"] ?? null]);
+                $user->detail()->create(["phone" => $validated["phone"] ?? null, "profile_img" => $user->detail->handlePhoto() ?? $user->detail->profile_img]);
             }
 
             /**
@@ -443,9 +427,8 @@ class UserController extends Controller
 
             event(new Registered($user));
 
-
             DB::commit();
-            return redirect()->route("user.index");
+            return redirect()->back();;
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::debug("Erreure lors de la modification de l'utilisateur", ["error" => $e->errors()]);
@@ -460,12 +443,20 @@ class UserController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request)
+    function destroy(User $user)
     {
-        $schools = Apprenant::all();
+        Log::debug("Suppression de l'utilisateur", ["user_id" => $user->id]);
+        try {
+            DB::beginTransaction();
 
-        return Inertia::render('Apprenant/Create', [
-            'schools' => $schools,
-        ]);
+            $user->delete();
+            DB::commit();
+            return redirect()->back()
+                ->with("success", "Suppression éffectuée avec succès!");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de création de l'école", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 }

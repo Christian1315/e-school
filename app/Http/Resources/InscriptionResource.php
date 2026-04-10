@@ -18,13 +18,15 @@ class InscriptionResource extends JsonResource
         // return parent::toArray($request);
         return [
             "id" => $this->id,
+            "numero" => $this->numero,
+            "receipted" => $this->receipted,
             "school" => $this->school, //SchoolResource::collection($this->school),
             "apprenant" => $this->apprenant, //ApprenantResource::collection($this->apprenant),
             "createdBy" => $this->createdBy, //UserResource::collection($this->createdBy),
             "updatedBy" => $this->updatedBy, //UserResource::collection($this->updatedBy),
             "numero_educ_master" => $this->numero_educ_master,
             "dossier_transfert" => $this->dossier_transfert,
-            "frais_inscription" => $this->frais_inscription,
+            "frais_inscription" => number_format($this->frais_inscription, 2, ".", " "),
         ];
     }
 }

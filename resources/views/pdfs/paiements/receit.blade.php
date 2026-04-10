@@ -117,6 +117,7 @@
                         <td style="width: 50%; text-align: left; vertical-align: top;">
                             <p class="apprenant-name"><strong class="badge"> Nom & Prénom</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->firstname}} {{$paiement->apprenant?->lastname}}</strong></p>
                             <p class="apprenant-class"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->classe?->libelle}}</strong></p>
+                            <p class="apprenant-class"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->serie?->libelle}}</strong></p>
                         </td>
 
                         <!-- Colonne droite -->
@@ -124,7 +125,6 @@
                             <p class="created_at"><strong class="badge">Délivré le</strong> : <strong style="margin-left:10px; border-bottom:1px dashed #000;">{{ \Carbon\Carbon::parse(now())->isoFormat('D MMMM YYYY') }}</strong></p>
                         </td>
                     </tr>
-
                 </table>
 
                 <br>
@@ -141,7 +141,7 @@
                         </td>
 
                         <!-- Colonne droite -->
-                        <td style="width: 30%; text-align: right; vertical-align: top;">
+                        <td style="width: 50%; text-align: right; vertical-align: top;">
                             <div id="resteBlock">
                                 <h3 class="souscription">N° souscription : <strong class="souscription_number">{{$paiement->numero}}</strong></h3>
                                 <h3 class="souscription">Reste à payer : <strong class="souscription_number">{{$reste}} {{ env('CURRENCY') }}</strong></h3>

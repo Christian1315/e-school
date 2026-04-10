@@ -18,6 +18,7 @@ class Inscription extends Model
      */
     protected $fillable = [
         "numero",
+        "receipted",
         "school_id",
         "apprenant_id",
         "created_by",
@@ -33,6 +34,7 @@ class Inscription extends Model
      */
     protected $casts = [
         "numero" => 'string',
+        "receipted" => "boolean",
         "school_id"      => "integer",
         "apprenant_id"      => "integer",
         "created_by"     => "integer",
@@ -76,7 +78,7 @@ class Inscription extends Model
         return $this->belongsTo(User::class, "updated_by");
     }
 
-     /**
+    /**
      * Upload photo
      */
     function handlePhoto()
@@ -96,7 +98,7 @@ class Inscription extends Model
 
     protected function generateNumero()
     {
-        return "000" . $this->id;
+        return "INS-" . date("y-m-d") . '-' . $this->id;
     }
 
     /**
@@ -110,17 +112,24 @@ class Inscription extends Model
         static::creating(function ($model) {
             $model->created_by = Auth::id();
             $model->dossier_transfert = $model->handlePhoto();
-            // You can't set $model->numero here yet because the ID is not generated.
+            $model->school_id = Auth::user()->school_id ?? 1;
         });
 
         static::created(function ($model) {
-            $model->numero = "000" . $model->id;
-            // Save once, no update inside update loop
+            $model->numero = $model->generateNumero();
             $model->saveQuietly(); // avoids triggering events again
         });
 
-        static::updating(function ($model) {
+        static::updated(function ($model) {
             $model->updated_by = Auth::id();
+            $model->school_id = Auth::user()->school_id ?? 1;
+
+            if (request()->hasFile('dossier_transfert')) {
+                $model->dossier_transfert = $model->handlePhoto();
+            } else {
+                unset($model->dossier_transfert); // Prevent overwriting if no new file is uploaded
+            }
+            $model->saveQuietly();
         });
     }
 }

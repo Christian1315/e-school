@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 
-export default function Create({ schools, apprenants, trimestres, matieres }) {
+export default function Create({ apprenants, trimestres, matieres }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -27,7 +27,7 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
         processing,
         progress
     } = useForm({
-        school_id: "",
+        // school_id: "",
         apprenant_id: "",
         trimestre_id: "",
         matiere_id: "",
@@ -90,31 +90,6 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.data.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools.data.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-                                    </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="apprenant_id" value="L'apprenant concerné" >  <span className="text-danger">*</span> </InputLabel>
@@ -192,23 +167,22 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                             <InputError className="mt-2" message={errors.matiere_id} />
                                         </div>
                                     </div>
-                                </div>
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="note"
+                                                type="number"
+                                                className="mt-1 block w-full"
+                                                value={data.note}
+                                                placeholder="18.00"
+                                                onChange={(e) => setData('note', e.target.value)}
+                                                autoComplete="note"
+                                                required
+                                            />
 
-                                <div className="col-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
-                                        <TextInput
-                                            id="note"
-                                            type="number"
-                                            className="mt-1 block w-full"
-                                            value={data.note}
-                                            placeholder="18.00"
-                                            onChange={(e) => setData('note', e.target.value)}
-                                            autoComplete="note"
-                                            required
-                                        />
-
-                                        <InputError className="mt-2" message={errors.note} />
+                                            <InputError className="mt-2" message={errors.note} />
+                                        </div>
                                     </div>
                                 </div>
 

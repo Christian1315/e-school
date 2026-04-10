@@ -38,11 +38,11 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * 
+     * A role belongs to some schools.
      */
-    function school(): BelongsTo
+    function schools(): BelongsToMany
     {
-        return $this->belongsTo(School::class, "school_id");
+        return $this->belongsToMany(School::class, "roles_schools", "role_id", "school_id");
     }
 
     /**

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InscriptionResource;
 use App\Models\Apprenant;
-use App\Models\Classe;
 use App\Models\Inscription;
 use App\Models\School;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +18,7 @@ class InscriptionController extends Controller
     /**
      * Index
      */
-    function index(Request $request)
+    function index()
     {
         if (Auth::user()->school) {
             $inscriptions = Inscription::latest()
@@ -37,7 +35,7 @@ class InscriptionController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         return Inertia::render('Inscription/Create', [
             "apprenants" => Auth::user()->school_id ?
@@ -57,14 +55,14 @@ class InscriptionController extends Controller
         Log::info("Les datas", ["data" => $request->all()]);
         try {
             $validated = $request->validate([
-                "school_id"          => "required|integer",
+                // "school_id"          => "required|integer",
                 "apprenant_id"       => "required|integer",
                 "numero_educ_master" => "required|string",
                 "frais_inscription"  => "required|numeric",
                 "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
             ], [
-                "school_id.required"      => "L'école est obligatoire.",
-                "school_id.integer"       => "L'école doit être un identifiant valide.",
+                // "school_id.required"      => "L'école est obligatoire.",
+                // "school_id.integer"       => "L'école doit être un identifiant valide.",
 
                 "apprenant_id.required"   => "L'apprenant est obligatoire.",
                 "apprenant_id.integer"    => "L'apprenant doit être un identifiant valide.",
@@ -96,18 +94,17 @@ class InscriptionController extends Controller
         }
     }
 
-
     /**
      * Edit
      */
-    function edit(Request $request, Inscription $inscription)
+    function edit(Inscription $inscription)
     {
         try {
             if (!$inscription) {
                 throw new \Exception("Cette inscription n'existe pas!");
             }
 
-            $inscription->load(["school","apprenant"]);
+            $inscription->load(["school", "apprenant"]);
 
             return Inertia::render('Inscription/Update', [
                 'inscription' => $inscription,
@@ -136,14 +133,14 @@ class InscriptionController extends Controller
             }
 
             $validated = $request->validate([
-                "school_id"          => "required|integer",
+                // "school_id"          => "required|integer",
                 "apprenant_id"       => "required|integer",
                 "numero_educ_master" => "required|string",
                 "frais_inscription"  => "required|numeric",
                 "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
             ], [
-                "school_id.required"      => "L'école est obligatoire.",
-                "school_id.integer"       => "L'école doit être un identifiant valide.",
+                // "school_id.required"      => "L'école est obligatoire.",
+                // "school_id.integer"       => "L'école doit être un identifiant valide.",
 
                 "apprenant_id.required"   => "L'apprenant est obligatoire.",
                 "apprenant_id.integer"    => "L'apprenant doit être un identifiant valide.",
@@ -182,27 +179,39 @@ class InscriptionController extends Controller
 
     function generateReceit(Inscription $inscription, $reste)
     {
-        $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
-        $logoPath = explode(env("APP_URL"), $inscription->school->logo);
+        try {
+            DB::beginTransaction();
 
-        // return $logoPath;
-        set_time_limit(0);
-        $pdf = Pdf::loadView("pdfs.souscriptions.receit", [
-            "inscription" => $inscription,
-            "reste" => $reste,
-            "logo" => $logoPath[1]
-        ]);
+            $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
+            $logoPath = explode(env("APP_URL"), $inscription->school->logo);
 
-        // Set PDF orientation to landscape
-        $pdf->setPaper('a4', 'landscape');
+            // return $logoPath;
+            set_time_limit(0);
+            $pdf = Pdf::loadView("pdfs.souscriptions.receit", [
+                "inscription" => $inscription,
+                "reste" => $reste,
+                "logo" => $logoPath[1]
+            ]);
 
-        return $pdf->stream();
+            // Set PDF orientation to landscape
+            $pdf->setPaper('a4', 'landscape');
+
+            // marquer l'inscription comme reçu generé
+            $inscription->update(["receipted" => true]);
+
+            DB::commit();
+            return $pdf->stream();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure lors de la modification de l'inscription", ["error" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
+        }
     }
 
     /**
      * Destroy
      */
-    function destroy(Request $request,Inscription $inscription)
+    function destroy(Request $request, Inscription $inscription)
     {
         try {
             DB::beginTransaction();

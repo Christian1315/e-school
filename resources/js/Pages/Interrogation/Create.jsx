@@ -32,6 +32,7 @@ export default function Create({ apprenants, trimestres, matieres }) {
         trimestre_id: "",
         matiere_id: "",
         note: "",
+        annee_scolaire: new Date().getFullYear()
     });
 
     const submit = (e) => {
@@ -169,13 +170,33 @@ export default function Create({ apprenants, trimestres, matieres }) {
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
+                                            <InputLabel htmlFor="annee_scolaire" value="Année scolaire" > <span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="annee_scolaire"
+                                                type="number"
+                                                className="mt-1 block w-full"
+                                                value={data.annee_scolaire}
+                                                placeholder="Ex: 2026"
+                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
+                                                autoComplete="annee_scolaire"
+                                                min={2000}
+                                                max={2030}
+                                                required
+                                            />
+
+                                            <InputError className="mt-2" message={errors.annee_scolaire} />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-12">
+                                        <div className='mb-3'>
                                             <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
                                             <TextInput
                                                 id="note"
                                                 type="number"
                                                 className="mt-1 block w-full"
                                                 value={data.note}
-                                                placeholder="18.00"
+                                                placeholder="Ex: 18.00"
                                                 onChange={(e) => setData('note', e.target.value)}
                                                 autoComplete="note"
                                                 required

@@ -19,6 +19,8 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->string('numero')->nullable()->unique();
+
             $table->foreignId('apprenant_id')
                 ->nullable()
                 ->constrained('apprenants')
@@ -50,7 +52,9 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->decimal('note', 10, 2)->nullable();
-            $table->boolean("is_validated")->default(true);
+            $table->string("annee_scolaire")->nullable();
+            $table->boolean("is_validated")->default(false);
+
             $table->softDeletes();
             $table->timestamps();
         });

@@ -27,6 +27,7 @@ class InterrogationResource extends JsonResource
             "note" => $this->note,
             "createdAt" => Carbon::parse($this->created_at)->locale("fr")->isoFormat("D MMMM YYYY"),
             "createdBy" => $this->createdBy,
+            "annee_scolaire" => $this->annee_scolaire
         ];
     }
 }

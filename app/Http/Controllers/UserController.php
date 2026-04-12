@@ -39,7 +39,7 @@ class UserController extends Controller
         } else {
             $users = User::with("roles")->get();
 
-            $roles = Role::with(['school'])
+            $roles = Role::with(['schools'])
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }
@@ -93,10 +93,10 @@ class UserController extends Controller
     {
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
-            $roles = Auth::user()->school->roles()->with("school")->get();
+            $roles = Auth::user()->school->roles()->with("schools")->get();
         } else {
             $schools = School::latest()->get();
-            $roles = Role::with("school")->where("id", "!=", 1)->get();
+            $roles = Role::with("schools")->where("id", "!=", 1)->get();
         }
 
         return Inertia::render('User/Create', [

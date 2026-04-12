@@ -9,7 +9,7 @@ import { cilSend, cilArrowCircleLeft, cilPencil } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 
-export default function StoreMultiple({ trimestre, matiere, classe, apprenants }) {
+export default function StoreMultiple({ school, trimestre, matiere, classe, apprenants }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -17,6 +17,7 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
     }
 
     // les lignes à soumettre enfin
+
     const {
         data,
         setData,
@@ -24,14 +25,14 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
         post,
         processing,
     } = useForm({
-        // school_id: school.id || "",
+        school_id: school.id || "",
         apprenant_id: "",
         trimestre_id: trimestre.id || "",
         matiere_id: matiere.id || "",
         classe_id: classe.id || "",
-        apprenants: [],
-        annee_scolaire: new Date().getFullYear()
+        apprenants: []
     });
+
 
     //reformatage des apprennants pour afficher dans le tableau
     const [_apprenants, setApprenants] = useState(
@@ -81,17 +82,27 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
             Swal.fire({
                 icon: "error",
                 title: "Opération échouée",
-                text: "Renseignez au moins une note d'interrogation"
+                text: "Renseignez au moins une note de devoir"
             })
             return
         } else {
-            post(route('interrogation.post-store-multiple'), {
+            post(route('devoir.post-store-multiple'), {
+                onStart: () => {
+                    Swal.fire({
+                        title: 'Opération en cours...',
+                        text: 'Veuillez patienter pendant que nous traitons vos données.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                    });
+                },
                 onSuccess: () => {
                     Swal.close();
                     Swal.fire({
                         icon: 'success',
                         title: 'Opération réussie',
-                        text: 'Interrogation(s) créee(s) avec succès',
+                        text: 'Devoir(s) crée(s) avec succès',
                     });
                 },
                 onError: (e) => {
@@ -111,29 +122,42 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilPencil} /> Insertion d'interrogations groupées
+                    <CIcon className='text-success' icon={cilPencil} /> Insertion de devoirs groupées
                 </h2>
             }
         >
-            <Head title="Ajouter un groupe d'interrogation" />
+            <Head title="Ajouter un groupe de devoir" />
 
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
 
                         <div className="bg-light p-3 rounded border mb-5">
-                            {checkPermission('interrogation.view') ?
+                            {checkPermission('devoir.view') ?
                                 (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("interrogation.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des intérrogations</Link>
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des devoirs</Link>
                                 </div>) : null
                             }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+
+                                            <TextInput
+                                                className="form-control mt-1 block w-full"
+                                                readOnly
+                                                value={school.raison_sociale} />
+
+                                            <InputError className="mt-2" message={errors.school_id} />
+                                        </div>
+                                    </div>
+
                                     {/*  */}
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" ></InputLabel>
+                                            <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" >  <span className="text-danger">*</span> </InputLabel>
 
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
@@ -145,7 +169,7 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="matiere_id" value="La matière concernée" > </InputLabel>
+                                            <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
                                                 readOnly
@@ -156,32 +180,13 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="classe_id" value="La classe concernée" ></InputLabel>
+                                            <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
                                                 readOnly
                                                 value={classe.libelle} />
 
                                             <InputError className="mt-2" message={errors.classe_id} />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="annee_scolaire" value="Année scolaire" > <span className="text-danger">*</span> </InputLabel>
-                                            <TextInput
-                                                id="annee_scolaire"
-                                                type="number"
-                                                className="mt-1 block w-full"
-                                                value={data.annee_scolaire}
-                                                placeholder="Ex: 2026"
-                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
-                                                autoComplete="annee_scolaire"
-                                                min={2000}
-                                                max={2030}
-                                                required
-                                            />
-
-                                            <InputError className="mt-2" message={errors.annee_scolaire} />
                                         </div>
                                     </div>
                                 </div>

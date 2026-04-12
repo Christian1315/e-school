@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 
-export default function Create({ schools, apprenants, trimestres, matieres }) {
+export default function Create({ apprenants, trimestres, matieres }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -27,11 +27,12 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
         processing,
         progress
     } = useForm({
-        school_id: "",
+        // school_id: "",
         apprenant_id: "",
         trimestre_id: "",
         matiere_id: "",
         note: "",
+        annee_scolaire: new Date().getFullYear()
     });
 
     const submit = (e) => {
@@ -52,7 +53,7 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Opération réussie',
-                    text: 'Devoir crée avec succès',
+                    text: 'Devoir créee avec succès',
                 });
             },
             onError: (e) => {
@@ -84,37 +85,12 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('devoir.view') ?
                                 (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("interrogation.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des intérrogations</Link>
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des devoirs</Link>
                                 </div>) : null
                             }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.data.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools.data.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-                                    </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="apprenant_id" value="L'apprenant concerné" >  <span className="text-danger">*</span> </InputLabel>
@@ -192,23 +168,42 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                             <InputError className="mt-2" message={errors.matiere_id} />
                                         </div>
                                     </div>
-                                </div>
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="annee_scolaire" value="Année scolaire" > <span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="annee_scolaire"
+                                                type="number"
+                                                className="mt-1 block w-full"
+                                                value={data.annee_scolaire}
+                                                placeholder="Ex: 2026"
+                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
+                                                autoComplete="annee_scolaire"
+                                                min={2000}
+                                                max={2030}
+                                                required
+                                            />
 
-                                <div className="col-12">
-                                    <div className='mb-3'>
-                                        <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
-                                        <TextInput
-                                            id="note"
-                                            type="number"
-                                            className="mt-1 block w-full"
-                                            value={data.note}
-                                            placeholder="18.00"
-                                            onChange={(e) => setData('note', e.target.value)}
-                                            autoComplete="note"
-                                            required
-                                        />
+                                            <InputError className="mt-2" message={errors.annee_scolaire} />
+                                        </div>
+                                    </div>
 
-                                        <InputError className="mt-2" message={errors.note} />
+                                    <div className="col-md-12">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="note"
+                                                type="number"
+                                                className="mt-1 block w-full"
+                                                value={data.note}
+                                                placeholder="Ex: 18.00"
+                                                onChange={(e) => setData('note', e.target.value)}
+                                                autoComplete="note"
+                                                required
+                                            />
+
+                                            <InputError className="mt-2" message={errors.note} />
+                                        </div>
                                     </div>
                                 </div>
 

@@ -12,18 +12,17 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
-export default function List({ interrogations, schools, trimestres, matieres, classes }) {
-    const auth = usePage().props.auth;
-    const permissions = auth.permissions;
+export default function List({ devoirs, schools, trimestres, matieres, classes }) {
+    const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
 
-    const [interros, setInterros] = useState(interrogations.data.map((interro) => (
+    const [devois, setDevois] = useState(devoirs.data.map((devoir) => (
         {
-            id: interro.id,
-            checked: interro.is_validated,
+            id: devoir.id,
+            checked: devoir.is_validated,
         }
     )))
 
@@ -38,47 +37,39 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     const [classe, setClasse] = useState(false);
     const [_classes, setClasses] = useState(classes.data);
 
-    const [selectedSchool, setSelectedSchool] = useState({})
-
 
     const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
-        // school_id: "",
+        school_id: "",
         trimestre_id: "",
         classe_id: "",
         matiere_id: "",
-        interroscheckeds: []
+        devoirscheckeds: []
     })
 
     // Fields handling
     const changeSchool = (option) => {
-        // setData('school_id', option.value)
+        setData('school_id', option.value)
 
         const selectedSchool = schools.data.find((s) => s.id === option.value);
         console.log("École sélectionnée :", selectedSchool);
 
-        setSelectedSchool(selectedSchool)
-
         // Access trimestres directly
-        console.log("Trimestres :", trimestres.data);
-        console.log("Matières :", matieres.data);
-        console.log("Classes :", classes.data);
+        console.log("Trimestres :", selectedSchool.trimestres);
+        console.log("Matières :", selectedSchool.matieres);
+        console.log("Classes :", selectedSchool.classes);
 
-        // setTrimestres(selectedSchool.trimestres ?? trimestres.data)
-        // setTrimestre(true)
+        setTrimestres(selectedSchool.trimestres)
+        setTrimestre(true)
 
-        // setMatieres(selectedSchool.matieres ?? matieres.data)
-        // setMatiere(true)
+        setMatieres(selectedSchool.matieres)
+        setMatiere(true)
 
-        // setClasses(selectedSchool.classes ?? classes.data)
-        // setClasse(true)
-
-        console.log("Trimestres après sélection :", trimestre, _trimestres);
-        console.log("Matières après sélection :", matiere, _matieres);
-        console.log("Classes après sélection :", classe, _classes);
+        setClasses(selectedSchool.classes)
+        setClasse(true)
     }
 
     // validation d'une intérrogation
-    const validateInterrogation = (e, interrogation) => {
+    const validateDevoir = (e, devoir) => {
         e.preventDefault();
 
         Swal.fire({
@@ -90,13 +81,13 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
             },
         });
 
-        patch(route('interrogation.valide', interrogation.id), {
+        patch(route('devoir.valide', devoir.id), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Opération réussie',
-                    text: 'Interrogation validée avec succès',
+                    text: 'Devoir validé avec succès',
                 });
             },
             onError: (e) => {
@@ -121,32 +112,30 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     };
 
     useEffect(() => {
-        let interroscheckeds = interros.filter((interro) => interro.checked)
+        let devoirscheckeds = devois.filter((dev) => dev.checked)
 
-        setData("interroscheckeds", interroscheckeds)
-        console.log("Finals dats to send :", interroscheckeds)
-    }, [interros])
+        setData("devoirscheckeds", devoirscheckeds)
+        console.log("Finals dats to send :", devoirscheckeds)
+    }, [devois])
 
-    const checkedLine = (index, e) => {
-        const updated = interros.map((interro, i) =>
-            i === index ? { ...interro, checked: e.target.checked } : interro
-        );
-        setInterros(updated);
+    const checkedLine = (index, e, devoir) => {
+        e.preventDefault();
+
+        let updated = [...devois]
+        if (e.target.checked) {
+            updated[index].checked = true
+            console.log("updated true....: ", updated)
+            setDevois(updated)
+        } else {
+            updated[index].checked = false
+            console.log("updated false....: ", updated)
+            setDevois(updated)
+        }
     }
 
     // validation des interrogations selectionnées
     const validate = (e) => {
         e.preventDefault()
-
-        if (data.interroscheckeds.length <= 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Aucune interrogation sélectionnée',
-                text: 'Veuillez sélectionner au moins une interrogation à valider.'
-            });
-            return;
-        }
-
         Swal.fire({
             title: 'Opération en cours...',
             text: 'Veuillez patienter pendant que nous traitons vos données.',
@@ -156,13 +145,13 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
             },
         });
 
-        post(route('interrogation.validate-multiple'), {
+        post(route('devoir.validate-multiple'), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Opération éffectuée!',
-                    text: "Interrogations validées avec succès!"
+                    text: "Devoirs validées avec succès!"
                 })
             },
             onError: (e) => {
@@ -189,7 +178,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
             },
         });
 
-        get(route('interrogation.get-store-multiple'), {
+        get(route('devoir.get-store-multiple'), {
             onSuccess: () => {
                 Swal.close();
             },
@@ -205,13 +194,13 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
         });
     };
 
-    // suppression d'interrogation
-    const deleteInterrogation = (e, interro) => {
+    // suppression de devoir
+    const deleteDevoir = (e, devoir) => {
         e.preventDefault();
 
         Swal.fire({
             title: '<span style="color: #facc15;">⚠️ Êtes-vous sûr ?</span>', // yellow text
-            text: `L'interrogation sera supprimée de façon permanente !`,
+            text: `Le devoir sera supprimé de façon permanente !`,
             showCancelButton: true,
             confirmButtonColor: '#2a7348',
             cancelButtonColor: '#3085d6',
@@ -227,12 +216,12 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                         Swal.showLoading();
                     },
                 });
-                destroy(route('interrogation.destroy', interro.id), {
+                destroy(route('devoir.destroy', devoir.id), {
                     onSuccess: () => {
                         Swal.close();
                         Swal.fire({
                             title: '<span style="color: #2a7348;">👌Suppression réussie </span>',
-                            text: `L'interrogation a été supprimée avec succès.`,
+                            text: `Le devoir a été supprimé avec succès.`,
                             confirmButtonText: '😇 Fermer'
                         });
                     },
@@ -253,18 +242,19 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des intérrogations
+                    <CIcon className='text-success' icon={cilList} /> Panel des devoirs
                 </h2>
             }
         >
-            <Head title="Les Interrogations d'écoles" />
+            <Head title="Les devoirs d'écoles" />
 
             <div className="row py-12 justify-content-center">
+
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('interrogation.create') ?
                             (<div className="  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("interrogation.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
                                 <Link className="btn btn-sm bg-success bg-hover text-white mx-3"
                                     href="#"
                                     onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilPlaylistAdd} /> Faire un ajout groupé</Link>
@@ -276,12 +266,9 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                 <thead>
                                     <tr>
                                         <th scope="col">N°</th>
-                                        <th scope='col'>Validée</th>
                                         <th scope='col'>Action</th>
-                                        <th scope='col'>Reference</th>
                                         <th scope='col'>Statut</th>
                                         <th scope="col">Ecole</th>
-                                        <th scope="col">Année scolaire</th>
                                         <th scope="col">Apprenant</th>
                                         <th scope="col">Trimestre</th>
                                         <th scope="col">Matiere</th>
@@ -291,27 +278,24 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                 </thead>
                                 <tbody>
                                     {
-                                        interrogations.data.map((interrogation, index) => (
-                                            <tr key={interrogation.id} className={`bg-${interrogation.is_validated ? 'success' : 'danger'}`}>
-                                                <th>
-                                                    <span className="badge bg-light text-dark border rounded shadow">{index + 1}</span>
-                                                </th>
+                                        devoirs.data.map((devoir, index) => (
+                                            <tr key={devoir.id} className={`bg-${devoir.is_validated ? 'success' : 'danger'}`}>
                                                 <th scope="row">
+                                                    {index + 1}
                                                     {
-                                                        checkPermission('interrogation.edit') ?
+                                                        checkPermission('devoir.edit') ?
                                                             (
-                                                                !interrogation.is_validated ?
+                                                                !devoir.is_validated ?
                                                                     <TextInput
                                                                         type="checkbox"
-                                                                        className=" mt-1 block _w-full"
-                                                                        checked={interros[index]?.checked || false}
-                                                                        onChange={(e) => checkedLine(index, e)} /> : '---'
+                                                                        className="form-control mt-1 block w-full"
+                                                                        onChange={(e) => checkedLine(index, e, devoir)} /> : null
                                                             ) : null
                                                     }
                                                 </th>
                                                 <td className='text-center'>
                                                     {
-                                                        !interrogation.is_validated ?
+                                                        !devoir.is_validated ?
                                                             <div className="dropstart">
                                                                 <button
                                                                     type="button"
@@ -322,30 +306,31 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                                 </button>
                                                                 <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
 
-                                                                    {checkPermission('interrogation.edit') ?
+                                                                    {checkPermission('devoir.edit') ?
                                                                         (<li><Link
                                                                             className='btn btn-success text-white w-100'
-                                                                            onClick={(e) => validateInterrogation(e, interrogation)}
+                                                                            onClick={(e) => validateDevoir(e, devoir)}
+                                                                        // href={route('interrogation.edit', interrogation.id)}
                                                                         >
                                                                             <CIcon icon={cilCheck} />  Valider
                                                                         </Link></li>
                                                                         ) : null
                                                                     }
 
-                                                                    {checkPermission('interrogation.edit') ?
+                                                                    {checkPermission('devoir.edit') ?
                                                                         (<li><Link
                                                                             className='btn text-warning'
-                                                                            href={route('interrogation.edit', interrogation.id)}
+                                                                            href={route('devoir.edit', devoir.id)}
                                                                         >
                                                                             <CIcon icon={cilPencil} />  Modifier
                                                                         </Link></li>
                                                                         ) : null
                                                                     }
 
-                                                                    {checkPermission('interrogation.delete') ?
+                                                                    {checkPermission('devoir.delete') ?
                                                                         (<li><Link
                                                                             className='btn text-danger'
-                                                                            onClick={(e) => deleteInterrogation(e, interrogation)}
+                                                                            onClick={(e) => deleteDevoir(e, devoir)}
                                                                         >
                                                                             <CIcon icon={cilDelete} />  Supprimer
                                                                         </Link></li>) : null
@@ -355,12 +340,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                             </div> : '--'
                                                     }
                                                 </td>
-                                                <td> <span className="badge bg-light text-dark border rounded shadow">{interrogation.numero ?? '---'}</span> </td>
                                                 <td>
                                                     <span
-                                                        className={`btn btn-sm badge bg-${interrogation.is_validated ? 'success' : 'danger'} border rounded text-light`}
+                                                        className={`btn btn-sm badge bg-${devoir.is_validated ? 'success' : 'danger'} border rounded text-light`}
                                                     >
-                                                        {interrogation.is_validated ? (
+                                                        {devoir.is_validated ? (
                                                             <>
                                                                 Validée
                                                             </>
@@ -371,13 +355,12 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                                         )}
                                                     </span>
                                                 </td>
-                                                <td><span className="badge bg-light text-dark border rounded"> {interrogation.school?.raison_sociale ?? '---'}</span></td>
-                                                <td><span className="badge bg-light text-dark border rounded"> {interrogation.annee_scolaire ?? '---'}</span></td>
-                                                <td>{`${interrogation.apprenant?.firstname} - ${interrogation.apprenant?.lastname}`}</td>
-                                                <td>{interrogation.trimestre?.libelle}</td>
-                                                <td>{interrogation.matiere?.libelle}</td>
-                                                <td><span className="badge bg-light text-dark border rounded"> {interrogation.note ?? '00'}</span></td>
-                                                <td><span className="badge bg-light text-dark border rounded"> {`${interrogation.createdBy?.firstname} - ${interrogation.createdBy?.lastname}`}</span></td>
+                                                <td>{devoir.school?.raison_sociale ?? '---'}</td>
+                                                <td>{`${devoir.apprenant?.firstname} - ${devoir.apprenant?.lastname}`}</td>
+                                                <td>{devoir.trimestre?.libelle}</td>
+                                                <td>{devoir.matiere?.libelle}</td>
+                                                <td><span className="badge bg-light text-dark border rounded"> {devoir.note ?? '00'}</span></td>
+                                                <td><span className="badge bg-light text-dark border rounded"> {`${devoir.createdBy?.firstname} - ${devoir.createdBy?.lastname}`}</span></td>
                                             </tr>
                                         ))
                                     }
@@ -401,43 +384,40 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Ajout groupé des intérrogations
+                        Ajout groupé des devoirs
                     </h2>
 
                     <div className="row">
-                        {!auth.school_id &&
-                            <div className="col-md-12">
-                                <div className='mb-3'>
-                                    <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+                        <div className="col-md-12">
+                            <div className='mb-3'>
+                                <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                    <Select
-                                        placeholder="Rechercher une école ..."
-                                        name="school_id"
-                                        id="school_id"
-                                        // required
-                                        className="form-control mt-1 block w-full"
-                                        cleanable
-                                        options={schools?.data.map((school) => ({
-                                            value: school.id,
-                                            label: `${school.raison_sociale}`,
-                                        }))}
-                                        value={schools.data.map((school) => ({
-                                            value: school.id,
-                                            label: `${school.raison_sociale}`,
-                                            trimestres: school.trimestres
-                                        }))
-                                            .find((option) => option.value === data.school_id)} // set selected option
-                                        onChange={(option) => changeSchool(option)} // update state with id
-                                    />
+                                <Select
+                                    placeholder="Rechercher une école ..."
+                                    name="school_id"
+                                    id="school_id"
+                                    required
+                                    className="form-control mt-1 block w-full"
+                                    options={schools.data.map((school) => ({
+                                        value: school.id,
+                                        label: `${school.raison_sociale}`,
+                                    }))}
+                                    value={schools.data.map((school) => ({
+                                        value: school.id,
+                                        label: `${school.raison_sociale}`,
+                                        trimestres: school.trimestres
+                                    }))
+                                        .find((option) => option.value === data.school_id)} // set selected option
+                                    onChange={(option) => changeSchool(option)} // update state with id
+                                />
 
-                                    <InputError className="mt-2" message={errors.school_id} />
-                                </div>
+                                <InputError className="mt-2" message={errors.school_id} />
                             </div>
-                        }
+                        </div>
 
                         {/* Trimestre */}
                         {
-                            (selectedSchool.trimestres ?? trimestres.data).length > 0 &&
+                            trimestre && _trimestres.length > 0 &&
                             <div className="col-md-12">
                                 <div className='mb-3'>
                                     <InputLabel htmlFor="trimestre_id" value="Le trimestre concerné" >  <span className="text-danger">*</span> </InputLabel>
@@ -448,11 +428,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         id="trimestre_id"
                                         required
                                         className="form-control mt-1 block w-full"
-                                        options={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
+                                        options={_trimestres.map((trimestre) => ({
                                             value: trimestre.id,
                                             label: `${trimestre.libelle}`,
                                         }))}
-                                        value={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
+                                        value={_trimestres.map((trimestre) => ({
                                             value: trimestre.id,
                                             label: `${trimestre.libelle}`,
                                         }))
@@ -467,61 +447,64 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
 
                         {/* Matière */}
                         {
-                            (selectedSchool.matieres ?? matieres.data).length > 0 &&
-                            <div className="col-md-12">
-                                <div className='mb-3'>
-                                    <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
+                            matiere && _matieres.length > 0 && (
+                                <div className="col-md-12">
+                                    <div className='mb-3'>
+                                        <InputLabel htmlFor="matiere_id" value="La matière concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                    <Select
-                                        placeholder="Rechercher une matière ..."
-                                        name="matiere_id"
-                                        id="matiere_id"
-                                        required
-                                        className="form-control mt-1 block w-full"
-                                        options={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
-                                            value: matiere.id,
-                                            label: `${matiere.libelle}`,
-                                        }))}
-                                        value={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
-                                            value: matiere.id,
-                                            label: `${matiere.libelle}`,
-                                        }))
-                                            .find((option) => option.value === data.matiere_id)} // set selected option
-                                        onChange={(option) => setData('matiere_id', option.value)} // update state with id
-                                    />
+                                        <Select
+                                            placeholder="Rechercher une matière ..."
+                                            name="matiere_id"
+                                            id="matiere_id"
+                                            required
+                                            className="form-control mt-1 block w-full"
+                                            options={_matieres.map((matiere) => ({
+                                                value: matiere.id,
+                                                label: `${matiere.libelle}`,
+                                            }))}
+                                            value={_matieres.map((matiere) => ({
+                                                value: matiere.id,
+                                                label: `${matiere.libelle}`,
+                                            }))
+                                                .find((option) => option.value === data.matiere_id)} // set selected option
+                                            onChange={(option) => setData('matiere_id', option.value)} // update state with id
+                                        />
 
-                                    <InputError className="mt-2" message={errors.matiere_id} />
+                                        <InputError className="mt-2" message={errors.matiere_id} />
+                                    </div>
                                 </div>
-                            </div>
+                            )
                         }
 
                         {/* Les classes */}
-                        {(selectedSchool.classes ?? classes.data).length > 0 &&
-                            <div className="col-md-12">
-                                <div className='mb-3'>
-                                    <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
+                        {
+                            classe && _classes.length > 0 && (
+                                <div className="col-md-12">
+                                    <div className='mb-3'>
+                                        <InputLabel htmlFor="classe_id" value="La classe concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                    <Select
-                                        placeholder="Rechercher une classe ..."
-                                        name="classe_id"
-                                        id="classe_id"
-                                        required
-                                        className="form-control mt-1 block w-full"
-                                        options={(selectedSchool.classes ?? classes.data).map((classe) => ({
-                                            value: classe.id,
-                                            label: `${classe.libelle}`,
-                                        }))}
-                                        value={(selectedSchool.classes ?? classes.data).map((classe) => ({
-                                            value: classe.id,
-                                            label: `${classe.libelle}`,
-                                        }))
-                                            .find((option) => option.value === data.classe_id)} // set selected option
-                                        onChange={(option) => setData('classe_id', option.value)} // update state with id
-                                    />
+                                        <Select
+                                            placeholder="Rechercher une classe ..."
+                                            name="classe_id"
+                                            id="classe_id"
+                                            required
+                                            className="form-control mt-1 block w-full"
+                                            options={_classes.map((classe) => ({
+                                                value: classe.id,
+                                                label: `${classe.libelle}`,
+                                            }))}
+                                            value={_classes.map((classe) => ({
+                                                value: classe.id,
+                                                label: `${classe.libelle}`,
+                                            }))
+                                                .find((option) => option.value === data.classe_id)} // set selected option
+                                            onChange={(option) => setData('classe_id', option.value)} // update state with id
+                                        />
 
-                                    <InputError className="mt-2" message={errors.classe_id} />
+                                        <InputError className="mt-2" message={errors.classe_id} />
+                                    </div>
                                 </div>
-                            </div>
+                            )
                         }
                     </div>
 

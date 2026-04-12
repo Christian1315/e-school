@@ -115,6 +115,7 @@ class InterrogationController extends Controller
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "note"          => "required|numeric",
+                "annee_scolaire" => "required|numeric"
             ], [
 
                 "apprenant_id.required" => "L'identifiant de l'apprenant est obligatoire.",
@@ -128,6 +129,8 @@ class InterrogationController extends Controller
 
                 "note.required"         => "La note est obligatoire.",
                 "note.numeric"          => "La note doit être un nombre.",
+                "annee_scolaire.required"    => "L'année scolaire est réquise",
+                "annee_scolaire.numeric"    => "Le format est invalide!",
             ]);
 
             Interrogation::create($validated);
@@ -217,6 +220,7 @@ class InterrogationController extends Controller
                 "apprenants" => "array",
                 "apprenants*apprenant_id" => "required|integer",
                 "apprenants*note" => "required|numeric",
+                "annee_scolaire" => "required|numeric"
             ], [
                 // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
                 // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
@@ -229,6 +233,9 @@ class InterrogationController extends Controller
 
                 "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
                 "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
+
+                "annee_scolaire.required"    => "L'année scolaire est réquise",
+                "annee_scolaire.numeric"    => "Le format est invalide!",
             ]);
 
             // 
@@ -239,7 +246,8 @@ class InterrogationController extends Controller
                     "trimestre_id" => $validated["trimestre_id"],
                     "matiere_id" => $validated["matiere_id"],
                     "classe_id" => $validated["classe_id"],
-                    "note" => $ligne["note"]
+                    "note" => $ligne["note"],
+                    "annee_scolaire" => $validated["annee_scolaire"],
                 ]);
             }
 
@@ -362,14 +370,12 @@ class InterrogationController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id"     => "required|integer",
                 "apprenant_id"  => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "note"          => "required|numeric",
+                "annee_scolaire" => "required|numeric"
             ], [
-                "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
 
                 "apprenant_id.required" => "L'identifiant de l'apprenant est obligatoire.",
                 "apprenant_id.integer"  => "L'identifiant de l'apprenant doit être un nombre entier.",
@@ -382,6 +388,8 @@ class InterrogationController extends Controller
 
                 "note.required"         => "La note est obligatoire.",
                 "note.numeric"          => "La note doit être un nombre.",
+                "annee_scolaire.required"    => "L'année scolaire est réquise",
+                "annee_scolaire.numeric"    => "Le format est invalide!",
             ]);
 
             $interrogation->update($validated);

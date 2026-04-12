@@ -15,9 +15,9 @@ class DevoirResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
         return [
             "id" => $this->id,
+            "numero" => $this->numero,
             "school" => $this->school,
             "is_validated" => $this->is_validated,
             "apprenant" => $this->apprenant,
@@ -26,6 +26,7 @@ class DevoirResource extends JsonResource
             "note" => $this->note,
             "createdAt" => Carbon::parse($this->created_at)->locale("fr")->isoFormat("D MMMM YYYY"),
             "createdBy" => $this->createdBy,
+            "annee_scolaire" => $this->annee_scolaire
         ];
     }
 }

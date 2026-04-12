@@ -17,14 +17,16 @@ class Devoir extends Model
      * fillbale
      */
     protected $fillable = [
+        "numero",
         "school_id",
         "apprenant_id",
         "trimestre_id",
         "matiere_id",
-        "note",
         "created_by",
         "updated_by",
-        "is_validated"
+        "note",
+        "is_validated",
+        "annee_scolaire"
     ];
 
     /**
@@ -35,9 +37,9 @@ class Devoir extends Model
         "apprenant_id"      => "integer",
         "trimestre_id"      => "integer",
         "matiere_id"      => "integer",
-        "note"      => "decimal:2",
         "created_by"     => "integer",
-        "updated_by"     => "integer"
+        "updated_by"     => "integer",
+        "note" => "decimal:2"
     ];
 
     /**
@@ -61,7 +63,7 @@ class Devoir extends Model
      */
     public function trimestre(): BelongsTo
     {
-        return $this->belongsTo(Trimestre::class, "trimestre_id");
+        return $this->belongsTo(Trimestre::class);
     }
 
     /**
@@ -69,7 +71,7 @@ class Devoir extends Model
      */
     public function matiere(): BelongsTo
     {
-        return $this->belongsTo(Matiere::class, "matiere_id");
+        return $this->belongsTo(Matiere::class);
     }
 
     /**
@@ -91,7 +93,6 @@ class Devoir extends Model
     /**
      * Boot
      */
-
     static protected function boot()
     {
         parent::boot();
@@ -99,7 +100,12 @@ class Devoir extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            $model->is_validated = false;
+            $model->school_id = Auth::user()->school_id ?? 1;
+        });
+
+        static::created(function ($model) {
+            $model->numero = "INT-" . date("y-m-d") . "-" . $model->id;
+            $model->saveQuietly();
         });
 
         // updating

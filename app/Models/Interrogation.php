@@ -25,7 +25,8 @@ class Interrogation extends Model
         "created_by",
         "updated_by",
         "note",
-        "is_validated"
+        "is_validated",
+        "annee_scolaire"
     ];
 
     /**

@@ -8,12 +8,14 @@ import {
 
 import CIcon from '@coreui/icons-react'
 import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked, cilWc } from '@coreui/icons'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, useForm, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
+import Modal from '@/Components/Modal';
+import SecondaryButton from '@/Components/SecondaryButton';
+import PrimaryButton from '@/Components/PrimaryButton';
+import Swal from "sweetalert2"
 
 export default function SidebarMenu(props) {
-    // const [visible, setVisible] = useState(false)
-    console.log(props)
 
     const user = usePage().props.auth.user;
     const permissions = usePage().props.auth.permissions;
@@ -22,6 +24,69 @@ export default function SidebarMenu(props) {
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
+
+    const [showInterroTrimestreModal, setShowInterroTrimestreModal] = useState(false);
+    const [showDevoirTrimestreModal, setShowDevoirTrimestreModal] = useState(false);
+    const [currentTrimestre, setCurrentTrimestre] = useState(null);
+
+    const openInterroTrimestreModal = (e, trimestre) => {
+        e.preventDefault();
+        setCurrentTrimestre(trimestre);
+        setShowInterroTrimestreModal(true);
+    }
+
+    const openDevoirTrimestreModal = (e, trimestre) => {
+        e.preventDefault();
+        setCurrentTrimestre(trimestre);
+        setShowDevoirTrimestreModal(true);
+    }
+
+    const [date, setDate] = useState('');
+    const { get } = useForm({})
+
+    // interrogations moyenne filter
+    const filtreInterroTrimestre = (e) => {
+        e.preventDefault();
+        setShowInterroTrimestreModal(false);
+
+        get(route("moyenne.interro", { trimestre: currentTrimestre.id, annee_scolaire: date }), {
+            onSuccess: () => {
+                Swal.close();
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+        });
+    };
+
+    // devoirs moyenne filter
+    const filtreDevoirTrimestre = (e) => {
+        console.log("filtre devoir trimestre");
+        e.preventDefault();
+        setShowInterroTrimestreModal(false);
+
+        get(route("moyenne.devoir", { trimestre: currentTrimestre.id, annee_scolaire: date }), {
+            onSuccess: () => {
+                Swal.close();
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+        });
+    };
+
 
     return (
         <>
@@ -249,7 +314,7 @@ export default function SidebarMenu(props) {
                                             <span className="nav-icon">
                                                 <span className="nav-icon-bullet text-danger"></span>
                                             </span>
-                                            Liste des devoir
+                                            Liste des devoirs
                                         </Link>) : null
                                     }
 
@@ -281,7 +346,8 @@ export default function SidebarMenu(props) {
                                         trimestres.map((trimestre) => (
                                             <Link
                                                 key={trimestre.id}
-                                                href={route("moyenne.interro", { trimestre: trimestre.id })}
+                                                // href={route("moyenne.interro", { trimestre: trimestre.id })}
+                                                onClick={(e) => openTrimestreModal(e, trimestre)}
                                                 className="nav-link"
                                             >
                                                 <span className="nav-icon">
@@ -312,7 +378,8 @@ export default function SidebarMenu(props) {
                                         trimestres.map((trimestre) => (
                                             <Link
                                                 key={trimestre.id}
-                                                href={route("moyenne.devoir", { trimestre: trimestre.id })}
+                                                // href={route("moyenne.devoir", { trimestre: trimestre.id })}
+                                                onClick={(e) => openDevoirTrimestreModal(e, trimestre)}
                                                 className="nav-link"
                                             >
                                                 <span className="nav-icon">
@@ -529,6 +596,62 @@ export default function SidebarMenu(props) {
                     </CSidebarNav>
                 </CSidebar>
             </div>
+
+            {/*Interro Modal */}
+            <Modal show={showInterroTrimestreModal} onClose={() => setShowInterroTrimestreModal(false)}>
+                <form onSubmit={(e) => filtreInterroTrimestre(e)} className="p-3">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Trimestre concerné : <em className='text-success'>{currentTrimestre?.libelle} </em>
+                    </h2>
+                    <div className="border rounded">
+                        <input type="number"
+                            name="interro_date"
+                            className="form-control w-full"
+                            min={2000}
+                            max={2030}
+                            required
+                            placeholder="Année scolaire (ex: 2023)"
+                            onChange={(e) => setDate(e.target.value)} />
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={() => setShowInterroTrimestreModal(false)}>
+                            Fermer
+                        </SecondaryButton>
+                        <PrimaryButton className="mx-1">
+                            Appliquer le filtre
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
+
+            {/*Devoir Modal */}
+            <Modal show={showDevoirTrimestreModal} onClose={() => setShowDevoirTrimestreModal(false)}>
+                <form onSubmit={(e) => filtreDevoirTrimestre(e)} className="p-3">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Trimestre concerné : <em className='text-success'>{currentTrimestre?.libelle} </em>
+                    </h2>
+                    <div className="border rounded">
+                        <input type="number"
+                            name="interro_date"
+                            className="form-control w-full"
+                            min={2000}
+                            max={2030}
+                            required
+                            placeholder="Année scolaire (ex: 2023)"
+                            onChange={(e) => setDate(e.target.value)} />
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={() => setShowDevoirTrimestreModal(false)}>
+                            Fermer
+                        </SecondaryButton>
+                        <PrimaryButton className="mx-1">
+                            Appliquer le filtre
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
         </>
     )
 }

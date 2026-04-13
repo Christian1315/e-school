@@ -199,6 +199,7 @@ export default function Create({ apprenants, trimestres, matieres, interrogation
                                                 placeholder="18.00"
                                                 onChange={(e) => setData('note', e.target.value)}
                                                 autoComplete="note"
+                                                max={20}
                                                 required
                                             />
 

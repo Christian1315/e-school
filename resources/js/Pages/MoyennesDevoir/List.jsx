@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 
-export default function List({ apprenants, trimestre }) {
+export default function List({ apprenants, trimestre, annee_scolaire }) {
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -45,7 +45,7 @@ export default function List({ apprenants, trimestre }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes des devoirs | <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong>
+                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes des devoirs | Trimestre: <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong> | Année scolaire: <strong className="badge bg-light shadow-sm rounded border text-danger">{annee_scolaire || '---'}</strong>
                 </h2>
             }
         >
@@ -86,7 +86,7 @@ export default function List({ apprenants, trimestre }) {
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
                                             <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-                                            
+
                                         </tr>
                                     ))
                                 }

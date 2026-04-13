@@ -7,12 +7,14 @@ use App\Http\Resources\ClasseResource;
 use App\Http\Resources\InterrogationResource;
 use App\Http\Resources\MatiereResource;
 use App\Http\Resources\SchoolResource;
+use App\Http\Resources\SerieResource;
 use App\Http\Resources\TrimestreResource;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\Interrogation;
 use App\Models\Matiere;
 use App\Models\School;
+use App\Models\Serie;
 use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +49,9 @@ class InterrogationController extends Controller
 
             $classes = Classe::latest()
                 ->where("school_id", Auth::user()->school_id)->get();
+
+            $series = Serie::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
         } else {
             $interrogations = Interrogation::orderByDesc("id")->get();
 
@@ -59,6 +64,7 @@ class InterrogationController extends Controller
 
             $matieres = Matiere::latest()->get();
             $classes = Classe::latest()->get();
+            $series = Serie::latest()->get();
         }
 
         return Inertia::render("Interrogation/List", [
@@ -68,6 +74,7 @@ class InterrogationController extends Controller
             "trimestres" => TrimestreResource::collection($trimestres),
             "matieres" => MatiereResource::collection($matieres),
             "classes" => ClasseResource::collection($classes),
+            "series" => SerieResource::collection($series),
         ]);
     }
 
@@ -165,12 +172,16 @@ class InterrogationController extends Controller
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
+                "serie_id"          => "required|integer",
             ], [
                 // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
                 // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
 
                 "classe_id.required" => "La classe doit être obligatoire.",
                 "classe_id.integer"  => "La classe doit  être un nombre entier.",
+
+                "serie_id.required" => "La série doit être obligatoire.",
+                "serie_id.integer"  => "La série doit  être un nombre entier.",
 
                 "trimestre_id.required" => "L'identifiant du trimestre est obligatoire.",
                 "trimestre_id.integer"  => "L'identifiant du trimestre doit être un nombre entier.",
@@ -179,8 +190,9 @@ class InterrogationController extends Controller
                 "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
             ]);
 
-            $Query = Apprenant::where("classe_id", $request->classe_id)
+            $Query = Apprenant::where(["classe_id" => $request->classe_id, "serie_id" => $request->serie_id])
                 ->latest();
+                
             if (Auth::user()->school) {
                 $apprenants = $Query
                     ->where("school_id", Auth::user()->school_id)->get();

@@ -20,14 +20,16 @@
         }
 
         #logo {
-            width: 100px;
-            height: 100px;
+            width: 50px;
+            height: 50px;
         }
 
         #block {
             width: 100%;
             /* text-align: center; */
             margin: 0 auto;
+            border: solid 2px #000 !important;
+            border-radius: 10px;
         }
 
         #block-content {
@@ -13983,8 +13985,8 @@
                         <!-- Texte centre -->
                         <td style="width: 50%; text-align: center;">
                             <p class="school-description text-upercase my-2" style="text-transform: uppercase!important;">République du Bénin</p>
-                            <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$apprenant->school?->raison_sociale}}</h1>
-                            <h3 style="margin: 2px!important;">{{$apprenant->school?->description}}</h3>
+                            <h1 class="school-name text-danger" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$apprenant->school?->raison_sociale}}</h1>
+                            <h3 class="text-success" style="margin: 2px!important;">{{$apprenant->school?->description}}</h3>
                             <br>
                             <p class="school-contact" style="margin: 0;">Tel: {{$apprenant->school?->phone}}</p>
                             <p class="school-slogan" style="margin: 0;">{{$apprenant->school?->slogan}}</p>
@@ -13995,7 +13997,6 @@
                             @if($apprenantProfil)
                             <img src="{{ public_path($apprenantProfil) }}"
                                 id="logo"
-                                alt="Logo de l'apprenant"
                                 class="shadow"
                                 style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
                             @else
@@ -14026,18 +14027,19 @@
                         <!-- Colonne milieu -->
                         <td style="width: 25%; text-align: left; vertical-align: top;">
                             <div class="border rounded p-2">
-                                <p class="apprenant-name"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->libelle}} - {{$apprenant->serie?->libelle}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->libelle}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->serie?->libelle}}</strong></p>
                                 <p class="apprenant-name"><strong class="badge"> Effectif</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->apprenants->count()}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Statut</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> </strong></p>
+                                <!-- <p class="apprenant-name"><strong class="badge"> Statut</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> </strong></p> -->
                             </div>
                         </td>
 
                         <!-- Colonne droite -->
                         <td style="width: 25%; text-align: left; vertical-align: center; align-items:center!important">
                             <div class="border rounded p-2">
-                                <p class="apprenant-name"><strong class="badge"> Lieu de naissance</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->lieu_naissance}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Sexe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->sexe}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Année scolaire</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->period}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Lieu de naissance</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->lieu_naissance??'---'}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Sexe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->sexe??'---'}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Année scolaire</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->period??'---'}}</strong></p>
                             </div>
                         </td>
                     </tr>
@@ -14074,7 +14076,7 @@
                             <th scope="col">Moy Coef</th>
                             <th scope="col">Moy faible</th>
                             <th scope="col">Moy forte</th>
-                            <th scope="col">Rang</th>
+                            <!-- <th scope="col">Rang</th> -->
                             <th scope="col">Appréciation du prof</th>
                         </tr>
                     </thead>
@@ -14101,31 +14103,31 @@
 
                             {{-- Compléter avec des 0.00 s'il manque des colonnes --}}
                             @for($i = $interros_count; $i < 3; $i++)
-                            <td>0.00</td>
-                            @endfor
-                            <td class="text-success">{{$matiere->moyenne_interro}}</td>
+                                <td>--</td>
+                                @endfor
+                                <td class="text-success">{{$matiere->moyenne_interro}}</td>
 
-                            <!-- les devoirs -->
-                            <td class="text-danger">{{$devoirs_count}}</td>
-                            {{-- Affichage des notes existantes --}}
-                            @foreach($devoirs as $devoir)
-                            <td>{{ $devoir->note }}</td>
-                            @endforeach
+                                <!-- les devoirs -->
+                                <td class="text-danger">{{$devoirs_count}}</td>
+                                {{-- Affichage des notes existantes --}}
+                                @foreach($devoirs as $devoir)
+                                <td>{{ $devoir->note }}</td>
+                                @endforeach
 
-                            {{-- Compléter avec des 0.00 s'il manque des colonnes --}}
-                            @for($i = $devoirs_count; $i < 3; $i++)
-                            <td>0.00</td>
-                            @endfor
-                            <td class="text-success">{{number_format($matiere->moyenne,2,","," ")}}</td>
+                                {{-- Compléter avec des 0.00 s'il manque des colonnes --}}
+                                @for($i = $devoirs_count; $i < 3; $i++)
+                                    <td>--</td>
+                                    @endfor
+                                    <td class="text-success">{{number_format($matiere->moyenne,2,","," ")}}</td>
 
-                            <!-- les autres  -->
-                            <td><span class="badge border rounded text-danger shadow"> {{number_format($matiere->moyenne_coefficie,2,","," ")}} </span> </td>
-                            <td>{{number_format($matiere->moyenne_faible,2,","," ")}}</td>
-                            <td>{{number_format($matiere->moyenne_forte,2,","," ")}}</td>
-                            <td><span class="badge border rounded text-danger shadow"> {{$matiere->rang}} .ième </span> </td>
-                            <td>
-                                <p></p>
-                            </td>
+                                    <!-- les autres  -->
+                                    <td><span class="badge border rounded text-danger shadow"> {{number_format($matiere->moyenne_coefficie,2,","," ")}} </span> </td>
+                                    <td>{{number_format($matiere->moyenne_faible,2,","," ")}}</td>
+                                    <td>{{number_format($matiere->moyenne_forte,2,","," ")}}</td>
+                                    <!-- <td><span class="badge border rounded text-danger shadow"> {{$matiere->rang}} .ième </span> </td> -->
+                                    <td>
+                                        <p></p>
+                                    </td>
                         </tr>
                         @empty
                         <p>Aucune matière trouvée!</p>

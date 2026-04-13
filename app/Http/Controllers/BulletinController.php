@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DevoirResource;
-use App\Http\Resources\InterrogationResource;
 use App\Models\Apprenant;
+use App\Models\Matiere;
 use App\Models\Trimestre;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -17,7 +16,7 @@ class BulletinController extends Controller
     /**
      * Handle the incoming request.
      */
-    function __invoke(Request $request, Trimestre $trimestre)
+    function __invoke(Trimestre $trimestre)
     {
         if (Auth::user()->school) {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
@@ -30,18 +29,27 @@ class BulletinController extends Controller
          * Moyennes formatage
          */
         $apprenants->transform(function ($apprenant) use ($trimestre) {
-            $matieres = $apprenant->school->matieres;
+            if (Auth::user()->school_id) {
+                $matieres = $apprenant->school?->matieres;
+            } else {
+                $matieres = Matiere::latest()->get();
+            }
 
             $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre) {
                 $matiere_interros = $apprenant->interrogations()
-                    ->where(["matiere_id" => $matiere->id, "trimestre_id" => $trimestre->id])->get();
+                    ->where([
+                        "matiere_id" => $matiere->id,
+                        "trimestre_id" => $trimestre->id,
+                        "is_validated" => true, //les interrogations validées uniquement
+                    ])
+                    ->get();
 
                 /** */
                 return [
                     "id" => $matiere->id,
                     "libelle" => $matiere->libelle,
                     "interrogations" => [],
-                    "moyenne_interro" => !$matiere_interros->isEmpty() ? $matiere_interros->sum("note") / $matiere_interros->count() : 0
+                    "moyenne_interro" => !$matiere_interros->isEmpty() ? number_format($matiere_interros->sum("note") / $matiere_interros->count(), 2) : 0
                 ];
             });
 
@@ -58,24 +66,33 @@ class BulletinController extends Controller
      * Generate un bulletin
      */
 
-    function generateBulletin(Request $request, Trimestre $trimestre, Apprenant $apprenant)
+    function generateBulletin(Trimestre $trimestre, Apprenant $apprenant, $annee_scolaire = null)
     {
+        Log::info("Génération du bulletin pour l'apprenant: {$apprenant->nom} {$apprenant->prenom}, trimestre: {$trimestre->libelle} et année scolaire: {$annee_scolaire}");
         try {
             $apprenant->load(["school", "parent", "classe.apprenants", "serie"]);
 
             $logoPath = explode(env("APP_URL"), $apprenant->school->logo);
-            $apprenantProfilPath = explode(env("APP_URL"), $apprenant->photo);
+
+            $apprenantProfilPath = $apprenant->photo ? explode(env("APP_URL"), $apprenant->photo) : null;
+
+            if (Auth::user()->school_id) {
+                $_matieres = $apprenant->school?->matieres;
+            } else {
+                $_matieres = Matiere::latest()->get();
+            }
 
             /**
              * Moyennes formatage
              */
-            $matieres = $apprenant->school->matieres->map(function ($matiere) use ($apprenant, $trimestre) {
+            $matieres = $_matieres->map(function ($matiere) use ($apprenant, $trimestre, $annee_scolaire) {
 
                 $matiere_interros = $apprenant->interrogations()
                     ->where([
                         "matiere_id" => $matiere->id,
                         "trimestre_id" => $trimestre->id,
-                        "is_validated" => true
+                        "is_validated" => true,
+                        "annee_scolaire" => $annee_scolaire, // année scolaire choisie
                     ])
                     ->get();
 
@@ -83,7 +100,8 @@ class BulletinController extends Controller
                     ->where([
                         "matiere_id" => $matiere->id,
                         "trimestre_id" => $trimestre->id,
-                        "is_validated" => true
+                        "is_validated" => true,
+                        "annee_scolaire" => $annee_scolaire, // année scolaire choisie
                     ])
                     ->get();
 
@@ -92,17 +110,18 @@ class BulletinController extends Controller
                     : 0;
 
                 $sommeDevoirsNote = $matiere_devoirs->sum("note");
-                $moyenne = ($moyenne_interro + $sommeDevoirsNote) / 3;
+                $moyenne = ($moyenne_interro + $sommeDevoirsNote) / ($matiere_devoirs->count() + 1);
                 $moyenneCoefficie = $moyenne * $matiere->coefficient;
 
                 // 2️⃣ Calculer la moyenne faible & forte pour la matière
-                $allMoyennes = $apprenant->school->apprenants->map(function ($eleve) use ($matiere, $trimestre) {
+                $allMoyennes = $apprenant->school->apprenants->map(function ($eleve) use ($matiere, $trimestre, $annee_scolaire) {
 
                     $interros = $eleve->interrogations()
                         ->where([
                             "matiere_id" => $matiere->id,
                             "trimestre_id" => $trimestre->id,
-                            "is_validated" => true
+                            "is_validated" => true,
+                            "annee_scolaire" => $annee_scolaire, // année scolaire choisie
                         ])
                         ->get();
 
@@ -110,7 +129,8 @@ class BulletinController extends Controller
                         ->where([
                             "matiere_id" => $matiere->id,
                             "trimestre_id" => $trimestre->id,
-                            "is_validated" => true
+                            "is_validated" => true,
+                            "annee_scolaire" => $annee_scolaire, // année scolaire choisie
                         ])
                         ->get();
 
@@ -135,9 +155,9 @@ class BulletinController extends Controller
                     "coefficient" => $matiere->coefficient,
                     "interrogations" => $matiere_interros,
                     "devoirs" => $matiere_devoirs,
-                    "moyenne_interro" => $moyenne_interro,
-                    "moyenne" => $moyenne,
-                    "moyenne_coefficie" => $moyenneCoefficie,
+                    "moyenne_interro" => round($moyenne_interro, 2),
+                    "moyenne" => round($moyenne, 2),
+                    "moyenne_coefficie" => round($moyenneCoefficie, 2),
 
                     "moyenne_faible" => $moyenne_faible,
                     "moyenne_forte" => $moyenne_forte,
@@ -151,14 +171,14 @@ class BulletinController extends Controller
             $apprenant->matieres = $matieres;
             $apprenant->rang = 3;
             $apprenant->statut = 'Passant';
-            $apprenant->period = '2023-2024';
+            $apprenant->period = $annee_scolaire . " - " . ($annee_scolaire + 1);
 
             set_time_limit(0);
             $pdf = Pdf::loadView("pdfs.bulletins.bulletin", [
                 "apprenant" => $apprenant,
                 "trimestre" => $trimestre,
                 "logo" => $logoPath[1] ?? null,
-                "apprenantProfil" => $apprenantProfilPath[1] ?? null
+                "apprenantProfil" => $apprenantProfilPath ? $apprenantProfilPath[1] : null
             ]);
 
             // Set PDF orientation to landscape
@@ -171,7 +191,6 @@ class BulletinController extends Controller
                 "line" => $e->getLine()
             ]);
             return "Eureure lors de la generation du bulletin : " . $e->getMessage();
-            // return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 }

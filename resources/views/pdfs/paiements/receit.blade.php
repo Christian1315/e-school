@@ -143,7 +143,7 @@
                         <!-- Colonne droite -->
                         <td style="width: 50%; text-align: right; vertical-align: top;">
                             <div id="resteBlock">
-                                <h3 class="souscription">N° souscription : <strong class="souscription_number">{{$paiement->numero}}</strong></h3>
+                                <h3 class="souscription">N° paiement : <strong class="souscription_number">{{$paiement->numero}}</strong></h3>
                                 <h3 class="souscription">Reste à payer : <strong class="souscription_number">{{$reste}} {{ env('CURRENCY') }}</strong></h3>
                             </div>
                             <p style="text-align: center;" class="">Service comptabilité</p>

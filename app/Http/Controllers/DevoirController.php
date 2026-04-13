@@ -7,12 +7,14 @@ use App\Http\Resources\ClasseResource;
 use App\Http\Resources\DevoirResource;
 use App\Http\Resources\MatiereResource;
 use App\Http\Resources\SchoolResource;
+use App\Http\Resources\SerieResource;
 use App\Http\Resources\TrimestreResource;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\Devoir;
 use App\Models\Matiere;
 use App\Models\School;
+use App\Models\Serie;
 use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +49,9 @@ class DevoirController extends Controller
 
             $classes = Classe::latest()
                 ->where("school_id", Auth::user()->school_id)->get();
+
+            $series = Serie::latest()
+                ->where("school_id", Auth::user()->school_id)->get();
         } else {
             $devoirs = Devoir::orderByDesc("id")->get();
 
@@ -56,6 +61,8 @@ class DevoirController extends Controller
             $trimestres = Trimestre::latest()->get();
             $matieres = Matiere::latest()->get();
             $classes = Classe::latest()->get();
+            $classes = Classe::latest()->get();
+            $series = Serie::latest()->get();
         }
 
         return Inertia::render("Devoir/List", [
@@ -65,6 +72,7 @@ class DevoirController extends Controller
             "trimestres" => TrimestreResource::collection($trimestres),
             "matieres" => MatiereResource::collection($matieres),
             "classes" => ClasseResource::collection($classes),
+            "series" => SerieResource::collection($series)
         ]);
     }
 
@@ -162,6 +170,7 @@ class DevoirController extends Controller
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
+                "serie_id"          => "required|integer",
             ], [
                 // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
                 // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
@@ -174,9 +183,12 @@ class DevoirController extends Controller
 
                 "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
                 "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
+
+                "serie_id.required"   => "L'identifiant de la série est obligatoire.",
+                "serie_id.integer"    => "L'identifiant de la série doit être un nombre entier.",
             ]);
 
-            $Query = Apprenant::where("classe_id", $request->classe_id)
+            $Query = Apprenant::where(["classe_id" => $request->classe_id, "serie_id" => $request->serie_id])
                 ->latest();
             if (Auth::user()->school) {
                 $apprenants = $Query

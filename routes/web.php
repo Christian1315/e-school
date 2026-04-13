@@ -93,15 +93,15 @@ Route::middleware('auth')->group(function () {
     //Les moyennes 
     Route::prefix("moyennes")->group(function () {
         // Moyennes des interrogations
-        Route::get("interro/{trimestre}", MoyenneInterrogationController::class)->name("moyenne.interro");
+        Route::get("interro/{trimestre}/{annee_scolaire?}", MoyenneInterrogationController::class)->name("moyenne.interro");
 
         // Moyennes des devoirs
-        Route::get("devoir/{trimestre}", MoyenneDevoirController::class)->name("moyenne.devoir");
+        Route::get("devoir/{trimestre}/{annee_scolaire?}", MoyenneDevoirController::class)->name("moyenne.devoir");
     });
 
     // Les bulletins
     Route::get("bulletin/{trimestre}", BulletinController::class)->name("bulletin");
-    Route::get("bulletin/{trimestre}/{apprenant}", [BulletinController::class, "generateBulletin"])->name("generateBulletin");
+    Route::get("bulletin/{trimestre}/{apprenant}/{annee_scolaire?}", [BulletinController::class, "generateBulletin"])->name("generateBulletin");
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

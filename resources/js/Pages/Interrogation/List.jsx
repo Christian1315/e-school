@@ -12,7 +12,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
-export default function List({ interrogations, schools, trimestres, matieres, classes }) {
+export default function List({ interrogations, schools, trimestres, matieres, classes, series }) {
     const auth = usePage().props.auth;
     const permissions = auth.permissions;
 
@@ -38,6 +38,9 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     const [classe, setClasse] = useState(false);
     const [_classes, setClasses] = useState(classes.data);
 
+    const [serie, setSerie] = useState(false);
+    const [_series, setSeries] = useState(series.data);
+
     const [selectedSchool, setSelectedSchool] = useState({})
 
 
@@ -45,6 +48,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
         // school_id: "",
         trimestre_id: "",
         classe_id: "",
+        serie_id: "",
         matiere_id: "",
         interroscheckeds: []
     })
@@ -517,6 +521,35 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         }))
                                             .find((option) => option.value === data.classe_id)} // set selected option
                                         onChange={(option) => setData('classe_id', option.value)} // update state with id
+                                    />
+
+                                    <InputError className="mt-2" message={errors.classe_id} />
+                                </div>
+                            </div>
+                        }
+
+                        {/* Les series */}
+                        {(selectedSchool.series ?? series.data).length > 0 &&
+                            <div className="col-md-12">
+                                <div className='mb-3'>
+                                    <InputLabel htmlFor="serie_id" value="La série concernée" >  <span className="text-danger">*</span> </InputLabel>
+
+                                    <Select
+                                        placeholder="Rechercher une série ..."
+                                        name="serie_id"
+                                        id="serie_id"
+                                        required
+                                        className="form-control mt-1 block w-full"
+                                        options={(selectedSchool.series ?? series.data).map((serie) => ({
+                                            value: serie.id,
+                                            label: `${serie.libelle}`,
+                                        }))}
+                                        value={(selectedSchool.series ?? series.data).map((serie) => ({
+                                            value: serie.id,
+                                            label: `${serie.libelle}`,
+                                        }))
+                                            .find((option) => option.value === data.serie_id)} // set selected option
+                                        onChange={(option) => setData('serie_id', option.value)} // update state with id
                                     />
 
                                     <InputError className="mt-2" message={errors.classe_id} />

@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\InterrogationResource;
 use App\Models\Apprenant;
+use App\Models\Matiere;
 use App\Models\Trimestre;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class MoyenneInterrogationController extends Controller
 {
-    function __invoke(Request $request, Trimestre $trimestre)
+    function __invoke(Trimestre $trimestre, $annee_scolaire = null)
     {
+        Log::info("Calcul des moyennes d'interrogation pour le trimestre: {$trimestre->libelle} et l'année scolaire: {$annee_scolaire}");
+
         if (Auth::user()->school) {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
                 ->where("school_id", Auth::user()->school_id)->get();
@@ -23,16 +26,22 @@ class MoyenneInterrogationController extends Controller
         /**
          * Moyennes formatage
          */
-        $apprenants->transform(function ($apprenant) use ($trimestre) {
-            $matieres = $apprenant->school->matieres;
-            // $trimestres = $apprenant->school->trimestres;
+        $apprenants->transform(function ($apprenant) use ($trimestre, $annee_scolaire) {
 
-            $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre) {
+            if (Auth::user()->school_id) {
+                $matieres = $apprenant->school?->matieres;
+            } else {
+                $matieres = Matiere::latest()->get();
+            }
+
+            // pour chaque matiere, on recupere les interros de l'apprenant pour le trimestre en cours
+            $apprenant->matieres = $matieres->map(function ($matiere) use ($apprenant, &$trimestre, &$annee_scolaire) {
                 $matiere_interros = $apprenant->interrogations()
                     ->where([
                         "matiere_id" => $matiere->id,
                         "trimestre_id" => $trimestre->id,
-                        "is_validated" => true,
+                        "is_validated" => true, //les interrogations validées uniquement
+                        "annee_scolaire" => $annee_scolaire, // année scolaire choisie
                     ])
                     ->get();
 
@@ -41,7 +50,7 @@ class MoyenneInterrogationController extends Controller
                     "id" => $matiere->id,
                     "libelle" => $matiere->libelle,
                     "interrogations" => InterrogationResource::collection($matiere_interros),
-                    "moyenne_interro" => !$matiere_interros->isEmpty() ? $matiere_interros->sum("note") / $matiere_interros->count() : 0
+                    "moyenne_interro" => !$matiere_interros->isEmpty() ? number_format($matiere_interros->sum("note") / $matiere_interros->count(), 2) : 0
                 ];
             });
 
@@ -49,10 +58,10 @@ class MoyenneInterrogationController extends Controller
         });
 
 
-        // return response()->json($apprenants);
         return Inertia::render('MoyennesInterro/List', [
             'apprenants' => $apprenants,
-            "trimestre" => $trimestre
+            "trimestre" => $trimestre,
+            "annee_scolaire" => $annee_scolaire
         ]);
     }
 }

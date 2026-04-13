@@ -17,6 +17,7 @@ export default function List({ apprenants, trimestre }) {
 
     const [showModal, setShowModal] = useState(false);
     const [currentApprenant, setCurrentApprenant] = useState(null);
+    const [year, setYear] = useState(new Date().getFullYear()); // année scolaire par défaut
 
     const confirmShowModal = (e, apprenant) => {
         e.preventDefault();
@@ -66,7 +67,7 @@ export default function List({ apprenants, trimestre }) {
                                     <strong>le lien</strong> ci-dessous pour le récupérer :
                                 </p>
                                 <p>
-                                    <a target="_blank" href="${route('generateBulletin', { trimestre: trimestre?.id, apprenant: currentApprenant?.id })}">
+                                    <a target="_blank" href="${route('generateBulletin', { trimestre: trimestre?.id, apprenant: currentApprenant?.id, annee_scolaire: year })}" class="btn bg-light border rounded text-dark">
                                     📥 Télécharger le bulletin
                                     </a>
                                 </p>
@@ -126,7 +127,7 @@ export default function List({ apprenants, trimestre }) {
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
                                             <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-                                            
+
                                         </tr>
                                     ))
                                 }
@@ -138,12 +139,23 @@ export default function List({ apprenants, trimestre }) {
 
             {/* Modal */}
             <Modal show={showModal} onClose={closeModal}>
-                <form method='get' onClick={submit}>
+                <form onSubmit={(e) => submit(e)}>
                     <div className="p-3">
                         <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             Génerer le bulletin de l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
                         </h2>
 
+                        <div className="border rounded">
+                            <input type="number"
+                                name="interro_date"
+                                className="form-control w-full"
+                                min={2000}
+                                max={2030}
+                                required
+                                placeholder="Année scolaire (ex: 2023)"
+                                onChange={(e) => setYear(e.target.value)} />
+                        </div>
+                        <br />
                         <div className="mt-6 flex justify-end">
                             <SecondaryButton onClick={closeModal}>
                                 Fermer

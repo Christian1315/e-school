@@ -116,7 +116,7 @@ class UserController extends Controller
             $validated = $request->validate([
                 'firstname'   => 'required|string',
                 'lastname'    => 'required|string',
-                'school_id'   => 'required|integer',
+                'school_id'   => 'nullable|integer',
                 'role_id'   => 'required|integer',
 
                 'email'       => 'required|string|lowercase|email|max:255|unique:users,email',
@@ -166,8 +166,10 @@ class UserController extends Controller
                 'password' => Hash::make($validated["password"]),
             ]);
 
-            $user->detail()->create(["phone" => $validated["phone"] ?? null]);
-
+            $user->detail()->create([
+                "phone" => $validated["phone"] ?? null,
+                "profile_img" => $validated["profile_img"] ?? null,
+            ]);
 
             /**
              * Affectation de role
@@ -188,7 +190,6 @@ class UserController extends Controller
              * Affectation
              */
             $user->assignRole($role);
-
             event(new Registered($user));
 
             DB::commit();
@@ -323,14 +324,16 @@ class UserController extends Controller
      */
     function edit(User $user)
     {
-        $user->load("roles");
+
+        $user->load(["roles", "detail"]);
+        Log::info("Les datas", ["user" => $user]);
 
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
-            $roles = Auth::user()->school->roles()->with("school")->get();
+            $roles = Auth::user()->school->roles()->with("schools")->get();
         } else {
             $schools = School::latest()->get();
-            $roles = Role::with("school")->where("id", "!=", 1)->get();
+            $roles = Role::with("schools")->where("id", "!=", 1)->get();
         }
 
         return Inertia::render('User/Update', [
@@ -363,7 +366,7 @@ class UserController extends Controller
                 'email'       => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
                 'password'    => ['nullable', 'confirmed', Rules\Password::defaults()],
 
-                'phone'       => 'required|string',
+                'phone'       => 'nullable|string',
                 'profile_img' => 'nullable|image|mimes:png,jpeg',
             ], [
                 // 🔹 Messages personnalisés

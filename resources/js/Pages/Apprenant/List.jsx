@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCloudDownload, cilDelete, cilInfo, cilLibraryAdd, cilList, cilMenu, cilPencil, cilSend } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilCloudDownload, cilDelete, cilInfo, cilLibraryAdd, cilList, cilMenu, cilPencil, cilSend } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import InputLabel from '@/Components/InputLabel';
@@ -132,8 +132,8 @@ export default function List({ apprenants }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des listes d'apprenants
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Listes d'apprenants
                 </h2>
             }
         >
@@ -144,10 +144,10 @@ export default function List({ apprenants }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
 
                         {checkPermission('apprenant.create') ?
-                            (<div className="  items-center gap-4">
-                                <Link className="mx-2 btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 mx-2 btn btn-sm bg-success bg-hover text-white" href={route("apprenant.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
 
-                                <button className="btn btn-sm bg-success bg-hover text-white"
+                                <button className="w-50 mt-2 btn btn-sm bg-success bg-hover text-white"
                                     onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilCloudDownload} /> Importer des apprenants</button>
                             </div>) : null
                         }

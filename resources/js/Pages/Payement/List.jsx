@@ -6,7 +6,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
+import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibAddthis, cibBuffer } from "@coreui/icons";
 
 export default function List({ payements }) {
     const permissions = usePage().props.auth.permissions;
@@ -118,8 +118,8 @@ export default function List({ payements }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des paiements
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les paiements
                 </h2>
             }
         >
@@ -130,8 +130,8 @@ export default function List({ payements }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
 
                         {checkPermission('paiement.create') ?
-                            (<div className="items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("paiement.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("paiement.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
                             </div>) : null
                         }
 

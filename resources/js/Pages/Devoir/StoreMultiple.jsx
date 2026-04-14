@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilPencil, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 
@@ -110,8 +110,8 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilPencil} /> Insertion de devoirs groupées
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Insertion de devoirs groupées
                 </h2>
             }
         >
@@ -123,8 +123,8 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
 
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('devoir.view') ?
-                                (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des devoirs</Link>
+                                (<div className="row d-flex justify-content-center">
+                                    <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilList} /> Liste des devoirs</Link>
                                 </div>) : null
                             }
 

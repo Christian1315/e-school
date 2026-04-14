@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibAddthis, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
 export default function Create() {
@@ -74,8 +74,8 @@ export default function Create() {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des écoles
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibAddthis} /> Ajout des écoles
                 </h2>
             }
         >
@@ -87,8 +87,8 @@ export default function Create() {
 
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('ecole.view') ?
-                                (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("school.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                (<div className="row justify-content-center">
+                                    <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("school.index")}> <CIcon icon={cilList} /> Liste des écoles</Link>
                                 </div>) : null
                             }
 

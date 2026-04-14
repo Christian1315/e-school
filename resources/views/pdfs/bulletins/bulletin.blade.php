@@ -37,7 +37,7 @@
             margin: 0 auto;
             background-color: #dccee5;
             border-radius: 10px;
-            border: solid 2px #f6f6f6 !important;
+            border: solid 2px #000 !important;
             padding: 10px;
         }
 
@@ -14017,9 +14017,9 @@
                         <!-- Colonne gauche -->
                         <td style="width: 50%; text-align: left; vertical-align: top;">
                             <div class="border rounded p-2">
-                                <p class="apprenant-name"><strong class="badge"> Nom</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->firstname}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Prénom</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->lastname}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Date de naissance</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{\Carbon\carbon::parse( $apprenant->date_naissance)->locale('fr')->isoFormat('D MMMM YYYY')}} </strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Nom de l'apprenant</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->firstname}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Prénom de l'apprenant</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->lastname}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Date de naissance de l'apprenant</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{\Carbon\carbon::parse( $apprenant->date_naissance)->locale('fr')->isoFormat('D MMMM YYYY')}} </strong></p>
 
                             </div>
                         </td>

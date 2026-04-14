@@ -95,7 +95,7 @@ export default function Update({ school }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
                     <CIcon className='text-success' icon={cilPencil} /> Modification de l'école <span className="badge bg-light border rounded text-success">{school.raison_sociale}</span>
                 </h2>
             }

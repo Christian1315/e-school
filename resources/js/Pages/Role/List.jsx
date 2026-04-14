@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import { cilAlignCenter, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilAlignCenter, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
 
 export default function List({ roles }) {
     const authUser = usePage().props.auth.user;
@@ -16,8 +16,8 @@ export default function List({ roles }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des rôles
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les rôles
                 </h2>
             }
         >
@@ -26,8 +26,8 @@ export default function List({ roles }) {
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-                        <div className="items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("role.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                        <div className="row d-flex justify-content-center">
+                            {/* <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("role.create")} > <CIcon className='' icon={cibAddthis} /> Ajouter</Link> */}
                         </div>
 
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>

@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilCheck, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
@@ -256,8 +256,8 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des devoirs
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les devoirs
                 </h2>
             }
         >
@@ -267,9 +267,9 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('devoir.create') ?
-                            (<div className="  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
-                                <Link className="btn btn-sm bg-success bg-hover text-white mx-3"
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("devoir.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
+                                <Link className="w-50 my-2  btn btn-sm bg-success bg-hover text-white mx-3"
                                     href="#"
                                     onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilPlaylistAdd} /> Faire un ajout groupé</Link>
                             </div>) : null

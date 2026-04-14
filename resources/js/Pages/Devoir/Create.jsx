@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibBuffer, cibAddthis } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
@@ -71,8 +71,8 @@ export default function Create({ apprenants, trimestres, matieres }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des devoirs d'école
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Ajout des devoirs
                 </h2>
             }
         >
@@ -84,8 +84,8 @@ export default function Create({ apprenants, trimestres, matieres }) {
 
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('devoir.view') ?
-                                (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des devoirs</Link>
+                                (<div className="row d-flex justify-content-center">
+                                    <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("devoir.index")}> <CIcon icon={cibAddthis} /> Liste des devoirs</Link>
                                 </div>) : null
                             }
 

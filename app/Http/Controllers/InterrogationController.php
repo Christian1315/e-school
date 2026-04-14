@@ -165,7 +165,7 @@ class InterrogationController extends Controller
         try {
             DB::beginTransaction();
 
-            Log::debug("Donnees entrees", ["data" => $request->all()]);
+            Log::debug("Store multiple Donnees entrees", ["data" => $request->all()]);
 
             $request->validate([
                 // "school_id"     => "required|integer",

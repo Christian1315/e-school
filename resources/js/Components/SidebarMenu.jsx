@@ -7,7 +7,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked, cilWc } from '@coreui/icons'
+import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked, cilWc, cibBuffer, cibGooglesCholar, cibMyspace, cibMendeley, cibPatreon, cibReadme, cibSamsungPay, cibCoOp, cibFitbit, cibMastodon, cibMeetup, cibReadTheDocs, cibAsana, cibBathasu, cibBing, cibCodacy, cibCoderwall, cibCoursera } from '@coreui/icons'
 import { Link, useForm, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 import Modal from '@/Components/Modal';
@@ -110,7 +110,7 @@ export default function SidebarMenu(props) {
                         <CNavGroup
                             toggler={
                                 <>
-                                    <CIcon customClassName="nav-icon text-success" icon={cilApplications} /> Tableau de board
+                                    <CIcon customClassName="nav-icon text-success" icon={cibBuffer} /> Tableau de board
                                 </>
                             }
                         >
@@ -130,7 +130,7 @@ export default function SidebarMenu(props) {
                                 <CNavGroup
                                     toggler={
                                         <>
-                                            <CIcon customClassName="nav-icon text-success" icon={cilSchool} /> Les Ecoles
+                                            <CIcon customClassName="nav-icon text-success" icon={cibGooglesCholar} /> Les Ecoles
                                         </>
                                     }
                                 >
@@ -156,7 +156,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les Parents
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMyspace} /> Les Parents
                                     </>
                                 }
                             >
@@ -175,7 +175,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilWc} /> Les Professeurs
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMendeley} /> Les Professeurs
                                     </>
                                 }
                             >
@@ -194,7 +194,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilSmilePlus} /> Les Apprenants
+                                        <CIcon customClassName="nav-icon text-success" icon={cibPatreon} /> Les Apprenants
                                     </>
                                 }
                             >
@@ -221,7 +221,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilWallet} /> Les Inscriptions
+                                        <CIcon customClassName="nav-icon text-success" icon={cibReadme} /> Les Inscriptions
                                     </>
                                 }
                             >
@@ -248,7 +248,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cibAmazonPay} /> Les paiements
+                                        <CIcon customClassName="nav-icon text-success" icon={cibSamsungPay} /> Les paiements
                                     </>
                                 }
                             >
@@ -275,7 +275,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilGrain} /> Les Intérrogations
+                                        <CIcon customClassName="nav-icon text-success" icon={cibCoOp} /> Les Intérrogations
                                     </>
                                 }
                             >
@@ -305,7 +305,7 @@ export default function SidebarMenu(props) {
                                 (<CNavGroup
                                     toggler={
                                         <>
-                                            <CIcon customClassName="nav-icon text-success" icon={cilList} /> Les devoirs
+                                            <CIcon customClassName="nav-icon text-success" icon={cibFitbit} /> Les devoirs
                                         </>
                                     }
                                 >
@@ -337,7 +337,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilLayers} /> Moyennes des Intérros
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMastodon} /> Moyennes des Intérros
                                     </>
                                 }
                             >
@@ -347,7 +347,7 @@ export default function SidebarMenu(props) {
                                             <Link
                                                 key={trimestre.id}
                                                 // href={route("moyenne.interro", { trimestre: trimestre.id })}
-                                                onClick={(e) => openTrimestreModal(e, trimestre)}
+                                                onClick={(e) => openInterroTrimestreModal(e, trimestre)}
                                                 className="nav-link"
                                             >
                                                 <span className="nav-icon">
@@ -369,7 +369,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilLibrary} /> Moyennes des devoir
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMeetup} /> Moyennes des devoir
                                     </>
                                 }
                             >
@@ -402,7 +402,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilBook} /> Les bulletins
+                                        <CIcon customClassName="nav-icon text-success" icon={cibReadTheDocs} /> Les bulletins
                                     </>
                                 }
                             >
@@ -434,7 +434,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilPeople} /> Les utilisateurs
+                                        <CIcon customClassName="nav-icon text-success" icon={cibAsana} /> Les utilisateurs
                                     </>
                                 }
                             >
@@ -462,7 +462,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilAudioSpectrum} /> Les Séries
+                                        <CIcon customClassName="nav-icon text-success bold" icon={cibBathasu} /> Les Séries
                                     </>
                                 }
                             >
@@ -491,7 +491,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilBlur} /> Les Classes
+                                        <CIcon customClassName="nav-icon text-success" icon={cibBing} /> Les Classes
                                     </>
                                 }
                             >
@@ -520,7 +520,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilBraille} /> Les Matières
+                                        <CIcon customClassName="nav-icon text-success" icon={cibCodacy} /> Les Matières
                                     </>
                                 }
                             >
@@ -549,7 +549,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cilHealing} /> Les Trimestres
+                                        <CIcon customClassName="nav-icon text-success" icon={cibCoderwall} /> Les Trimestres
                                     </>
                                 }
                             >
@@ -580,7 +580,7 @@ export default function SidebarMenu(props) {
                                 (<CNavGroup
                                     toggler={
                                         <>
-                                            <CIcon customClassName="nav-icon text-success" icon={cilLockUnlocked} /> Les Rôles
+                                            <CIcon customClassName="nav-icon text-success" icon={cibCoursera} /> Les Rôles
                                         </>
                                     }
                                 >

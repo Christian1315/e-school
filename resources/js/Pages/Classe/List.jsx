@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -91,8 +91,8 @@ export default function List({ classes }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des classes d'écoles
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les classes d'écoles
                 </h2>
             }
         >
@@ -103,8 +103,8 @@ export default function List({ classes }) {
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('classe.create') ?
-                            (<div className="  items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("classe.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("classe.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
                             </div>) : null
                         }
 

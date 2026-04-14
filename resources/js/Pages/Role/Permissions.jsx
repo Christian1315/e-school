@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilList, cilArrowLeft, cilSend } from "@coreui/icons";
+import { cilList, cilArrowLeft, cilSend, cibBuffer } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 import Checkbox from '@/Components/Checkbox';
@@ -92,8 +92,8 @@ export default function List({ role, permissions }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Les permissions associées au rôle : <small className='badge bg-light text-danger border rounded'>{role.name}</small>
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les permissions associées au rôle : <small className='badge bg-light text-danger border rounded'>{role.name}</small>
                 </h2>
             }
         >
@@ -102,8 +102,8 @@ export default function List({ role, permissions }) {
             <div className="row py-12 justify-content-center">
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
-                        <div className="items-center gap-4">
-                            <Link className="btn btn-sm bg-success bg-hover text-white" href={route("role.index")}> <CIcon className='' icon={cilArrowLeft} /> Retour</Link>
+                        <div className="row d-flex justify-content-center">
+                            <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("role.index")}> <CIcon className='' icon={cilArrowLeft} /> Retour</Link>
                         </div>
 
                         <form onSubmit={submit} >
@@ -157,10 +157,12 @@ export default function List({ role, permissions }) {
                             <br />
                             {/* Bouton */}
                             {!authUser.school_id ?
-                                (<div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}>
-                                        <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
-                                    </PrimaryButton>
+                                (<div className="row d-flex justify-content-center">
+                                    <div className="w-50">
+                                        <PrimaryButton disabled={processing}>
+                                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                                        </PrimaryButton>
+                                    </div>
                                 </div>) : ''
                             }
                         </form>

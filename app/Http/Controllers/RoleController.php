@@ -46,7 +46,7 @@ class RoleController extends Controller
      */
     public function getPermissions(Request $request, $id)
     {
-        $role = Role::with(["permissions", "school"])->find($id);
+        $role = Role::with(["permissions", "schools"])->find($id);
 
         return Inertia::render('Role/Permissions', [
             "role" => $role,

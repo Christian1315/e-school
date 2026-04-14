@@ -3,7 +3,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu, cilPencil } from "@coreui/icons";
+import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu, cilPencil, cibBuffer, cibAddthis } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
@@ -30,16 +30,16 @@ export default function List({ users, roles }) {
     ), [currentUser]);
 
     const confirmShowModal = (e, user) => {
+        // alert("Vous êtes sur le point d'affecter un rôle à l'utilisateur : " + user.firstname + " " + user.lastname);
         e.preventDefault();
         setShowModal(true);
-        console.log("Current user :", currentUser)
 
         setCurrentUser(user)
     };
+
     const closeModal = () => {
         setShowModal(false);
     };
-
     const confirmShowImportModal = (e) => {
         setShowImportModal(true);
     };
@@ -162,8 +162,8 @@ export default function List({ users, roles }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des utilisateurs
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les utilisateurs
                 </h2>
             }
         >
@@ -173,10 +173,10 @@ export default function List({ users, roles }) {
                 <div className="col-md-10 bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('utilisateur.create') ?
-                            (<div className="items-center gap-4">
-                                <Link className="mx-2 btn btn-sm bg-success bg-hover text-white" href={route("user.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 mx-2 btn btn-sm bg-success bg-hover text-white" href={route("user.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
 
-                                <button className="btn btn-sm bg-success bg-hover text-white"
+                                <button className="w-50 my-1 btn btn-sm bg-success bg-hover text-white"
                                     onClick={(e) => confirmShowImportModal(e)}> <CIcon className='' icon={cilCloudDownload} /> Importer des utilisateurs</button>
                             </div>) : null
                         }
@@ -213,7 +213,7 @@ export default function List({ users, roles }) {
                                                         {checkPermission('utilisateur.edit') ?
                                                             (<li><Link
                                                                 className='btn text-warning  w-100'
-                                                                href={route("user.edit",user.id)}
+                                                                href={route("user.edit", user.id)}
                                                             >
                                                                 <CIcon icon={cilPencil} />  Modifier
                                                             </Link></li>
@@ -274,10 +274,6 @@ export default function List({ users, roles }) {
                         Affectation de rôle à <em className='text-success'>{currentUser?.firstname} -  {currentUser?.lastname} </em>
                     </h2>
 
-                    <p className="alert alert-warning">
-                        <CIcon className='text-danger' icon={cilInfo} /> En affectant un rôle à un utilisateur, tous les autres utilisateurs disposant de ce rôle vont tous le perdre
-                    </p>
-
                     {/*  */}
                     <table className="shadow-sm table table-striped" id='myTable' style={{ width: '100%' }}>
                         <thead>
@@ -296,7 +292,7 @@ export default function List({ users, roles }) {
                                             <td ><span className="badge bg-light rounded border text-dark">{role.name}</span></td>
                                             <td>
                                                 <Checkbox
-                                                    checked={role.checked}          // ⚡ important : bind à role.checked
+                                                    // checked={role.id == currentUser.roles?.[0]?.id}          // ⚡ important : bind à role.checked
                                                     onChange={() => selectRole(role)}
                                                 />
                                             </td>

@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil } from "@coreui/icons";
+import { cilSend, cilArrowCircleLeft, cilPencil, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
@@ -68,7 +68,7 @@ export default function Create({ apprenants, inscription }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
                     <CIcon className='text-success' icon={cilPencil} /> Mofication de l'inscription de <span className="badge bg-light border rounded text-success">{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</span>
                 </h2>
             }
@@ -80,9 +80,9 @@ export default function Create({ apprenants, inscription }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 ">
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('inscription.view') ?
-                                (<div className="text-center items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("inscription.index")}>
-                                        <CIcon icon={cilArrowCircleLeft} /> Liste des inscriptions
+                                (<div className="row d-flex justify-content-center">
+                                    <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("inscription.index")}>
+                                        <CIcon icon={cilList} /> Liste des inscriptions
                                     </Link>
                                 </div>) : null
                             }

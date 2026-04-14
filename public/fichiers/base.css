@@ -26,6 +26,14 @@ p {
     margin-bottom: 20px;
 }
 
+.panel-title {
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* font-style: normal; */
+}
+
 .text-cursive{
     font-family: "Dancing Script", cursive!important;
 }

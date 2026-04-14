@@ -9,7 +9,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
-import { cilCenterFocus, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload } from "@coreui/icons";
+import { cilCenterFocus, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibBuffer, cibAddthis } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
     const permissions = usePage().props.auth.permissions;
@@ -119,8 +119,8 @@ export default function List({ inscriptions }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des inscriptions
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Les inscriptions
                 </h2>
             }
         >
@@ -131,8 +131,8 @@ export default function List({ inscriptions }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
 
                         {checkPermission('inscription.create') ?
-                            (<div className="items-center gap-4">
-                                <Link className="btn btn-sm bg-success bg-hover text-white" href={route("inscription.create")}> <CIcon className='' icon={cilLibraryAdd} /> Ajouter</Link>
+                            (<div className="row d-flex justify-content-center">
+                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("inscription.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
                             </div>) : null
                         }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>

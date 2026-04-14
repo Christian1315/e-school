@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilList, cilFilterPhoto } from "@coreui/icons";
+import { cilList, cilFilterPhoto, cibBuffer } from "@coreui/icons";
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
@@ -44,8 +44,8 @@ export default function List({ apprenants, trimestre ,annee_scolaire}) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilList} /> Panel des moyennes d'interrogation | Trimestre: <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong> | Année scolaire: <strong className="badge bg-light shadow-sm rounded border text-danger">{annee_scolaire || '---'}</strong>
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Moyennes d'interrogation | Trimestre: <strong className="badge bg-light shadow-sm rounded border text-danger">{trimestre.libelle}</strong> | Année scolaire: <strong className="badge bg-light shadow-sm rounded border text-danger">{annee_scolaire || '---'}</strong>
                 </h2>
             }
         >

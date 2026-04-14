@@ -29,7 +29,7 @@ export default function List({ schools }) {
         <AuthenticatedLayout
             header={
                 <h5 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
-                    <CIcon className='text-success ' icon={cibBuffer} /> Liste d'écoles
+                    <CIcon className='text-success' icon={cibBuffer} /> Liste d'écoles
                 </h5>
             }
         >

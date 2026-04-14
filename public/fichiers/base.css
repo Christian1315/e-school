@@ -31,11 +31,12 @@ p {
     font-optical-sizing: auto;
     font-weight: 700;
     text-transform: uppercase;
+    color: white !important;
     /* font-style: normal; */
 }
 
-.text-cursive{
-    font-family: "Dancing Script", cursive!important;
+.text-cursive {
+    font-family: "Dancing Script", cursive !important;
 }
 
 @media (max-width: 768px) {
@@ -154,11 +155,10 @@ figcaption img {
 
 /* désactive le backdrop sur petits écrans */
 @media (max-width: 991.98px) {
-  .sidebar-backdrop,
-  .c-sidebar-backdrop {
-    display: none !important;
-    pointer-events: none !important;
-  }
+
+    .sidebar-backdrop,
+    .c-sidebar-backdrop {
+        display: none !important;
+        pointer-events: none !important;
+    }
 }
-
-

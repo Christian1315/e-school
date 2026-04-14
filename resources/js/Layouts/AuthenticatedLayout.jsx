@@ -67,7 +67,7 @@ export default function AuthenticatedLayout({ header, children }) {
             buttons: [
                 {
                     extend: 'copy',
-                    className: 'btn btn-sm btn-primary',
+                    className: 'btn btn-sm btn-dark',
                     text: '<i class="fas fa-copy"></i> Copier'
                 },
                 {
@@ -341,8 +341,8 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow-sm text-center dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <header className="bg-dark shadow-sm text-center dark:bg-gray-800">
+                    <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8" style={{ overflowX: "scroll!important",color:"#fff!important" }}>
                         {header}
                     </div>
                 </header>

@@ -13,8 +13,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
 export default function List({ _devoirs, schools, trimestres, matieres, classes, series }) {
-    const auth = usePage().props.auth;
-    const permissions = auth.permissions;
+    const auth = usePage().props.auth.user;
+    const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);

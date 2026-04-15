@@ -44,7 +44,7 @@ export default function Create({ apprenants, inscription }) {
             },
         });
 
-        post(route('inscription.update', inscription.id, { forceFormData: true }), {
+        post(route('inscription.update', inscription.id), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({

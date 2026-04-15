@@ -87,7 +87,7 @@
                                 id="logo"
                                 alt="Logo de l'école"
                                 class="shadow"
-                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                                style="max-width: 50px; height: 50px;border-radius:50px;border:solid 5px #fff">
                         </td>
 
                         <!-- Texte centre -->

@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cibAddthis, cibBuffer, cilLibraryAdd, cilList } from "@coreui/icons";
+import { cibAddthis, cibBuffer } from "@coreui/icons";
 
 export default function List({ series }) {
     const permissions = usePage().props.auth.permissions;
@@ -26,7 +26,7 @@ export default function List({ series }) {
                     <div className="mx-auto _max-w-7xl space-y-6 sm:px-6 lg:px-8 " style={{ overflowX: 'auto' }} >
                         {checkPermission('classe.create') ?
                             (<div className="row d-flex justify-content-center">
-                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("classe.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
+                                <Link className="w-50 btn btn-sm bg-success bg-hover text-white" href={route("serie.create")}> <CIcon className='' icon={cibAddthis} /> Ajouter</Link>
                             </div>) : null
                         }
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>

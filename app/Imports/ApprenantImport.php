@@ -50,8 +50,13 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         }
 
         /**Serie */
-        $isSerieExiste = isset($row[3]) ?
-            Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
+        if (Auth::user()->school_id) {
+            $isSerieExiste = isset($row[3]) ?
+                Serie::where("school_id", Auth::user()->school_id)->firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
+        } else {
+            $isSerieExiste = isset($row[3]) ?
+                Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
+        }
 
         /**Parent */
         $isParentExiste = User::where("school_id", Auth::user()->school_id ?? 1)

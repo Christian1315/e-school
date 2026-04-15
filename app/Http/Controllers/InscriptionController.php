@@ -37,13 +37,16 @@ class InscriptionController extends Controller
      */
     function create()
     {
+        if (Auth::user()->school_id) {
+            $apprenantQuery = Apprenant::where("school_id", Auth::user()->school_id);
+            $schoolQuery = School::where("id", Auth::user()->school_id);
+        } else {
+            $apprenantQuery = Apprenant::all();
+            $schoolQuery = School::all();
+        }
         return Inertia::render('Inscription/Create', [
-            "apprenants" => Auth::user()->school_id ?
-                Apprenant::where("id", Auth::user()->school_id)->get() :
-                Apprenant::all(),
-            "schools" => Auth::user()->school_id ?
-                School::where("id", Auth::user()->school_id)->get() :
-                School::all(),
+            "apprenants" => $apprenantQuery->get(),
+            "schools" => $schoolQuery->get(),
         ]);
     }
 
@@ -104,16 +107,20 @@ class InscriptionController extends Controller
                 throw new \Exception("Cette inscription n'existe pas!");
             }
 
+            if (Auth::user()->school_id) {
+                $apprenantQuery = Apprenant::where("school_id", Auth::user()->school_id);
+                $schoolQuery = School::where("id", Auth::user()->school_id);
+            } else {
+                $apprenantQuery = Apprenant::all();
+                $schoolQuery = School::all();
+            }
+
             $inscription->load(["school", "apprenant"]);
 
             return Inertia::render('Inscription/Update', [
                 'inscription' => $inscription,
-                "apprenants" => Auth::user()->school_id ?
-                    Apprenant::where("id", Auth::user()->school_id)->get() :
-                    Apprenant::all(),
-                "schools" => Auth::user()->school_id ?
-                    School::where("id", Auth::user()->school_id)->get() :
-                    School::all(),
+                "apprenants" => $apprenantQuery->get(),
+                "schools" => $schoolQuery->get(),
             ]);
         } catch (\Exception $e) {
             Log::debug("Erreure de modification", ["exception" => $e->getMessage()]);
@@ -157,7 +164,6 @@ class InscriptionController extends Controller
 
             DB::beginTransaction();
 
-            $validated["dossier_transfert"] = $inscription->handlePhoto() ?? $inscription->dossier_transfert;
             $inscription->update($validated);
 
             DB::commit();
@@ -211,7 +217,7 @@ class InscriptionController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request, Inscription $inscription)
+    function destroy(Inscription $inscription)
     {
         try {
             DB::beginTransaction();

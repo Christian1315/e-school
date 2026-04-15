@@ -135,31 +135,6 @@ export default function update({ schools, classes, parents, series, apprenant })
                                         </div>
 
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools
-                                                    .map((school) => ({
-                                                        value: school.id,
-                                                        label: `${school.raison_sociale}`,
-                                                    }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-
-                                        <div className='mb-3'>
                                             <InputLabel htmlFor="classe_id" value="Classe concernée" >  <span className="text-danger">*</span> </InputLabel>
 
                                             <Select
@@ -241,6 +216,26 @@ export default function update({ schools, classes, parents, series, apprenant })
                                             <InputError className="mt-2" message={errors.date_naissance} />
                                         </div>
 
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="photo" value="Photo de l'apprenant" ></InputLabel>
+
+                                            <TextInput
+                                                id="photo"
+                                                type="file"
+                                                className="mt-1 block w-full"
+                                                // required
+                                                onChange={(e) => setData('photo', e.target.files[0])}
+                                                autoComplete="photo"
+                                            />
+
+                                            {progress && (
+                                                <progress value={progress.percentage} max="100">
+                                                    {progress.percentage}%
+                                                </progress>
+                                            )}
+
+                                            <InputError className="mt-2" message={errors.photo} />
+                                        </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className='mb-3'>
@@ -368,30 +363,7 @@ export default function update({ schools, classes, parents, series, apprenant })
                                             <InputError className="mt-2" message={errors.educ_master} />
                                         </div>
                                     </div>
-                                    <div className="col-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="photo" value="Photo de l'apprenant" ></InputLabel>
-
-                                            <TextInput
-                                                id="photo"
-                                                type="file"
-                                                className="mt-1 block w-full"
-                                                // required
-                                                onChange={(e) => setData('photo', e.target.files[0])}
-                                                autoComplete="photo"
-                                            />
-
-                                            {progress && (
-                                                <progress value={progress.percentage} max="100">
-                                                    {progress.percentage}%
-                                                </progress>
-                                            )}
-
-                                            <InputError className="mt-2" message={errors.photo} />
-                                        </div>
-                                    </div>
                                 </div>
-
 
                                 <div className="flex items-center gap-4">
                                     <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>

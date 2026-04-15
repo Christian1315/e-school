@@ -34,7 +34,7 @@ class TrimestreController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         if (Auth::user()->school) {
             $schools = School::latest()
@@ -59,10 +59,10 @@ class TrimestreController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id" => "required|integer",
+                "school_id" => "nullable|integer",
                 "libelle" => "required",
             ], [
-                "school_id.required" => "L'école est réquise",
+                // "school_id.required" => "L'école est réquise",
                 "school_id.integer" => "L'école est invalide",
                 "libelle.required" => "Le libelle est réquis!",
             ]);

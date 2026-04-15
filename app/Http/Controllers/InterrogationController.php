@@ -33,7 +33,6 @@ class InterrogationController extends Controller
         if (Auth::user()->school) {
             $interrogations = Interrogation::orderByDesc("id")
                 ->where("school_id", Auth::user()->school_id)->get();
-
             // 
             $schools = School::latest()
                 ->where("id", Auth::user()->school_id)->get();
@@ -192,7 +191,7 @@ class InterrogationController extends Controller
 
             $Query = Apprenant::where(["classe_id" => $request->classe_id, "serie_id" => $request->serie_id])
                 ->latest();
-                
+
             if (Auth::user()->school) {
                 $apprenants = $Query
                     ->where("school_id", Auth::user()->school_id)->get();

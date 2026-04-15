@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Inscription extends Model
 {
@@ -86,13 +87,36 @@ class Inscription extends Model
         $photoPath = null;
         $request = request();
 
+        Log::debug("Handling photo upload", ["request_has_file" => $request->hasFile('dossier_transfert')]);
+        
         if ($request->hasFile('dossier_transfert')) {
-            $file = $request->file('dossier_transfert');
-            $name = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('dossier_transferts'), $name);
-            $photoPath = asset('dossier_transferts/' . $name);
+            try {
+                $file = $request->file('dossier_transfert');
+                
+                // Vérifier que le fichier est valide
+                if (!$file->isValid()) {
+                    throw new \Exception("Le fichier téléchargé n'est pas valide.");
+                }
+                
+                $uploadDir = public_path('dossier_transferts');
+                
+                // Créer le répertoire s'il n'existe pas
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $name = time() . '_' . $file->getClientOriginalName();
+                $file->move($uploadDir, $name);
+                $photoPath = asset('dossier_transferts/' . $name);
+                
+                Log::info("Fichier téléchargé avec succès", ["filename" => $name, "path" => $photoPath]);
+            } catch (\Exception $e) {
+                Log::error("Erreur lors du téléchargement du fichier", ["error" => $e->getMessage()]);
+                throw $e;
+            }
         }
 
+        Log::debug("Photo path after handling upload", ["photo_path" => $photoPath]);
         return $photoPath;
     }
 
@@ -120,16 +144,15 @@ class Inscription extends Model
             $model->saveQuietly(); // avoids triggering events again
         });
 
-        static::updated(function ($model) {
+        static::updating(function ($model) {
             $model->updated_by = Auth::id();
-            $model->school_id = Auth::user()->school_id ?? 1;
 
             if (request()->hasFile('dossier_transfert')) {
+                Log::info("Handling photo upload on update");
                 $model->dossier_transfert = $model->handlePhoto();
             } else {
                 unset($model->dossier_transfert); // Prevent overwriting if no new file is uploaded
             }
-            $model->saveQuietly();
         });
     }
 }

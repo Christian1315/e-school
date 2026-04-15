@@ -210,13 +210,14 @@ export default function List({ inscriptions }) {
                                             <td><span className="badge bg-light text-dark border rounded shadow"> {`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`} </span></td>
                                             <td>{inscription.numero_educ_master}</td>
                                             <td>
-                                                <a target='__blank'
-                                                    href={inscription.dossier_transfert}
-                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                // onClick={() => showTransfertDossier(inscription)}
-                                                >
-                                                    <CIcon icon={cilCenterFocus} />
-                                                </a>
+                                                {inscription.dossier_transfert?
+                                                    <a target='__blank'
+                                                        href={inscription.dossier_transfert}
+                                                        className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                    >
+                                                        <CIcon icon={cilCenterFocus} />
+                                                    </a>:'---'
+                                                }
                                             </td>
                                             <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>
                                             <td>{`${inscription.createdBy?.firstname} - ${inscription.createdBy?.lastname}`}</td>

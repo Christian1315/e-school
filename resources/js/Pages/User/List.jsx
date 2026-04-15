@@ -200,6 +200,7 @@ export default function List({ users, roles }) {
                                         <tr key={user.id}>
                                             <th scope="row">{index + 1}</th>
                                             <td>
+                                                {authUser.id != user.id ?
                                                 <div className="dropstart">
                                                     <button
                                                         type="button"
@@ -234,7 +235,7 @@ export default function List({ users, roles }) {
                                                             ) : null
                                                         }
                                                     </ul>
-                                                </div>
+                                                </div>:'---'}
                                             </td>
                                             <td>
                                                 <button

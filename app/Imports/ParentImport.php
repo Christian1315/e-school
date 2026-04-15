@@ -46,6 +46,10 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             }
         }
 
+        if (User::firstWhere("phone", $row[3])) {
+            throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le numéro de téléphone $row[3] existe déjà!");
+        }
+
         /**
          * Creation du user
          */

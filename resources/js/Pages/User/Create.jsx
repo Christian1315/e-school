@@ -95,7 +95,7 @@ export default function Create({ schools, roles }) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         {/* École */}
-                                        {authUser.school_id &&
+                                        {!authUser.school && (
                                             <div className='mb-3'>
                                                 <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
                                                 <Select
@@ -117,7 +117,7 @@ export default function Create({ schools, roles }) {
                                                     onChange={(option) => setData('school_id', option.value)} // update state with id
                                                 />
                                                 <InputError className="mt-2" message={errors.school_id} />
-                                            </div>}
+                                            </div>)}
 
                                         {/* Firstname */}
                                         <div className='mb-3'>

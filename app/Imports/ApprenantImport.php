@@ -53,19 +53,15 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         $isSerieExiste = isset($row[3]) ?
             Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
 
-
         /**Parent */
-        $parentColumn = explode('-', $row[2]);
-        $firstName = isset($parentColumn[0]) ? $parentColumn[0] : null;
-        $lastName = isset($parentColumn[1]) ? $parentColumn[1] : null;
-
         $isParentExiste = User::where("school_id", Auth::user()->school_id ?? 1)
-            ->where(["firstname" => $firstName, "lastname" => $lastName])
-            ->orWhere(["firstname" => $lastName, "lastname" => $firstName])
+            ->whereHas("detail", function ($query) use ($row) {
+                $query->where("phone", $row[2]);
+            })
             ->first();
 
         if (!$isParentExiste) {
-            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le parent $row[2] n'existe pas!");
+            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le parent d'email $row[2] n'existe pas!");
         }
 
         /**

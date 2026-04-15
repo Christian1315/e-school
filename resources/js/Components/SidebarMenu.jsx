@@ -122,33 +122,40 @@ export default function SidebarMenu(props) {
                             </Link>
                         </CNavGroup>
 
-                        <CNavTitle>Gestion</CNavTitle>
+                        {(checkPermission('ecole.view') || checkPermission('ecole.create') ||
+                            checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ||
+                            checkPermission("apprenant.view") || checkPermission("apprenant.create") ||
+                            checkPermission('inscription.view') || checkPermission('inscription.create') ||
+                            checkPermission('paiement.view') || checkPermission('paiement.create') ||
+                            checkPermission('interrogation.view') || checkPermission('interrogation.create') ||
+                            checkPermission('devoir.view') || checkPermission('devoir.create')) && <CNavTitle>Gestion</CNavTitle>}
 
                         {/* ecoles */}
                         {checkPermission('ecole.view') || checkPermission('ecole.create') ?
-                            (user.school_id == null ?
-                                <CNavGroup
-                                    toggler={
-                                        <>
-                                            <CIcon customClassName="nav-icon text-success" icon={cibGooglesCholar} /> Les Ecoles
-                                        </>
-                                    }
-                                >
-                                    {checkPermission('ecole.view') ?
-                                        (<Link href={route('school.index')} className="nav-link">
-                                            <span className="nav-icon">
-                                                <span className="nav-icon-bullet text-danger"></span>
-                                            </span>
-                                            Liste des écoles
-                                        </Link>) : null}
+                            (
+                                !user.school_id ?
+                                    <CNavGroup
+                                        toggler={
+                                            <>
+                                                <CIcon customClassName="nav-icon text-success" icon={cibGooglesCholar} /> Les Ecoles
+                                            </>
+                                        }
+                                    >
+                                        {checkPermission('ecole.view') ?
+                                            (<Link href={route('school.index')} className="nav-link">
+                                                <span className="nav-icon">
+                                                    <span className="nav-icon-bullet text-danger"></span>
+                                                </span>
+                                                Liste des écoles
+                                            </Link>) : null}
 
-                                    {checkPermission('ecole.create') ? (<Link href={route('school.create')} className="nav-link">
-                                        <span className="nav-icon">
-                                            <span className="nav-icon-bullet"></span>
-                                        </span>
-                                        Ajouter une école
-                                    </Link>) : null}
-                                </CNavGroup> : null) : null
+                                        {checkPermission('ecole.create') ? (<Link href={route('school.create')} className="nav-link">
+                                            <span className="nav-icon">
+                                                <span className="nav-icon-bullet"></span>
+                                            </span>
+                                            Ajouter une école
+                                        </Link>) : null}
+                                    </CNavGroup> : null) : null
                         }
 
                         {/* parents */}
@@ -330,38 +337,41 @@ export default function SidebarMenu(props) {
                             ) : null}
 
 
-                        <CNavTitle>Moyennes</CNavTitle>
+                        {(checkPermission('moyenne_interro.view') || checkPermission('moyenne_devoir.view')) && (
+                            <CNavTitle>Moyennes</CNavTitle>
+                        )}
 
                         {/* Moyennes des Interrogations */}
                         {checkPermission('moyenne_interro.view') ?
-                            (<CNavGroup
-                                toggler={
-                                    <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cibMastodon} /> Moyennes des Intérros
-                                    </>
-                                }
-                            >
-                                {
-                                    trimestres.length > 0 ? (
-                                        trimestres.map((trimestre) => (
-                                            <Link
-                                                key={trimestre.id}
-                                                // href={route("moyenne.interro", { trimestre: trimestre.id })}
-                                                onClick={(e) => openInterroTrimestreModal(e, trimestre)}
-                                                className="nav-link"
-                                            >
-                                                <span className="nav-icon">
-                                                    <span className="nav-icon-bullet text-danger"></span>
-                                                </span>
-                                                {trimestre.libelle}
-                                            </Link>
-                                        ))
-                                    ) : (
-                                        <span>Aucun trimestre!</span>
-                                    )
-                                }
+                            (
+                                <CNavGroup
+                                    toggler={
+                                        <>
+                                            <CIcon customClassName="nav-icon text-success" icon={cibMastodon} /> Moyennes des Intérros
+                                        </>
+                                    }
+                                >
+                                    {
+                                        trimestres.length > 0 ? (
+                                            trimestres.map((trimestre) => (
+                                                <Link
+                                                    key={trimestre.id}
+                                                    // href={route("moyenne.interro", { trimestre: trimestre.id })}
+                                                    onClick={(e) => openInterroTrimestreModal(e, trimestre)}
+                                                    className="nav-link"
+                                                >
+                                                    <span className="nav-icon">
+                                                        <span className="nav-icon-bullet text-danger"></span>
+                                                    </span>
+                                                    {trimestre.libelle}
+                                                </Link>
+                                            ))
+                                        ) : (
+                                            <span>Aucun trimestre!</span>
+                                        )
+                                    }
 
-                            </CNavGroup>) : null
+                                </CNavGroup>) : null
                         }
 
                         {/* Moyennes des devoirs */}
@@ -395,7 +405,9 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        <CNavTitle>Les Bulletins</CNavTitle>
+                        {(checkPermission('bulletin.view')) && (
+                            <CNavTitle>Les Bulletins</CNavTitle>
+                        )}
 
                         {/* Bulletins des trimestres*/}
                         {checkPermission('bulletin.view') ?
@@ -427,7 +439,11 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        <CNavTitle>Paramètrage</CNavTitle>
+                        {(checkPermission('utilisateur.view') || checkPermission('utilisateur.create') ||
+                            checkPermission('serie.view') || checkPermission('serie.create') ||
+                            checkPermission('classe.view') || checkPermission('classe.create') ||
+                            checkPermission('matiere.view') || checkPermission('matiere.create') ||
+                            checkPermission('trimestre.view') || checkPermission('trimestre.create')) && <CNavTitle>Paramètrage</CNavTitle>}
 
                         {/* utilisateurs */}
                         {checkPermission('utilisateur.view') || checkPermission('utilisateur.create') ?
@@ -573,7 +589,9 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        <CNavTitle>Gestion des Rôles</CNavTitle>
+
+                        {(checkPermission('role.view') || checkPermission('role.view')) &&
+                            <CNavTitle>Gestion des Rôles</CNavTitle>}
 
                         {
                             checkPermission('role.view') || checkPermission('role.view') ?

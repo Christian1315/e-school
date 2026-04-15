@@ -36,7 +36,7 @@ class ClasseController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         if (Auth::user()->school) {
             $schools = School::latest()
@@ -47,6 +47,7 @@ class ClasseController extends Controller
 
         return Inertia::render('Classe/Create', [
             "schools" => $schools,
+            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->get(),
         ]);
     }
 
@@ -61,18 +62,23 @@ class ClasseController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id" => "required|integer",
+                'professeur_ids' => 'array|exists:users,id',
+                "school_id" => "nullable|integer",
                 "libelle" => "required",
                 "scolarite" => "required|numeric",
             ], [
-                "school_id.required" => "L'école est réquise",
+                // "school_id.required" => "L'école est réquise",
+                "professeur_ids.array" => "Le format des professeurs est invalide",
+                "professeur_ids.exists" => "Un ou plusieurs professeurs sélectionnés sont invalides",
                 "school_id.integer" => "L'école est invalide",
                 "libelle.required" => "Le libelle est réquis!",
                 "scolarite.required" => "La scolarité est réquise",
                 "scolarite.numeric" => "Le format n'est pas valide",
             ]);
 
-            Classe::create($validated);
+            $classe = Classe::create($validated);
+
+            $classe->professeurs()->sync($validated["professeur_ids"]);
 
             Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();
@@ -92,28 +98,20 @@ class ClasseController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request, Classe $classe)
+    function edit(Classe $classe)
     {
-        $school = Auth::user()->school;
-        if ($school) {
-            $queryProffesseurs = User::whereHas("roles", fn($query) => $query->where("name", "Professeur" . ' (' . $school->raison_sociale . ')'));
-            $queryProffesseurs->where("school_id",  $school->id);
+        if (Auth::user()->school) {
             $schools = School::latest()
                 ->where("id", Auth::user()->school_id)->get();
         } else {
-            $schoolsName = School::get()->pluck("raison_sociale");
-            $nameArray = $schoolsName->map(function ($name) {
-                return "Professeur" . ' (' . $name . ')';
-            })->concat(["Professeur"])->toArray();
-
-            $queryProffesseurs = User::whereHas("roles", fn($query) => $query->whereIn("name", $nameArray));
             $schools = School::latest()->get();
         }
 
         return Inertia::render('Classe/Update', [
-            'professeurs' => $queryProffesseurs->get(),
-            "classe" => $classe->load("professeurs"),
             "schools" => $schools,
+            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->get(),
+            "classe" => $classe,
+            "professeurs_ids" => $classe->professeurs->pluck("id")->toArray(),
         ]);
     }
 
@@ -128,16 +126,15 @@ class ClasseController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                "school_id" => "required|integer",
+                'professeur_ids' => 'array|exists:users,id',
+                "school_id" => "nullable|integer",
                 "libelle" => "required",
                 "scolarite" => "required|numeric",
-                'professeur_id' => 'required|array',
-                'professeur_id.*' => 'exists:users,id'
             ], [
-                "school_id.required" => "L'école est réquise",
+                // "school_id.required" => "L'école est réquise",
+                "professeur_ids.array" => "Le format des professeurs est invalide",
+                "professeur_ids.exists" => "Un ou plusieurs professeurs sélectionnés sont invalides",
                 "school_id.integer" => "L'école est invalide",
-                "professeur_id.required" => "Le professeur est réquis",
-                "professeur_id.integer" => "Le champ est invalide",
                 "libelle.required" => "Le libelle est réquis!",
                 "scolarite.required" => "La scolarité est réquise",
                 "scolarite.numeric" => "Le format n'est pas valide",
@@ -145,7 +142,7 @@ class ClasseController extends Controller
 
             $classe->update($validated);
 
-            $classe->professeurs()->sync($validated["professeur_id"]);
+            $classe->professeurs()->sync($validated["professeur_ids"]);
 
             Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();
@@ -165,7 +162,7 @@ class ClasseController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request, Classe $classe)
+    function destroy(Classe $classe)
     {
         try {
             DB::beginTransaction();

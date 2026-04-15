@@ -5,13 +5,17 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd } from "@coreui/icons";
+import { cilSend, cilList, cibBuffer } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
+import { useEffect } from 'react';
 
 
-export default function Create({ schools }) {
+export default function Create({ schools, professeurs }) {
     const permissions = usePage().props.auth.permissions;
+    const authUser = usePage().props.auth;
+
+    // Vérifier si l'utilisateur a la permission
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -24,11 +28,15 @@ export default function Create({ schools }) {
         post,
         processing,
     } = useForm({
-        libelle: libelle,
-        classe_id: classe_id,
-        professeur_id: professeur_id,
-        scolarite: scolarite
+        libelle: '',
+        school_id: '',
+        scolarite: '',
+        professeur_ids: null
     });
+
+    useEffect(() => {
+        console.log("Data changed", data);
+    }, [data])
 
     const submit = (e) => {
         // alert("gogog")
@@ -68,8 +76,8 @@ export default function Create({ schools }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    <CIcon className='text-success' icon={cilLibraryAdd} /> Panel d'ajout des classe d'école
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
+                    <CIcon className='text-success' icon={cibBuffer} /> Ajout des classes
                 </h2>
             }
         >
@@ -82,40 +90,83 @@ export default function Create({ schools }) {
                         <div className="bg-light p-3 rounded border mb-5">
                             {checkPermission('classe.view') ?
                                 (<div className=" text-center  items-center gap-4">
-                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("classe.index")}> <CIcon icon={cilArrowCircleLeft} /> Liste des écoles</Link>
+                                    <Link className="btn btn-sm bg-success bg-hover text-white" href={route("classe.index")}> <CIcon icon={cilList} /> Liste des classes</Link>
                                 </div>) : null
                             }
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                    {/* schools */}
+                                    {!authUser.school &&
+                                        <div className="col-md-6">
+                                            <div className='mb-3'>
+                                                <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
 
-                                            <Select
-                                                placeholder="Rechercher une école ..."
-                                                name="school_id"
-                                                id="school_id"
-                                                required
-                                                className="form-control mt-1 block w-full"
-                                                options={schools.map((school) => ({
-                                                    value: school.id,
-                                                    label: `${school.raison_sociale}`,
-                                                }))}
-                                                value={schools
-                                                    .map((school) => ({
+                                                <Select
+                                                    placeholder="Rechercher une école ..."
+                                                    name="school_id"
+                                                    id="school_id"
+                                                    required
+                                                    className="form-control mt-1 block w-full"
+                                                    options={schools.map((school) => ({
                                                         value: school.id,
                                                         label: `${school.raison_sociale}`,
+                                                    }))}
+                                                    value={schools
+                                                        .map((school) => ({
+                                                            value: school.id,
+                                                            label: `${school.raison_sociale}`,
+                                                        }))
+                                                        .find((option) => option.value === data.school_id)} // set selected option
+                                                    onChange={(option) => setData('school_id', option.value)} // update state with id
+                                                />
+
+                                                <InputError className="mt-2" message={errors.school_id} />
+                                            </div>
+                                        </div>
+                                    }
+
+                                    {/* professeurs */}
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="professeur_ids" value="Les professeurs" >  <span className="text-danger">*</span> </InputLabel>
+
+                                            <Select
+                                                placeholder="Rechercher un professeur ..."
+                                                name="professeur_ids"
+                                                id="professeur_ids"
+                                                required
+                                                isMulti
+                                                className="mt-1 block w-full"
+                                                options={professeurs.map((professeur) => ({
+                                                    value: professeur.id,
+                                                    label: `${professeur.firstname} ${professeur.lastname}`,
+                                                }))}
+
+                                                // Valeurs sélectionnées (tableau)
+                                                value={professeurs
+                                                    .map((professeur) => ({
+                                                        value: professeur.id,
+                                                        label: `${professeur.firstname} ${professeur.lastname}`,
                                                     }))
-                                                    .find((option) => option.value === data.school_id)} // set selected option
-                                                onChange={(option) => setData('school_id', option.value)} // update state with id
+                                                    .filter((option) =>
+                                                        data.professeur_ids?.includes(option.value)
+                                                    )
+                                                }
+
+                                                // Mise à jour du state (tableau d'IDs)
+                                                onChange={(options) =>
+                                                    setData(
+                                                        'professeur_ids',
+                                                        options ? options.map((opt) => opt.value) : []
+                                                    )
+                                                }
                                             />
 
                                             <InputError className="mt-2" message={errors.school_id} />
                                         </div>
-
                                     </div>
-                                    <div className="col-md-6">
+                                    <div className={authUser.school ? "col-md-12" : "col-md-6"}>
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="libelle" value="Libelle de la classe" > <span className="text-danger">*</span> </InputLabel>
                                             <TextInput

@@ -97,7 +97,7 @@ export default function Update({ schools, roles, user, role }) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         {/* École */}
-                                        {authUser.school_id &&
+                                        {authUser.school &&
                                             <div className='mb-3'>
                                                 <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
                                                 <Select

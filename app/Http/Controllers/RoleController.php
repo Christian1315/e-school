@@ -24,12 +24,14 @@ class RoleController extends Controller
         $user = Auth::user();
 
         if ($user->school) {
-            $roles = Role::with(['permissions', 'users'])
+            $roles = $user->school->roles->load(['permissions', 'users'])
                 ->where('id', '!=', 1)
-                ->where('school_id', $user->school_id)
-                // ->whereNotIn('id', $user->roles->pluck('id')->toArray())
-                ->latest()
-                ->get();
+                ->latest();
+            //  Role::with(['permissions', 'users'])
+            //     ->where('id', '!=', 1)
+            //     ->where('school_id', $user->school_id)
+            //     ->latest()
+            //     ->get();
         } else {
             $roles = Role::with(['permissions', 'users'])
                 ->where('id', '!=', 1)
@@ -44,7 +46,7 @@ class RoleController extends Controller
     /**
      * Getting all permissions
      */
-    public function getPermissions(Request $request, $id)
+    public function getPermissions($id)
     {
         $role = Role::with(["permissions", "schools"])->find($id);
 
@@ -57,7 +59,7 @@ class RoleController extends Controller
     /**
      * Getting all users
      */
-    public function getUsers(Request $request, $id)
+    public function getUsers($id)
     {
         $user = Auth::user();
 
@@ -178,7 +180,11 @@ class RoleController extends Controller
     {
         // dd("gogoooooo");
         try {
-            $role = Role::find($id);
+            if ($school = Auth::user()->school) {
+                $role = $school->roles()->find($id);
+            } else {
+                $role = Role::find($id);
+            }
 
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas!");
@@ -231,11 +237,15 @@ class RoleController extends Controller
      * Actualisation 
      * des users d'un rôle
      */
-    
+
     public function updateUsers(Request $request, $id)
     {
         try {
-            $role = Role::find($id);
+            if ($school = Auth::user()->school) {
+                $role = $school->roles()->find($id);
+            } else {
+                $role = Role::find($id);
+            }
 
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas!");
@@ -286,27 +296,43 @@ class RoleController extends Controller
 
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
+        try {
+            DB::beginTransaction();
+            if ($school = Auth::user()->school) {
+                $role = $school->roles()->find($id);
+            } else {
+                $role = Role::find($id);
+            }
 
-        if ($role->name === 'super-admin') {
+            if ($role->name === 'Super Administrateur') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Le rôle super-admin ne peut pas être supprimé'
+                ], 403);
+            }
+
+            if ($role->users()->count() > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ce rôle est attribué à des utilisateurs'
+                ], 403);
+            }
+
+            $role->delete();
+
+            DB::commit();
             return response()->json([
-                'success' => false,
-                'message' => 'Le rôle super-admin ne peut pas être supprimé'
-            ], 403);
+                'success' => true,
+                'message' => 'Rôle supprimé avec succès'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::debug("Erreure de validation", ["errors" => $e->errors()]);
+            return back()->withErrors($e->errors());
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::debug("Erreure de d'exception", ["exception" => $e->getMessage()]);
+            return back()->withErrors(["exception" => $e->getMessage()]);
         }
-
-        if ($role->users()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ce rôle est attribué à des utilisateurs'
-            ], 403);
-        }
-
-        $role->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Rôle supprimé avec succès'
-        ]);
     }
 }

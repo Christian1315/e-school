@@ -6,7 +6,6 @@ use App\Http\Resources\UserResource;
 use App\Imports\ParentImport;
 use App\Imports\ProfesseurImport;
 use App\Imports\UsersImport;
-use App\Models\Apprenant;
 use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
@@ -27,19 +26,12 @@ class UserController extends Controller
      */
     function index()
     {
-        if (Auth::user()->school) {
-            $users = User::with("roles")
-                ->where("school_id",  Auth::user()->school_id)->get();
-
-            $roles = Role::with(['school'])
-                ->where('id', '!=', 1)
-                ->whereNotIn('name', Auth::user()->roles->pluck('name')->toArray())
-                ->latest()
-                ->get();
+        if ($school = Auth::user()->school) {
+            $users = User::where("school_id",  Auth::user()->school_id)->get();
+            $roles = $school->roles;
         } else {
             $users = User::with("roles")->get();
-
-            $roles = Role::with(['schools'])
+            $roles = Role::with('schools')
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }
@@ -75,14 +67,14 @@ class UserController extends Controller
     {
         $school = Auth::user()->school ?? School::with("roles")->first();
         if ($school) {
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))
+            $professeursQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))
                 ->where("school_id",  $school->id);
         } else {
-            $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", 'Professeur'));
+            $professeursQuery = User::whereHas("roles", fn($query) => $query->where("name", 'Professeur'));
         }
 
         return Inertia::render('Apprenant/Professeur', [
-            'users' => UserResource::collection($parentsQuery->get()),
+            'users' => UserResource::collection($professeursQuery->get()),
         ]);
     }
 

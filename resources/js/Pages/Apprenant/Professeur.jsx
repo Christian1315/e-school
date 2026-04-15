@@ -37,6 +37,8 @@ export default function List({ users }) {
 
     const confirmShowClasseModal = (e, prof) => {
         e.preventDefault();
+
+        console.log("Professeur sélectionné : ", prof);
         setShowClasseModal(true);
         setCurrentProf(prof)
     }
@@ -226,8 +228,8 @@ export default function List({ users }) {
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
                                     <th scope='col'>Les classes</th>
+                                    <th scope="col">Phone</th>
                                     <th scope="col">Rôles</th>
                                 </tr>
                             </thead>
@@ -272,9 +274,10 @@ export default function List({ users }) {
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
                                             <td>{user.email ?? '---'}</td>
-                                            <td>{user.detail?.phone ?? '---'}</td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"
-                                                onClick={(e) => confirmShowClasseModal(e, user)}> {user.classes.length} <CIcon icon={cilList} className='text-success' /> </button></td>
+                                                onClick={(e) => confirmShowClasseModal(e, user)}> {user.classes.length} <CIcon icon={cilList} className='text-success' /> </button>
+                                            </td>
+                                            <td>{user.detail?.phone ?? '---'}</td>
                                             <td className='text-center'>
                                                 {
                                                     user.roles?.length > 0 ?
@@ -294,42 +297,40 @@ export default function List({ users }) {
 
             {/* Modal des Classes */}
             <Modal show={showClasseModal} onClose={closeClasseModal}>
-                {({ tableRef }) =>
-                    <div className="p-3">
-                        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            Liste des classes  du professeur: <em className='text-success'>{`${currentProf?.lastname}-${currentProf?.firstname}`} </em>
-                        </h2>
+                <div className="p-3">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Liste des classes  du professeur: <em className='text-success'>{`${currentProf?.lastname}-${currentProf?.firstname}`} </em>
+                    </h2>
 
-                        <table className="table table-striped min-w-full" id='modalTable' ref={tableRef} >
-                            <thead>
-                                <tr>
-                                    <th scope="col">N°</th>
-                                    <th scope="col">Libelle</th>
-                                    <th scope="col">Scolarité</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    currentProf?.classes.length > 0 ?
-                                        currentProf?.classes.map((classe, index) => (
-                                            <tr key={classe.id}>
-                                                <th scope="row">{index + 1}</th>
-                                                <td>{`${classe.libelle}`}</td>
-                                                <td>{`${classe.scolarite}`}</td>
-                                            </tr>
-                                        )) :
-                                        <tr className='text-center'>Aucun element trouvé</tr>
-                                }
-                            </tbody>
-                        </table>
+                    <table className="table table-striped min-w-full" >
+                        <thead>
+                            <tr>
+                                <th scope="col">N°</th>
+                                <th scope="col">Libelle</th>
+                                <th scope="col">Scolarité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                currentProf?.classes.length > 0 ?
+                                    currentProf?.classes.map((classe, index) => (
+                                        <tr key={classe.id}>
+                                            <th scope="row">{index + 1}</th>
+                                            <td>{`${classe.libelle}`}</td>
+                                            <td>{`${classe.scolarite}`}</td>
+                                        </tr>
+                                    )) :
+                                    <tr className='text-center'>Aucun element trouvé</tr>
+                            }
+                        </tbody>
+                    </table>
 
-                        <div className="mt-6 flex justify-end">
-                            <SecondaryButton onClick={closeClasseModal}>
-                                Fermer
-                            </SecondaryButton>
-                        </div>
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={closeClasseModal}>
+                            Fermer
+                        </SecondaryButton>
                     </div>
-                }
+                </div>
             </Modal>
 
             {/* Importation modal */}

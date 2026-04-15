@@ -2,7 +2,7 @@ import "./../../../public/fichiers/base.css";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CIcon from '@coreui/icons-react';
 import { cilBlur } from "@coreui/icons";
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { cilWallet, cilSmilePlus, cilPeople } from "@coreui/icons";
 import { useEffect, useRef } from 'react';
 import Chart from "chart.js/auto";
@@ -10,6 +10,8 @@ import Chart from "chart.js/auto";
 export default function Dashboard({ schools, apprenants, inscriptions, users }) {
     const monthlyChartRef = useRef(null);
     const dailyChartRef = useRef(null);
+    const school = usePage().props.auth.school;
+
 
     useEffect(() => {
         if (!monthlyChartRef.current || !dailyChartRef.current) return;
@@ -74,7 +76,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
                     <CIcon className='text-success' icon={cilBlur} />  Tableau de board
                 </h2>
             }
@@ -88,12 +90,14 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                         <div className="p-6 text-gray-900">
                             {/* Totaux */}
                             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 mb-6">
-                                <div
-                                    uk-scrollspy="cls: uk-animation-slide-bottom"
-                                    className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
-                                    <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {schools.data.length < 10 ? '0' + schools.data.length : schools.data.length} </strong> </p>
-                                    <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilWallet} /> Ecoles </h2>
-                                </div>
+                                {!school &&
+                                    <div
+                                        uk-scrollspy="cls: uk-animation-slide-bottom"
+                                        className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">
+                                        <p className="text-2xl mt-2 text-cursive font-bold"><strong className="text-danger"> {schools.data.length < 10 ? '0' + schools.data.length : schools.data.length} </strong> </p>
+                                        <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilWallet} /> Ecoles </h2>
+                                    </div>
+                                }
                                 <div
                                     uk-scrollspy="cls: uk-animation-slide-top"
                                     className="shadow bg-light border border-gray-200 p-4 rounded-full border-4 border-sky-500 flex flex-col items-center justify-center">

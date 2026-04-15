@@ -91,6 +91,15 @@ class School extends Model
         return $this->hasMany(Classe::class);
     }
 
+    /**
+     * Professeurs
+     */
+    function professeurs(): HasMany
+    {
+        return $this->hasMany(User::class)
+            ->whereHas("roles", fn($query) => $query->where("name", "Professeur"));
+    }
+
 
     /**
      * Apprenants

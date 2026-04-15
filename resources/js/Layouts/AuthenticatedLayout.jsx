@@ -43,6 +43,8 @@ import SidebarMenu from '@/Components/SidebarMenu';
 
 export default function AuthenticatedLayout({ header, children }) {
     const [visible, setVisible] = useState(true)
+    const school = usePage().props.auth.school;
+    const roleName = usePage().props.auth.user?.roles[0]?.name || "Aucun rôle";
 
     useEffect(() => {
         const table = new DataTable('#myTable,#modalTable', {
@@ -208,8 +210,9 @@ export default function AuthenticatedLayout({ header, children }) {
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="flex shrink-0 items-center">
+                                {school && <span className="badge bg-light shadow-sm text-success">{school.raison_sociale}</span>}
                                 <span className="badge bg-light rounded"> <CIcon className='text-dark' icon={cilBellExclamation} /> </span>
-                                <strong className='text-danger' style={{ position: "absolute", marginRight: "-10" }} >{receivedNotificationsNbr < 9 ? `0 ${receivedNotificationsNbr}` : receivedNotificationsNbr}</strong>
+                                {/* <strong className='text-danger' style={{ position: "absolute", marginRight: "0" }} >{receivedNotificationsNbr < 9 ? `0 ${receivedNotificationsNbr}` : receivedNotificationsNbr}</strong> */}
                             </div>
                             <div className="relative ms-3">
 
@@ -239,6 +242,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
+                                        <Dropdown.Link
+                                            href="#"
+                                        >
+                                            <CIcon icon={cilUserX} />  Rôle: <span className="badge bg-light border rounded text-success"> {roleName} </span>
+                                        </Dropdown.Link>
+
                                         <Dropdown.Link
                                             href={route('profile.edit')}
                                         >
@@ -342,7 +351,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
             {header && (
                 <header className="bg-dark shadow-sm text-center dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8" style={{ overflowX: "scroll!important",color:"#fff!important" }}>
+                    <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8" style={{ overflowX: "scroll!important", color: "#fff!important" }}>
                         {header}
                     </div>
                 </header>

@@ -1,8 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
-import { cibAddthis, cibBuffer, cilAlignCenter, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
+import { cibBuffer, cilList, cilMenu, cilPencil } from "@coreui/icons";
 
 export default function List({ roles }) {
     const authUser = usePage().props.auth.user;
@@ -47,45 +46,49 @@ export default function List({ roles }) {
                                             <th scope="row">{role.id} {index + 1}</th>
                                             <td >{role.name}</td>
                                             <td>
-                                                <Link href={route('role.permissions', role.id)}
-                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                >
-                                                    <strong className="text-danger">{role.permissions?.length}</strong> <CIcon icon={cilList} />
-                                                </Link>
+                                                {!authUser.roles.some(r => r.name == role.name) ?
+                                                    <Link href={route('role.permissions', role.id)}
+                                                        className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                    >
+                                                        <strong className="text-danger">{role.permissions?.length}</strong> <CIcon icon={cilList} />
+                                                    </Link> : '---'
+                                                }
                                             </td>
                                             <td>
-                                                <Link href={route('role.users', role.id)}
-                                                    className='btn btn-sm btn-light border bg-hover shadow-sm'
-                                                >
-                                                    <strong className="text-danger">{role.users?.length}</strong> <CIcon icon={cilList} />
-                                                </Link>
+                                                {!authUser.roles.some(r => r.name == role.name) ?
+                                                    <Link href={route('role.users', role.id)}
+                                                        className='btn btn-sm btn-light border bg-hover shadow-sm'
+                                                    >
+                                                        <strong className="text-danger">{role.users?.length}</strong> <CIcon icon={cilList} />
+                                                    </Link> : '---'
+                                                }
                                             </td>
                                             <td>
                                                 {!authUser.school_id ?
                                                     (
-                                                    <div className="dropstart">
-                                                        <button
-                                                            type="button"
-                                                            className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                            data-bs-toggle="dropdown" aria-expanded="false"
-                                                        >
-                                                            <CIcon icon={cilMenu} /> Gérer
-                                                        </button>
-                                                        <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
-    
-                                                            {checkPermission('role.edit') ?
-                                                                (
-                                                                    <li>
-                                                                        <Link
-                                                                            href={route('role.permissions', role.id)}
-                                                                        >
-                                                                            <CIcon icon={cilPencil} /> Modifier
-                                                                        </Link>
-                                                                    </li>
-                                                                ) : null
-                                                            }
-                                                        </ul>
-                                                    </div>) : '---'
+                                                        <div className="dropstart">
+                                                            <button
+                                                                type="button"
+                                                                className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                            >
+                                                                <CIcon icon={cilMenu} /> Gérer
+                                                            </button>
+                                                            <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+
+                                                                {checkPermission('role.edit') ?
+                                                                    (
+                                                                        <li>
+                                                                            <Link
+                                                                                href={route('role.permissions', role.id)}
+                                                                            >
+                                                                                <CIcon icon={cilPencil} /> Modifier
+                                                                            </Link>
+                                                                        </li>
+                                                                    ) : null
+                                                                }
+                                                            </ul>
+                                                        </div>) : '---'
                                                 }
                                             </td>
                                         </tr>

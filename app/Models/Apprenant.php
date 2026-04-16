@@ -180,7 +180,7 @@ class Apprenant extends Model
         static::creating(function ($model) {
             $model->created_by = Auth::id();
             $model->photo = $model->handlePhoto();
-            $model->school_id = Auth::user()->school_id ?? 1;
+            $model->school_id = Auth::user()->school_id;
         });
 
         // updated

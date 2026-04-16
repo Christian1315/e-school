@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SchoolResource;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\School;
 use Exception;
@@ -71,6 +72,13 @@ class SchoolController extends Controller
              * Generation des rôles
              */
             $school->roles()->attach(Role::where('id', '!=', 1)->get()->pluck("id")->toArray());
+
+            /**
+             * Generation des permissions
+             */
+            $school->permissions()->attach(Permission::get()->pluck("id")->toArray());
+
+            /*** */
 
             DB::commit();
             return redirect()->route("school.index");

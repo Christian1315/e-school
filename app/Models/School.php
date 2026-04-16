@@ -76,6 +76,14 @@ class School extends Model
     }
 
     /**
+     * Permissions
+     */
+    function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, "permission_schools", "school_id", "permission_id");
+    }
+
+    /**
      * Users
      */
     function users(): HasMany

@@ -25,12 +25,12 @@ class DatabaseSeeder extends Seeder
             'firstname' => 'Admin',
             'lastname' => 'E-school',
             'email' => 'admin@gmail.com',
-            'password' => bcrypt('admin@2026'), // mot de passe par défaut
+            'password' => 'admin@2026', // mot de passe par défaut
         ]);
 
         $user->detail()->create([
             "phone" => "+2290156854397",
-            "profile_img" => asset("fichisers/images/logo.png"),
+            "profile_img" => asset("fichiers/images/logo.png"),
         ]);
 
         /**

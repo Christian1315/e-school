@@ -35,8 +35,7 @@ class DashboardController extends Controller
             $inscriptions = Inscription::latest()->get();
             $users = User::latest()->get();
         }
-
-        // dd(UserResource::collection($users));
+        
         return Inertia::render('Dashboard', [
             "apprenants" => ApprenantResource::collection($apprenants),
             "inscriptions" => InscriptionResource::collection($inscriptions),

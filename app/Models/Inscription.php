@@ -136,7 +136,7 @@ class Inscription extends Model
         static::creating(function ($model) {
             $model->created_by = Auth::id();
             $model->dossier_transfert = $model->handlePhoto();
-            $model->school_id = Auth::user()->school_id ?? 1;
+            $model->school_id = Auth::user()->school_id;
         });
 
         static::created(function ($model) {

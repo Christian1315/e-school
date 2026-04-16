@@ -160,7 +160,6 @@ class UserController extends Controller
 
             $user->detail()->create([
                 "phone" => $validated["phone"] ?? null,
-                "profile_img" => $validated["profile_img"] ?? null,
             ]);
 
             /**

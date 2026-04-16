@@ -25,13 +25,7 @@ class RoleController extends Controller
 
         if ($user->school) {
             $roles = $user->school->roles->load(['permissions', 'users'])
-                ->where('id', '!=', 1)
-                ->latest();
-            //  Role::with(['permissions', 'users'])
-            //     ->where('id', '!=', 1)
-            //     ->where('school_id', $user->school_id)
-            //     ->latest()
-            //     ->get();
+                ->where('id', '!=', 1);
         } else {
             $roles = Role::with(['permissions', 'users'])
                 ->where('id', '!=', 1)
@@ -48,11 +42,17 @@ class RoleController extends Controller
      */
     public function getPermissions($id)
     {
-        $role = Role::with(["permissions", "schools"])->find($id);
+        if ($school = Auth::user()->school) {
+            $role = $school->roles()->findOrFail($id);
+            $permissions = $school->permissions()->get();
+        } else {
+            $role = Role::findOrFail($id);
+            $permissions = Permission::all();
+        }
 
         return Inertia::render('Role/Permissions', [
-            "role" => $role,
-            "permissions" => Permission::all(),
+            "role" => $role->load("schools","permissions"),
+            "permissions" => $permissions,
         ]);
     }
 
@@ -155,7 +155,7 @@ class RoleController extends Controller
                 ->delete();
 
             /**
-             * Affcetation
+             * Affectation
              */
             $user->assignRole($role->name);
 
@@ -178,16 +178,11 @@ class RoleController extends Controller
      */
     public function updatePermissions(Request $request, $id)
     {
-        // dd("gogoooooo");
         try {
             if ($school = Auth::user()->school) {
-                $role = $school->roles()->find($id);
+                $role = $school->roles()->findOrFail($id);
             } else {
-                $role = Role::find($id);
-            }
-
-            if (!$role) {
-                throw new \Exception("Ce rôle n'existe pas!");
+                $role = Role::findOrFail($id);
             }
 
             DB::beginTransaction();

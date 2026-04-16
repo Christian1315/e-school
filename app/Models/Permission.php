@@ -35,6 +35,14 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
+     * Custum relationship with school
+     */
+    function schools(): BelongsToMany
+    {
+        return $this->belongsToMany(School::class, "permission_schools", "permission_id", "school_id");
+    }
+
+    /**
      * @return PermissionContract|Permission
      *
      * @throws PermissionAlreadyExists

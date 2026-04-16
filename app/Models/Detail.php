@@ -47,7 +47,7 @@ class Detail extends Model
             $file->move(public_path('profiles'), $name);
             $photoPath = asset('profiles/' . $name);
         }
-
+        Log::info("Le path de la photo de profil de l'utilisateur", ["path" => $photoPath]);
         return $photoPath;
     }
 
@@ -61,12 +61,7 @@ class Detail extends Model
 
         static::creating(function ($model) {
             $model->profile_img = $model->handlePhoto();
-        });
-
-        static::created(function ($model) {
             $model->created_by = Auth::id();
-            $model->profile_img = $model->handlePhoto();
-            $model->saveQuietly();
         });
 
         static::updated(function ($model) {

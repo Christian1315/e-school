@@ -29,20 +29,7 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
 
     const [showModal, setShowModal] = useState(false);
 
-    const [trimestre, setTrimestre] = useState(false);
-    const [_trimestres, setTrimestres] = useState(trimestres.data);
-
-    const [matiere, setMatiere] = useState(false);
-    const [_matieres, setMatieres] = useState(matieres.data);
-
-    const [classe, setClasse] = useState(false);
-    const [_classes, setClasses] = useState(classes.data);
-
-    const [serie, setSerie] = useState(false);
-    const [_series, setSeries] = useState(series.data);
-
     const [selectedSchool, setSelectedSchool] = useState({})
-
 
     const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
         // school_id: "",
@@ -55,30 +42,10 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
 
     // Fields handling
     const changeSchool = (option) => {
-        // setData('school_id', option.value)
 
         const selectedSchool = schools.data.find((s) => s.id === option.value);
-        console.log("École sélectionnée :", selectedSchool);
-
+        
         setSelectedSchool(selectedSchool)
-
-        // Access trimestres directly
-        console.log("Trimestres :", trimestres.data);
-        console.log("Matières :", matieres.data);
-        console.log("Classes :", classes.data);
-
-        // setTrimestres(selectedSchool.trimestres ?? trimestres.data)
-        // setTrimestre(true)
-
-        // setMatieres(selectedSchool.matieres ?? matieres.data)
-        // setMatiere(true)
-
-        // setClasses(selectedSchool.classes ?? classes.data)
-        // setClasse(true)
-
-        console.log("Trimestres après sélection :", trimestre, _trimestres);
-        console.log("Matières après sélection :", matiere, _matieres);
-        console.log("Classes après sélection :", classe, _classes);
     }
 
     // validation d'une devoir

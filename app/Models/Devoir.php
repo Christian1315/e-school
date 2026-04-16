@@ -100,7 +100,7 @@ class Devoir extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            $model->school_id = Auth::user()->school_id ?? 1;
+            $model->school_id = Auth::user()->school_id;
         });
 
         static::created(function ($model) {

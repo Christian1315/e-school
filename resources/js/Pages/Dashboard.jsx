@@ -24,7 +24,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                 datasets: [
                     {
                         label: "Nombre (mensuel)",
-                        data: apprenants.data,
+                        // data: apprenants.data,
                         backgroundColor: "rgba(54, 162, 235, 0.5)",
                         borderColor: "rgba(54, 162, 235, 1)",
                         borderWidth: 1,
@@ -49,7 +49,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                 datasets: [
                     {
                         label: "Nombre (journalier)",
-                        data: inscriptions.data,
+                        // data: inscriptions.data,
                         backgroundColor: "rgba(54, 162, 235, 0.5)",
                         borderColor: "rgba(54, 162, 235, 1)",
                         borderWidth: 1,
@@ -70,7 +70,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
             monthlyChart.destroy();
             dailyChart.destroy();
         };
-    }, [apprenants, inscriptions]);
+    });
 
 
     return (
@@ -130,65 +130,7 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                                     <canvas ref={dailyChartRef}></canvas>
                                 </div>
                             </div>
-
                             <br /><br /><br />
-                            {/* Details */}
-                            <div className="mt-8">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <h3 className="font-semibold  text-xl text-gray-500"><CIcon className="nav-icon text-success" icon={cilPeople} /> Utilisateurs récents </h3>
-                                        <table id="" className="table-auto border-collapse border-b border-slate-400 mt-4 w-full">
-                                            <thead>
-                                                <tr>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Nom </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Prénom </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Phone </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Inseré le </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    users.data.map((user, index) => (
-                                                        <tr key={user.id}>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user.firstname}</span></td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user.lastname}</span></td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{user?.detail?.phone || '---'}</span> </td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded"> {user.created_at}</span></td>
-                                                        </tr>
-                                                    ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold  text-xl text-gray-500"><CIcon className="nav-icon text-success" icon={cilWallet} /> Inscriptions récentes </h3>
-                                        <table id="" className="table-auto border-collapse border-b border-slate-400 mt-4 w-full">
-                                            <thead>
-                                                <tr>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Ecole </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Apprenant </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Numéro Educ Master </th>
-                                                    <th className="border-b border-slate-300 p-2 text-left bg-slate-50"> Frais d'inscription </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    inscriptions.data.map((inscription, index) => (
-                                                        <tr key={inscription.id}>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{inscription.school?.raison_sociale}</span></td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{inscription.apprenant?.firstname} - {inscription.apprenant?.lastname}</span></td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded">{inscription.numero_educ_master}</span> </td>
-                                                            <td className="border-b border-slate-300 p-2"> <span className="badge bg-light text-dark border rounded"> {inscription.frais_inscription}</span></td>
-                                                        </tr>
-                                                    ))
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

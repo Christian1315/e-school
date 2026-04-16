@@ -17,9 +17,7 @@ export default function List({ role, permissions }) {
     }
 
     const [ckeckPermissions, setCheckPermissions] = useState(permissions.map((per) => ({
-        'id': per.id,
-        'name': per.name,
-        'description': per.description,
+        ...per,
         'checked': checkPermission(per.name)
     })))
 
@@ -93,7 +91,7 @@ export default function List({ role, permissions }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
-                    <CIcon className='text-success' icon={cibBuffer} /> Les permissions associées au rôle : <small className='badge bg-light text-danger border rounded'>{role.name}</small>
+                    <CIcon className='text-success' icon={cibBuffer} /> Les permissions associées au rôle : <small className='badge bg-light text-danger border rounded'>{role.name}  {role.schools.some((s) => s.id == authUser.school_id) ? `|(${role.schools.find((s) => s.id == authUser.school_id).raison_sociale})` : ''}</small>
                 </h2>
             }
         >

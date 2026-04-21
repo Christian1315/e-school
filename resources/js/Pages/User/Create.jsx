@@ -5,14 +5,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 export default function Create({ schools, roles }) {
     const authUser = usePage().props.auth;
     const permissions = authUser.permissions;
-
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -199,12 +198,12 @@ export default function Create({ schools, roles }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={roles.map((role) => ({
                                                     value: role.id,
-                                                    label: `${role.name} ${role.school_id ? '(' + role.school.raison_sociale + ')' : ''}`,
+                                                    label: `${role.name} ${!authUser.school ? role.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={roles
                                                     .map((role) => ({
                                                         value: role.id,
-                                                        label: `${role.name}`,
+                                                        label: `${role.name} ${!authUser.school ? role.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.role_id)} // set selected option
                                                 onChange={(option) => setData('role_id', option.value)} // update state with id

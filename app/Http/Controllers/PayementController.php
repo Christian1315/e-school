@@ -58,7 +58,7 @@ class PayementController extends Controller
 
             // marquer l'inscription comme reçu generé
             $paiement->update(["receipted" => true]);
-            
+
             // Set PDF orientation to landscape
             $pdf->setPaper('a4', 'landscape');
 
@@ -76,8 +76,8 @@ class PayementController extends Controller
     {
         return Inertia::render('Payement/Create', [
             "apprenants" => Auth::user()->school_id ?
-                Apprenant::where("school_id", Auth::user()->school_id)->get() :
-                Apprenant::all(),
+                Apprenant::with("school")->where("school_id", Auth::user()->school_id)->get() :
+                Apprenant::with("school")->get(),
             "schools" => Auth::user()->school_id ?
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),
@@ -92,9 +92,11 @@ class PayementController extends Controller
         Log::info("Les datas", ["data" => $request->all()]);
         try {
             $validated = $request->validate([
+                "school_id"      => "nullable|integer|exists:schools,id",
                 "apprenant_id"      => "required|integer",
                 "montant"      => "required|numeric",
                 "paiement_receit"          => "nullable|file",
+                "date_paiement" => "required|date",
                 "annee_scolaire" => "required|integer|min:2000|max:2030",
             ], [
                 "apprenant_id.required"      => "L'apprenant est obligatoire.",
@@ -139,8 +141,8 @@ class PayementController extends Controller
 
             return Inertia::render('Payement/Update', [
                 "apprenants" => Auth::user()->school_id ?
-                    Apprenant::where("school_id", Auth::user()->school_id)->get() :
-                    Apprenant::all(),
+                    Apprenant::with('school')->where("school_id", Auth::user()->school_id)->get() :
+                    Apprenant::with('school')->get(),
                 "schools" => Auth::user()->school_id ?
                     School::where("id", Auth::user()->school_id)->get() :
                     School::all(),
@@ -164,8 +166,9 @@ class PayementController extends Controller
             }
 
             $validated = $request->validate([
-                "school_id"      => "required|integer",
+                "school_id"      => "nullable|integer|exists:schools,id",
                 "apprenant_id"      => "required|integer",
+                "date_paiement" => "required|date",
                 "montant"      => "required|numeric",
                 "paiement_receit"          => "nullable|file",
             ], [

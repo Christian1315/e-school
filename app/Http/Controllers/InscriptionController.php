@@ -41,11 +41,11 @@ class InscriptionController extends Controller
             $apprenantQuery = Apprenant::where("school_id", Auth::user()->school_id);
             $schoolQuery = School::where("id", Auth::user()->school_id);
         } else {
-            $apprenantQuery = Apprenant::all();
-            $schoolQuery = School::all();
+            $apprenantQuery = Apprenant::query();
+            $schoolQuery = School::query();
         }
         return Inertia::render('Inscription/Create', [
-            "apprenants" => $apprenantQuery->get(),
+            "apprenants" => $apprenantQuery->with("school")->get(),
             "schools" => $schoolQuery->get(),
         ]);
     }
@@ -62,6 +62,7 @@ class InscriptionController extends Controller
                 "apprenant_id"       => "required|integer",
                 "numero_educ_master" => "required|string",
                 "frais_inscription"  => "required|numeric",
+                "annee_scolaire" => "required",
                 "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
             ], [
                 // "school_id.required"      => "L'école est obligatoire.",
@@ -103,23 +104,20 @@ class InscriptionController extends Controller
     function edit(Inscription $inscription)
     {
         try {
-            if (!$inscription) {
-                throw new \Exception("Cette inscription n'existe pas!");
-            }
 
             if (Auth::user()->school_id) {
                 $apprenantQuery = Apprenant::where("school_id", Auth::user()->school_id);
                 $schoolQuery = School::where("id", Auth::user()->school_id);
             } else {
-                $apprenantQuery = Apprenant::all();
-                $schoolQuery = School::all();
+                $apprenantQuery = Apprenant::query();
+                $schoolQuery = School::query();
             }
 
             $inscription->load(["school", "apprenant"]);
 
             return Inertia::render('Inscription/Update', [
                 'inscription' => $inscription,
-                "apprenants" => $apprenantQuery->get(),
+                "apprenants" => $apprenantQuery->with("school")->get(),
                 "schools" => $schoolQuery->get(),
             ]);
         } catch (\Exception $e) {
@@ -144,6 +142,7 @@ class InscriptionController extends Controller
                 "apprenant_id"       => "required|integer",
                 "numero_educ_master" => "required|string",
                 "frais_inscription"  => "required|numeric",
+                "annee_scolaire" => "required",
                 "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
             ], [
                 // "school_id.required"      => "L'école est obligatoire.",

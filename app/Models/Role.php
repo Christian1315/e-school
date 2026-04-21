@@ -6,6 +6,8 @@ use App\Models\School;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Spatie\Permission\Exceptions\GuardDoesNotMatch;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
@@ -40,9 +42,9 @@ class Role extends Model implements RoleContract
     /**
      * A role belongs to some schools.
      */
-    function schools(): BelongsToMany
+    function school(): BelongsTo
     {
-        return $this->belongsToMany(School::class, "roles_schools", "role_id", "school_id");
+        return $this->belongsTo(School::class, 'school_id');
     }
 
     /**
@@ -201,5 +203,17 @@ class Role extends Model implements RoleContract
 
         return $this->loadMissing('permissions')->permissions
             ->contains($permission->getKeyName(), $permission->getKey());
+    }
+
+    /**Boot */
+    static protected function boot()
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            Log::debug("The created Role", ["model" => $model]);
+            $model->reference = "RX-OOO{$model->id}";
+            $model->saveQuietly();
+        });
     }
 }

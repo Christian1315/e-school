@@ -5,16 +5,19 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cilPencil, cilList } from "@coreui/icons";
+import { cilSend, cilPencil, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Update({ apprenants, schools, paiement}) {
+export default function Update({ apprenants, schools, paiement }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
     }
+
+    console.log("le paiement :", paiement)
 
     const {
         data,
@@ -22,12 +25,13 @@ export default function Update({ apprenants, schools, paiement}) {
         errors,
         patch,
         processing,
-        progress
+        // progress
     } = useForm({
         school_id: paiement.school_id || "",
         apprenant_id: paiement.apprenant_id || "",
         montant: paiement.montant || "",
-        // paiement_receit: paiement.paiement_receit || "",
+        date_paiement: paiement.date_paiement?.split("T")?.[0] || "",
+        annee_scolaire: paiement.annee_scolaire || '', // default to current year
     });
 
     const submit = (e) => {
@@ -42,7 +46,7 @@ export default function Update({ apprenants, schools, paiement}) {
             },
         });
 
-        patch(route('paiement.update',paiement.id), {
+        patch(route('paiement.update', paiement.id), {
             onSuccess: () => {
                 Swal.close();
                 Swal.fire({
@@ -87,16 +91,16 @@ export default function Update({ apprenants, schools, paiement}) {
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        {/* École */}
+                                    {/* École */}
+                                    {!authUser.school &&
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="school_id" value="École concernée" > </InputLabel>
 
                                             <Select
                                                 placeholder="Rechercher une école ..."
                                                 name="school_id"
                                                 id="school_id"
-                                                required
+                                                // required
                                                 className="form-control mt-1 block w-full"
                                                 options={schools.map((school) => ({
                                                     value: school.id,
@@ -113,8 +117,8 @@ export default function Update({ apprenants, schools, paiement}) {
 
                                             <InputError className="mt-2" message={errors.school_id} />
                                         </div>
-
-
+                                    }
+                                    <div className="col-md-6">
                                         {/* Montant */}
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="montant" value="Montant versé" ><span className="text-danger">*</span> </InputLabel>
@@ -122,13 +126,29 @@ export default function Update({ apprenants, schools, paiement}) {
                                                 id="montant"
                                                 type="number"
                                                 className="mt-1 block w-full"
-                                                placeholder="50000"
+                                                placeholder="Ex: 50000"
                                                 value={data.montant}
                                                 onChange={(e) => setData('montant', e.target.value)}
                                                 autoComplete="montant"
                                                 required
                                             />
                                             <InputError className="mt-2" message={errors.montant} />
+                                        </div>
+
+                                        {/* Date de paiement */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="date_paiement" value="Date de paiement" />
+                                            <TextInput
+                                                id="date_paiement"
+                                                type="date"
+                                                className="mt-1 block w-full"
+                                                placeholder="YYYY-MM-DD"
+                                                value={data.date_paiement || ""}
+                                                onChange={(e) => setData('date_paiement', e.target.value)}
+                                                autoComplete="date_paiement"
+                                                required
+                                            />
+                                            <InputError className="mt-2" message={errors.date_paiement} />
                                         </div>
                                     </div>
                                     <div className="col-md-6">
@@ -144,12 +164,12 @@ export default function Update({ apprenants, schools, paiement}) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants
                                                     .map((apprenant) => ({
                                                         value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id
@@ -158,26 +178,23 @@ export default function Update({ apprenants, schools, paiement}) {
                                             <InputError className="mt-2" message={errors.apprenant_id} />
                                         </div>
 
-                                        {/* Recu de paiement */}
-                                        {/* <div className='mb-3'>
-                                            <InputLabel htmlFor="paiement_receit" value="Reçu du paiement" ></InputLabel>
+                                        {/* Annee scolaire */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="annee_scolaire" value="Année scolaire" required={true} />
                                             <TextInput
-                                                id="paiement_receit"
-                                                type="file"
+                                                id="annee_scolaire"
+                                                type="number"
                                                 className="mt-1 block w-full"
-                                                onChange={(e) => setData('paiement_receit', e.target.files[0])}
-                                                autoComplete="paiement_receit"
+                                                placeholder="Ex: 2023"
+                                                value={data.annee_scolaire}
+                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
+                                                autoComplete="annee_scolaire"
+                                                min="2000"
+                                                max="2030"
+                                                required
                                             />
-
-                                            {progress && (
-                                                <progress value={progress.percentage} max="100">
-                                                    {progress.percentage}%
-                                                </progress>
-                                            )}
-
-                                            <InputError className="mt-2" message={errors.paiement_receit} />
-                                        </div> */}
-
+                                            <InputError className="mt-2" message={errors.annee_scolaire} />
+                                        </div>
                                     </div>
                                 </div>
 

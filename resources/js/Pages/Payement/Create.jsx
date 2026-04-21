@@ -5,11 +5,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibAddthis, cilList } from "@coreui/icons";
+import { cilSend, cibAddthis, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
+import { useEffect } from 'react';
 
 export default function Create({ apprenants, schools }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -22,15 +24,18 @@ export default function Create({ apprenants, schools }) {
         errors,
         post,
         processing,
-        progress
+        // progress
     } = useForm({
-        // school_id: "",
+        school_id: "",
         apprenant_id: "",
         montant: "",
-        // paiement_receit: "",
         date_paiement: "",
         annee_scolaire: new Date().getFullYear(), // default to current year
     });
+
+    useEffect(() => {
+        console.log("Les datas updated :", data)
+    }, [data]);
 
     const submit = (e) => {
         e.preventDefault();
@@ -89,6 +94,33 @@ export default function Create({ apprenants, schools }) {
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
+                                    {/* École */}
+                                    {!authUser.school &&
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="school_id" value="École concernée" > </InputLabel>
+
+                                            <Select
+                                                placeholder="Rechercher une école ..."
+                                                name="school_id"
+                                                id="school_id"
+                                                // required
+                                                className="form-control mt-1 block w-full"
+                                                options={schools.map((school) => ({
+                                                    value: school.id,
+                                                    label: `${school.raison_sociale}`,
+                                                }))}
+                                                value={schools
+                                                    .map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))
+                                                    .find((option) => option.value === data.school_id)} // set selected option
+                                                onChange={(option) => setData('school_id', option.value)} // update state with id
+                                            />
+
+                                            <InputError className="mt-2" message={errors.school_id} />
+                                        </div>
+                                    }
                                     <div className="col-md-6">
                                         {/* Montant */}
                                         <div className='mb-3'>
@@ -135,12 +167,12 @@ export default function Create({ apprenants, schools }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants
                                                     .map((apprenant) => ({
                                                         value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id

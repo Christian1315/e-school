@@ -48,21 +48,21 @@ class ProfesseurImport implements OnEachRow, WithSkipDuplicates
             'lastname' => $rowData[1],
             'email' => $rowData[2],
             'password' => Hash::make($rowData[2]),
-            'school_id' => Auth::user()->school_id ?? 1,
+            'school_id' => Auth::user()->school_id,
         ]);
 
         /**
          * Detail du user
          */
         $user->detail()
-            ->create(["phone" => $row[3] ?? null]);
+            ->create(["phone" => $row[3]]);
 
         $school = Auth::user()->school;
 
-        
+
         // On cherche le role Professeur qui se trouve dans l'école concerné
-        $school = $user->school->load("roles");
-        if ($parentRole = $school->roles->firstWhere("name", "Professeur")) {
+        $school = $user->school?->load("roles");
+        if ($parentRole = $school?->roles?->firstWhere("name", "Professeur") ?? Role::whereNull("school_id")->firstWhere("name", "Professeur")) {
             /**
              *  On supprime tous les anciens liens et on garde seulement ceux envoyés
              * */

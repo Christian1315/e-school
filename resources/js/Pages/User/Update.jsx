@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
@@ -25,9 +25,7 @@ export default function Update({ schools, roles, user, role }) {
         setData,
         errors,
         post,
-        patch,
         processing,
-        progress
     } = useForm({
         role_id: role.id || '',
         school_id: user.school_id || "",
@@ -97,7 +95,7 @@ export default function Update({ schools, roles, user, role }) {
                                 <div className="row">
                                     <div className="col-md-6">
                                         {/* École */}
-                                        {authUser.school &&
+                                        {!authUser.school &&
                                             <div className='mb-3'>
                                                 <InputLabel htmlFor="school_id" value="École concernée" > <span className="text-danger">*</span> </InputLabel>
                                                 <Select
@@ -181,12 +179,12 @@ export default function Update({ schools, roles, user, role }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={roles.map((role) => ({
                                                     value: role.id,
-                                                    label: `${role.name} ${role.school_id ? '(' + role.school.raison_sociale + ')' : ''}`,
+                                                    label: `${role.name} ${!authUser.school ? role.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={roles
                                                     .map((role) => ({
                                                         value: role.id,
-                                                        label: `${role.name}`,
+                                                        label: `${role.name} ${!authUser.school ? role.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.role_id)} // set selected option
                                                 onChange={(option) => setData('role_id', option.value)} // update state with id

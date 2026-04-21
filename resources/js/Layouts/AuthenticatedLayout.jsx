@@ -125,7 +125,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const user = usePage().props.auth.user;
 
-    const receivedNotificationsNbr = usePage().props.auth.receivedNotificationsNbr;
+    // const receivedNotificationsNbr = usePage().props.auth.receivedNotificationsNbr;
 
     const { post } = useForm();
 

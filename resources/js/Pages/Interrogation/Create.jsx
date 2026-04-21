@@ -5,12 +5,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 
-export default function Create({ apprenants, trimestres, matieres }) {
+export default function Create({ schools, apprenants, trimestres, matieres }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -27,7 +28,7 @@ export default function Create({ apprenants, trimestres, matieres }) {
         processing,
         progress
     } = useForm({
-        // school_id: "",
+        school_id: "",
         apprenant_id: "",
         trimestre_id: "",
         matiere_id: "",
@@ -91,6 +92,34 @@ export default function Create({ apprenants, trimestres, matieres }) {
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
+                                    {!authUser.school &&
+                                        <div className="col-md-6">
+                                            <div className='mb-3'>
+                                                <InputLabel htmlFor="school_id" value="L'école concernée" > </InputLabel>
+
+                                                <Select
+                                                    placeholder="Rechercher une école ..."
+                                                    name="school_id"
+                                                    id="school_id"
+                                                    // required
+                                                    className="form-control mt-1 block w-full"
+                                                    options={schools.map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))}
+                                                    value={schools.map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))
+                                                        .find((option) => option.value === data.school_id)} // set selected option
+                                                    onChange={(option) => setData('school_id', option.value)} // update state with id
+                                                />
+
+                                                <InputError className="mt-2" message={errors.school_id} />
+                                            </div>
+                                        </div>
+                                    }
+
                                     <div className="col-md-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="apprenant_id" value="L'apprenant concerné" >  <span className="text-danger">*</span> </InputLabel>
@@ -103,11 +132,11 @@ export default function Create({ apprenants, trimestres, matieres }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.data.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants.data.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id
@@ -130,11 +159,11 @@ export default function Create({ apprenants, trimestres, matieres }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={trimestres.data.map((trimestre) => ({
                                                     value: trimestre.id,
-                                                    label: `${trimestre.libelle}`,
+                                                    label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={trimestres.data.map((trimestre) => ({
                                                     value: trimestre.id,
-                                                    label: `${trimestre.libelle}`,
+                                                    label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                                 }))
                                                     .find((option) => option.value === data.trimestre_id)} // set selected option
                                                 onChange={(option) => setData('trimestre_id', option.value)} // update state with id
@@ -155,11 +184,11 @@ export default function Create({ apprenants, trimestres, matieres }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={matieres.data.map((matiere) => ({
                                                     value: matiere.id,
-                                                    label: `${matiere.libelle}`,
+                                                    label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={matieres.data.map((matiere) => ({
                                                     value: matiere.id,
-                                                    label: `${matiere.libelle}`,
+                                                    label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                                 }))
                                                     .find((option) => option.value === data.matiere_id)} // set selected option
                                                 onChange={(option) => setData('matiere_id', option.value)} // update state with id
@@ -188,7 +217,7 @@ export default function Create({ apprenants, trimestres, matieres }) {
                                         </div>
                                     </div>
 
-                                    <div className="col-md-12">
+                                    <div className="col-md-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="note" value="Note" > <span className="text-danger">*</span> </InputLabel>
                                             <TextInput

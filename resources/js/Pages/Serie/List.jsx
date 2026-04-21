@@ -14,7 +14,7 @@ export default function List({ series }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
-                    <CIcon className='text-success' icon={cibBuffer} /> Les classes d'écoles
+                    <CIcon className='text-success' icon={cibBuffer} /> Les déries d'écoles
                 </h2>
             }
         >

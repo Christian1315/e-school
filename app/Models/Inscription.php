@@ -19,6 +19,7 @@ class Inscription extends Model
      */
     protected $fillable = [
         "numero",
+        "annee_scolaire",
         "receipted",
         "school_id",
         "apprenant_id",

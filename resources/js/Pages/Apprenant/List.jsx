@@ -217,7 +217,7 @@ export default function List({ apprenants }) {
                                                     /> : '---'
                                                 }
                                             </td>
-                                            <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
+                                            <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale || '---'}</span></td>
                                             <td>{apprenant.firstname}</td>
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>

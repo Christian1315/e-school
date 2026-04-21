@@ -24,11 +24,14 @@ class RoleController extends Controller
         $user = Auth::user();
 
         if ($user->school) {
-            $roles = $user->school->roles->load(['permissions', 'users'])
-                ->where('id', '!=', 1);
+            $roles = $user->school->roles
+                ->load(['permissions', 'users', "school"])
+                ->whereNotIn('id', $user->roles->pluck("id")->toArray())
+                ->values();
+
         } else {
-            $roles = Role::with(['permissions', 'users'])
-                ->where('id', '!=', 1)
+            $roles = Role::with(['permissions', 'users', 'school'])
+                ->whereNotIn('id', $user->roles->pluck("id")->toArray())
                 ->latest()->get();
         }
 
@@ -44,14 +47,14 @@ class RoleController extends Controller
     {
         if ($school = Auth::user()->school) {
             $role = $school->roles()->findOrFail($id);
-            $permissions = $school->permissions()->get();
         } else {
             $role = Role::findOrFail($id);
-            $permissions = Permission::all();
         }
+        // permissions
+        $permissions = Permission::all();
 
         return Inertia::render('Role/Permissions', [
-            "role" => $role->load("schools","permissions"),
+            "role" => $role->load("school", "permissions"),
             "permissions" => $permissions,
         ]);
     }
@@ -65,15 +68,13 @@ class RoleController extends Controller
 
         if ($user->school) {
             $role = Role::with([
-                "users" => function ($query) use ($user) {
-                    $query->where("school_id", $user->school_id);
-                },
                 "users.detail",
-                "users.school"
+                "users.school",
+                "school"
             ])
                 ->find($id);
         } else {
-            $role = Role::with(["users.detail", "users.school"])->find($id);
+            $role = Role::with(["users.detail", "users", "school"])->find($id);
         }
 
         return Inertia::render('Role/Users', [
@@ -157,7 +158,7 @@ class RoleController extends Controller
             /**
              * Affectation
              */
-            $user->assignRole($role->name);
+            $user->assignRole($role);
 
             DB::commit();
             return Redirect::back();

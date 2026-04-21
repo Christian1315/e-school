@@ -17,7 +17,7 @@ class SchoolController extends Controller
     /**
      * Index
      */
-    function index(Request $request)
+    function index()
     {
         $schools = School::latest()->get();
         return Inertia::render('School/List', [
@@ -28,7 +28,7 @@ class SchoolController extends Controller
     /**
      * Create
      */
-    function create(Request $request)
+    function create()
     {
         return Inertia::render('School/Create');
     }
@@ -38,6 +38,8 @@ class SchoolController extends Controller
      */
     function store(Request $request)
     {
+        Log::alert("Creating a school", ["data" => $request->all()]);
+
         try {
             $validated = $request->validate([
                 "raison_sociale" => "required",
@@ -71,14 +73,11 @@ class SchoolController extends Controller
             /**
              * Generation des rôles
              */
-            $school->roles()->attach(Role::where('id', '!=', 1)->get()->pluck("id")->toArray());
+            $baseRoles = Role::whereNull("school_id")->get()
+                ->map(fn($role) => ["name" => $role->name]);
 
-            /**
-             * Generation des permissions
-             */
-            $school->permissions()->attach(Permission::get()->pluck("id")->toArray());
-
-            /*** */
+            $school->roles()
+                ->createMany($baseRoles);
 
             DB::commit();
             return redirect()->route("school.index");

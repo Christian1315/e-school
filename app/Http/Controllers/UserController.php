@@ -26,12 +26,16 @@ class UserController extends Controller
      */
     function index()
     {
+        if (!auth()->user()->can("utilisateur.view")) {
+            return "😞 Vous n'êtes pas authorisé.e à accéder à ce panel!";
+        };
+
         if ($school = Auth::user()->school) {
             $users = User::where("school_id",  Auth::user()->school_id)->get();
             $roles = $school->roles;
         } else {
             $users = User::with("roles")->get();
-            $roles = Role::with('schools')
+            $roles = Role::with('school')
                 ->where('id', '!=', 1)
                 ->latest()->get();
         }
@@ -47,7 +51,7 @@ class UserController extends Controller
      */
     function parents()
     {
-        $school = Auth::user()->school ?? School::with("roles")->first();
+        $school = Auth::user()->school;
         if ($school) {
             $parentsQuery = User::whereHas("roles", fn($query) => $query->where("name", "Parent"))
                 ->where("school_id",  $school->id);
@@ -65,7 +69,7 @@ class UserController extends Controller
      */
     function professeurs()
     {
-        $school = Auth::user()->school ?? School::with("roles")->first();
+        $school = Auth::user()->school;
         if ($school) {
             $professeursQuery = User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))
                 ->where("school_id",  $school->id);
@@ -85,15 +89,15 @@ class UserController extends Controller
     {
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
-            $roles = Auth::user()->school->roles()->with("schools")->get();
+            $roles = Auth::user()->school->roles;
         } else {
             $schools = School::latest()->get();
-            $roles = Role::with("schools")->where("id", "!=", 1)->get();
+            $roles = Role::where("id", "!=", 1)->get();
         }
 
         return Inertia::render('User/Create', [
             "schools" => $schools,
-            "roles" => $roles
+            "roles" => $roles->load("school")
         ]);
     }
 
@@ -321,10 +325,10 @@ class UserController extends Controller
 
         if (Auth::user()->school) {
             $schools = School::where("id", Auth::user()->school_id)->get();
-            $roles = Auth::user()->school->roles()->with("schools")->get();
+            $roles = Auth::user()->school->roles;
         } else {
             $schools = School::latest()->get();
-            $roles = Role::with("schools")->where("id", "!=", 1)->get();
+            $roles = Role::with("school")->get();
         }
 
         return Inertia::render('User/Update', [
@@ -422,7 +426,7 @@ class UserController extends Controller
             event(new Registered($user));
 
             DB::commit();
-            return redirect()->back();;
+            return redirect()->route("user.index");;
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::debug("Erreure lors de la modification de l'utilisateur", ["error" => $e->errors()]);

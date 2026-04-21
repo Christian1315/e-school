@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cilList, cilArrowLeft, cilSend, cibBuffer } from "@coreui/icons";
+import { cilArrowLeft, cilSend, cibBuffer } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 import Checkbox from '@/Components/Checkbox';
@@ -13,11 +13,7 @@ export default function List({ role }) {
     console.log(role)
 
     const [ckeckUsers, setCheckUsers] = useState(role.users.map((user) => ({
-        'id': user.id,
-        'firstname': user.firstname,
-        'lastname': user.lastname,
-        'school': user.school,
-        'detail': user.detail,
+        ...user,
         'checked': true
     })))
 
@@ -84,7 +80,7 @@ export default function List({ role }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
-                    <CIcon className='text-success' icon={cibBuffer} /> Les users associées au rôle : <em>{role.name}</em>
+                    <CIcon className='text-success' icon={cibBuffer} /> Les users associées au rôle : <em>{role.name} | {role.reference}</em>
                 </h2>
             }
         >
@@ -118,7 +114,7 @@ export default function List({ role }) {
                                 </thead>
                                 <tbody>
                                     {
-                                        ckeckUsers.length > 0 ?
+                                        ckeckUsers.length > 0 &&
                                             ckeckUsers.map((user, index) => (
                                                 <tr key={user.id}>
                                                     <th scope="row">{index + 1}</th>
@@ -132,7 +128,7 @@ export default function List({ role }) {
                                                         />
                                                     </td>
                                                 </tr>
-                                            )) : (<tr><td colSpan={4} className='text-danger'>Aucun utilisateur!</td> </tr>)
+                                            ))
                                     }
                                 </tbody>
                             </table>

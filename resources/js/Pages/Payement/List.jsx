@@ -203,10 +203,10 @@ export default function List({ payements }) {
                                                 }
                                             </td>
                                             <td className="text-center"><span className="badge bg-light border rounded text-dark">{paiement.numero}</span></td>
-                                            <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale}`}</span></td>
+                                            <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale|| '---'}`}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
-                                            <td><span className="badge bg-light border rounded text-dark">{paiement.date_paiement}</span></td>
+                                            <td><span className="badge bg-light border rounded text-dark">{paiement.date_paiement || '---'}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.annee_scolaire}</span></td>
                                             <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
                                         </tr>

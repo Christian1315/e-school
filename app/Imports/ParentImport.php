@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\Detail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -36,17 +37,17 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             throw new \Exception("Tous les champs (nom, Prénom,email, phone) sont réquis!");
         }
 
-        if (User::firstWhere("email", $row[2])) {
-            throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le mail $row[2] existe déjà!");
-        }
-
         if ($row[2]) {
             if (!filter_var($row[2], FILTER_VALIDATE_EMAIL)) {
                 throw new \Exception("Erreur de validation de la ligne: $rowIndex . Le format de l'email $row[2] est invalide!");
             }
         }
 
-        if (User::firstWhere("phone", $row[3])) {
+        if (User::firstWhere("email", $row[2])) {
+            throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le mail $row[2] existe déjà!");
+        }
+
+        if (Detail::firstWhere("phone", $row[3])) {
             throw new \Exception("Erreure de validation de la ligne: $rowIndex . Le numéro de téléphone $row[3] existe déjà!");
         }
 
@@ -58,7 +59,7 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
             'lastname' => $rowData[1],
             'email' => $rowData[2],
             'password' => Hash::make($rowData[2]),
-            'school_id' => Auth::user()->school_id ?? 1,
+            'school_id' => Auth::user()->school_id,
         ]);
 
         /**
@@ -67,10 +68,9 @@ class ParentImport implements OnEachRow, WithSkipDuplicates
         $user->detail()
             ->create(["phone" => $row[3] ?? null]);
 
-
         // On cherche le role parent qui se trouve dans l'école concerné
-        $school = $user->school->load("roles");
-        if ($parentRole = $school->roles->firstWhere("name", "Parent")) {
+        $school = $user->school?->load("roles");
+        if ($parentRole = $school?->roles?->firstWhere("name", "Parent") ?? Role::whereNull("school_id")->firstWhere("name", "Parent")) {
             /**
              *  On supprime tous les anciens liens et on garde seulement ceux envoyés
              * */

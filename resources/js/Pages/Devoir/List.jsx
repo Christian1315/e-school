@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cibAddthis, cibBuffer, cilCheck, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilCheck, cilDelete, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,9 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
 export default function List({ _devoirs, schools, trimestres, matieres, classes, series }) {
+    const authUser = usePage().props.auth;
     const auth = usePage().props.auth.user;
+
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -32,7 +34,7 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
     const [selectedSchool, setSelectedSchool] = useState({})
 
     const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
-        // school_id: "",
+        school_id: "",
         trimestre_id: "",
         classe_id: "",
         matiere_id: "",
@@ -44,7 +46,7 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
     const changeSchool = (option) => {
 
         const selectedSchool = schools.data.find((s) => s.id === option.value);
-        
+
         setSelectedSchool(selectedSchool)
     }
 
@@ -372,7 +374,7 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Ajout groupé des devoirs
+                        Ajout groupé des intérrogations
                     </h2>
 
                     <div className="row">
@@ -421,11 +423,11 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle}`,
+                                            label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle}`,
+                                            label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.trimestre_id)} // set selected option
                                         onChange={(option) => setData('trimestre_id', option.value)} // update state with id
@@ -451,11 +453,11 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle}`,
+                                            label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle}`,
+                                            label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.matiere_id)} // set selected option
                                         onChange={(option) => setData('matiere_id', option.value)} // update state with id
@@ -480,11 +482,11 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle}`,
+                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle}`,
+                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.classe_id)} // set selected option
                                         onChange={(option) => setData('classe_id', option.value)} // update state with id
@@ -509,17 +511,17 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle}`,
+                                            label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle}`,
+                                            label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.serie_id)} // set selected option
                                         onChange={(option) => setData('serie_id', option.value)} // update state with id
                                     />
 
-                                    <InputError className="mt-2" message={errors.serie_id} />
+                                    <InputError className="mt-2" message={errors.classe_id} />
                                 </div>
                             </div>
                         }

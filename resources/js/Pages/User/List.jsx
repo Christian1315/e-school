@@ -60,10 +60,7 @@ export default function List({ users, roles }) {
     }
 
     const [formatedRoles, setFormatedRoles] = useState(roles.map((role) => ({
-        'id': role.id,
-        'name': role.name,
-        'school_id': role.school_id,
-        'school': role.school,
+        ...role,
         'checked': false
     })))
 
@@ -201,41 +198,41 @@ export default function List({ users, roles }) {
                                             <th scope="row">{index + 1}</th>
                                             <td>
                                                 {authUser.id != user.id ?
-                                                <div className="dropstart">
-                                                    <button
-                                                        type="button"
-                                                        className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                                        data-bs-toggle="dropdown" aria-expanded="false"
-                                                    >
-                                                        <CIcon icon={cilMenu} /> Gérer
-                                                    </button>
-                                                    <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
+                                                    <div className="dropstart">
+                                                        <button
+                                                            type="button"
+                                                            className="dropdown-toggle items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                                        >
+                                                            <CIcon icon={cilMenu} /> Gérer
+                                                        </button>
+                                                        <ul className="dropdown-menu p-2 border rounded shadow" aria-labelledby="dropdownMenuButton1">
 
-                                                        {checkPermission('utilisateur.edit') ?
-                                                            (<li><Link
-                                                                className='btn text-warning  w-100'
-                                                                href={route("user.edit", user.id)}
-                                                            >
-                                                                <CIcon icon={cilPencil} />  Modifier
-                                                            </Link></li>
-                                                            ) : null
-                                                        }
+                                                            {checkPermission('utilisateur.edit') ?
+                                                                (<li><Link
+                                                                    className='btn text-warning  w-100'
+                                                                    href={route("user.edit", user.id)}
+                                                                >
+                                                                    <CIcon icon={cilPencil} />  Modifier
+                                                                </Link></li>
+                                                                ) : null
+                                                            }
 
-                                                        {/* Un user ne peuut pas s'affceter un role */}
-                                                        {checkPermission('affect.role') && authUser.id != user.id ?
-                                                            (
-                                                                <li>
-                                                                    <Link
-                                                                        href='#'
-                                                                        onClick={(e) => confirmShowModal(e, user)}
-                                                                    >
-                                                                        <CIcon icon={cilLink} />  Affecter à un rôle
-                                                                    </Link>
-                                                                </li>
-                                                            ) : null
-                                                        }
-                                                    </ul>
-                                                </div>:'---'}
+                                                            {/* Un user ne peuut pas s'affceter un role */}
+                                                            {checkPermission('affect.role') && authUser.id != user.id ?
+                                                                (
+                                                                    <li>
+                                                                        <Link
+                                                                            href='#'
+                                                                            onClick={(e) => confirmShowModal(e, user)}
+                                                                        >
+                                                                            <CIcon icon={cilLink} />  Affecter à un rôle
+                                                                        </Link>
+                                                                    </li>
+                                                                ) : null
+                                                            }
+                                                        </ul>
+                                                    </div> : '---'}
                                             </td>
                                             <td>
                                                 <button
@@ -254,7 +251,7 @@ export default function List({ users, roles }) {
                                                 {
                                                     user.roles?.length > 0 ?
                                                         user.roles.map((role, index) => (
-                                                            <span key={index} className="m-1  bg-light text-dark border rounded">{role.name}</span>
+                                                            <small key={index} className="m-1  bg-light text-dark border rounded">{role.name} {role.reference ?? ''}</small>
                                                         )) : '---'
                                                 }
                                             </td>
@@ -290,7 +287,7 @@ export default function List({ users, roles }) {
                                     formatedRoles.map((role, index) => (
                                         <tr key={index}>
                                             <th scope="row">{index + 1}</th>
-                                            <td ><span className="badge bg-light rounded border text-dark">{role.name}</span></td>
+                                            <td ><span className="badge bg-light rounded border text-dark">{role.name} |  {role.school?.raison_sociale ?? ''}</span></td>
                                             <td>
                                                 <Checkbox
                                                     // checked={role.id == currentUser.roles?.[0]?.id}          // ⚡ important : bind à role.checked

@@ -129,25 +129,25 @@ export default function Create({ schools, professeurs, classe, professeurs_ids }
                                     {/* professeurs */}
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="professeur_ids" value="Les professeurs" >  <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="professeur_ids" value="Les professeurs" ></InputLabel>
 
                                             <Select
                                                 placeholder="Rechercher un professeur ..."
                                                 name="professeur_ids"
                                                 id="professeur_ids"
-                                                required
+                                                // required
                                                 isMulti
                                                 className="mt-1 block w-full"
                                                 options={professeurs.map((professeur) => ({
                                                     value: professeur.id,
-                                                    label: `${professeur.firstname} ${professeur.lastname}`,
+                                                    label: `${professeur.firstname} ${professeur.lastname} ${authUser.user.id == 1 ? professeur.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
 
                                                 // Valeurs sélectionnées (tableau)
                                                 value={professeurs
                                                     .map((professeur) => ({
                                                         value: professeur.id,
-                                                        label: `${professeur.firstname} ${professeur.lastname}`,
+                                                        label: `${professeur.firstname} ${professeur.lastname} ${authUser.user.id == 1 ? professeur.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .filter((option) =>
                                                         data.professeur_ids?.includes(option.value)

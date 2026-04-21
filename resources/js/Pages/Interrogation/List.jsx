@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cibAddthis, cibBuffer, cilCheck, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilCheck, cilDelete, cilMenu, cilPencil, cilPlaylistAdd, cilSave } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,8 @@ import TextInput from '@/Components/TextInput';
 
 export default function List({ interrogations, schools, trimestres, matieres, classes, series }) {
     const auth = usePage().props.auth.user;
+    const authUser= usePage().props.auth;
+
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -42,7 +44,6 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
     const [_series, setSeries] = useState(series.data);
 
     const [selectedSchool, setSelectedSchool] = useState({})
-
 
     const { data, patch, get, post, errors, processing, setData, reset, delete: destroy } = useForm({
         // school_id: "",
@@ -126,9 +127,7 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
 
     useEffect(() => {
         let interroscheckeds = interros.filter((interro) => interro.checked)
-
         setData("interroscheckeds", interroscheckeds)
-        console.log("Finals dats to send :", interroscheckeds)
     }, [interros])
 
     const checkedLine = (index, e) => {
@@ -454,11 +453,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle}`,
+                                            label: `${trimestre.libelle} ${!authUser.school?trimestre.school?.raison_sociale??'':''}`,
                                         }))}
                                         value={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle}`,
+                                            label: `${trimestre.libelle} ${!authUser.school?trimestre.school?.raison_sociale??'':''}`,
                                         }))
                                             .find((option) => option.value === data.trimestre_id)} // set selected option
                                         onChange={(option) => setData('trimestre_id', option.value)} // update state with id
@@ -484,11 +483,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle}`,
+                                            label: `${matiere.libelle} ${!authUser.school?matiere.school?.raison_sociale??'':''}`,
                                         }))}
                                         value={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle}`,
+                                            label: `${matiere.libelle} ${!authUser.school?matiere.school?.raison_sociale??'':''}`,
                                         }))
                                             .find((option) => option.value === data.matiere_id)} // set selected option
                                         onChange={(option) => setData('matiere_id', option.value)} // update state with id
@@ -513,11 +512,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle}`,
+                                            label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale??'':''}`,
                                         }))}
                                         value={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle}`,
+                                            label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale??'':''}`,
                                         }))
                                             .find((option) => option.value === data.classe_id)} // set selected option
                                         onChange={(option) => setData('classe_id', option.value)} // update state with id
@@ -542,11 +541,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle}`,
+                                            label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale??'':''}`,
                                         }))}
                                         value={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle}`,
+                                            label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale??'':''}`,
                                         }))
                                             .find((option) => option.value === data.serie_id)} // set selected option
                                         onChange={(option) => setData('serie_id', option.value)} // update state with id

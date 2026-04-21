@@ -271,7 +271,7 @@ export default function List({ users }) {
                                                 {
                                                     user.roles?.length > 0 ?
                                                         user.roles.map((role, index) => (
-                                                            <span key={index} className="m-1 badge bg-light text-dark border rounded">{role.name}</span>
+                                                            <span key={index} className="m-1 badge bg-light text-dark border rounded">{role.name} | {role.reference}</span>
                                                         )) : '---'
                                                 }
                                             </td>

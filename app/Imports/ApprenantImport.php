@@ -4,8 +4,8 @@ namespace App\Imports;
 
 use App\Models\Apprenant;
 use App\Models\Classe;
+use App\Models\Detail;
 use App\Models\Serie;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
@@ -59,14 +59,10 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         }
 
         /**Parent */
-        $isParentExiste = User::where("school_id", Auth::user()->school_id ?? 1)
-            ->whereHas("detail", function ($query) use ($row) {
-                $query->where("phone", $row[2]);
-            })
-            ->first();
+        $isParentExiste = Detail::firstWhere("phone", $row[2]);
 
         if (!$isParentExiste) {
-            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le parent d'email $row[2] n'existe pas!");
+            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le parent dont le numéro de telephone est $row[2] n'existe pas!");
         }
 
         /**
@@ -78,7 +74,7 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
             'parent_id' => $isParentExiste?->id,
             'classe_id' => $isClasseExiste?->id,
             'serie_id' => $isSerieExiste?->id,
-            'school_id' => Auth::user()->school_id ?? 1,
+            'school_id' => Auth::user()->school_id,
         ]);
     }
 }

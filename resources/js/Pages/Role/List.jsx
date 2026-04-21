@@ -44,9 +44,9 @@ export default function List({ roles }) {
                                     roles.map((role, index) => (
                                         <tr key={role.id}>
                                             <th scope="row">{role.id} {index + 1}</th>
-                                            <td >{role.name}</td>
+                                            <td >{role.name} {<em className='badge bg-light border text-dark'> {role.school?.raison_sociale}</em>}</td>
                                             <td>
-                                                {!authUser.roles.some(r => r.name == role.name) ?
+                                                {!authUser.roles.some(r => r.id == role.id) ?
                                                     <Link href={route('role.permissions', role.id)}
                                                         className='btn btn-sm btn-light border bg-hover shadow-sm'
                                                     >
@@ -55,7 +55,7 @@ export default function List({ roles }) {
                                                 }
                                             </td>
                                             <td>
-                                                {!authUser.roles.some(r => r.name == role.name) ?
+                                                {!authUser.roles.some(r => r.id == role.id) ?
                                                     <Link href={route('role.users', role.id)}
                                                         className='btn btn-sm btn-light border bg-hover shadow-sm'
                                                     >

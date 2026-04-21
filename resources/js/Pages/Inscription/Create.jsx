@@ -5,11 +5,12 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 export default function Create({ apprenants }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -28,6 +29,7 @@ export default function Create({ apprenants }) {
         numero_educ_master: "",
         frais_inscription: "",
         dossier_transfert: "",
+        annee_scolaire: new Date().getFullYear()
     });
 
     const submit = (e) => {
@@ -137,12 +139,12 @@ export default function Create({ apprenants }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants
                                                     .map((apprenant) => ({
                                                         value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id
@@ -165,6 +167,26 @@ export default function Create({ apprenants }) {
                                             />
                                             <InputError className="mt-2" message={errors.numero_educ_master} />
                                         </div>
+
+
+                                        {/* Annee scolaire */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="annee_scolaire" value="Anné scolaire" ><span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="annee_scolaire"
+                                                type="number"
+                                                min={2000}
+                                                max={2030}
+                                                required
+                                                className="mt-1 block w-full"
+                                                placeholder="2026"
+                                                value={data.annee_scolaire}
+                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
+                                                autoComplete="annee_scolaire"
+                                            />
+                                            <InputError className="mt-2" message={errors.annee_scolaire} />
+                                        </div>
+
                                     </div>
                                 </div>
 

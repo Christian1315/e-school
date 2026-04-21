@@ -143,6 +143,7 @@ export default function List({ inscriptions }) {
                                     <th scope="col">Reference</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
+                                    <th scope="col">Annéé Scolire</th>
                                     <th scope="col">Numero Educ Master</th>
                                     <th scope="col">Dossier Transfert</th>
                                     <th scope="col">Frais d'inscription</th>
@@ -208,15 +209,16 @@ export default function List({ inscriptions }) {
                                             <td><span className="badge bg-light rounded border text-dark">{inscription.numero}</span></td>
                                             <td><span className="badge bg-light rounded border text-dark">{inscription?.school?.raison_sociale ?? '---'}</span></td>
                                             <td><span className="badge bg-light text-dark border rounded shadow"> {`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`} </span></td>
+                                            <td><span className="badge bg-light text-dark border rounded shadow"> {`${inscription.annee_scolaire}`} </span></td>
                                             <td>{inscription.numero_educ_master}</td>
                                             <td>
-                                                {inscription.dossier_transfert?
+                                                {inscription.dossier_transfert ?
                                                     <a target='__blank'
                                                         href={inscription.dossier_transfert}
                                                         className='btn btn-sm btn-light border bg-hover shadow-sm'
                                                     >
                                                         <CIcon icon={cilCenterFocus} />
-                                                    </a>:'---'
+                                                    </a> : '---'
                                                 }
                                             </td>
                                             <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>

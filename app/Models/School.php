@@ -70,9 +70,9 @@ class School extends Model
     /**
      * Roles
      */
-    function roles(): BelongsToMany
+    function roles(): HasMany
     {
-        return $this->belongsToMany(Role::class, "roles_schools", "school_id", "role_id");
+        return $this->hasMany(Role::class, "school_id");
     }
 
     /**

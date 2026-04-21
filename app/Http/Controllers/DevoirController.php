@@ -99,6 +99,7 @@ class DevoirController extends Controller
         }
 
         return Inertia::render('Devoir/Create', [
+            "schools" => School::all(),
             "apprenants" => ApprenantResource::collection($apprenants),
             "trimestres" => TrimestreResource::collection($trimestres),
             "matieres" => MatiereResource::collection($matieres),
@@ -116,6 +117,7 @@ class DevoirController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
+                "school_id"  => "nullable|integer",
                 "apprenant_id"  => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",

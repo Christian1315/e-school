@@ -5,11 +5,12 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cilList, cibAddthis } from "@coreui/icons";
+import { cilSend, cilList, cibAddthis } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 export default function Create({ parents, classes, series }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -110,12 +111,12 @@ export default function Create({ parents, classes, series }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={parents.map((parent) => ({
                                                     value: parent.id,
-                                                    label: `${parent.lastname} - ${parent.firstname}`,
+                                                    label: `${parent.lastname} - ${parent.firstname} ${!authUser.school ? parent.school?.raison_sociale || '' : ''}`,
                                                 }))}
                                                 value={parents
                                                     .map((parent) => ({
                                                         value: parent.id,
-                                                        label: `${parent.lastname} - ${parent.firstname}`,
+                                                        label: `${parent.lastname} - ${parent.firstname} ${!authUser.school ? parent.school?.raison_sociale || '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.parent_id)} // set selected option
                                                 onChange={(option) => setData('parent_id', option.value)} // update state with id
@@ -136,12 +137,12 @@ export default function Create({ parents, classes, series }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={classes.map((classe) => ({
                                                     value: classe.id,
-                                                    label: `${classe.libelle}`,
+                                                    label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
                                                 }))}
                                                 value={classes
                                                     .map((classe) => ({
                                                         value: classe.id,
-                                                        label: `${classe.libelle}`,
+                                                        label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.classe_id)} // set selected option
                                                 onChange={(option) => setData('classe_id', option.value)} // update state with id
@@ -161,12 +162,12 @@ export default function Create({ parents, classes, series }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={series.map((serie) => ({
                                                     value: serie.id,
-                                                    label: `${serie.libelle}`,
+                                                    label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale || '' : ''}`,
                                                 }))}
                                                 value={series
                                                     .map((serie) => ({
                                                         value: serie.id,
-                                                        label: `${serie.libelle}`,
+                                                        label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale || '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.serie_id)} // set selected option
                                                 onChange={(option) => setData('serie_id', option.value)} // update state with id

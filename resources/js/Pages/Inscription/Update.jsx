@@ -5,11 +5,12 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil, cilList } from "@coreui/icons";
+import { cilSend, cilPencil, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 export default function Create({ apprenants, inscription }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
     console.log("Inscription concernée", inscription)
 
@@ -22,7 +23,6 @@ export default function Create({ apprenants, inscription }) {
         setData,
         errors,
         post,
-        patch,
         processing,
         progress
     } = useForm({
@@ -30,6 +30,7 @@ export default function Create({ apprenants, inscription }) {
         numero_educ_master: inscription.numero_educ_master || "",
         frais_inscription: inscription.frais_inscription || "",
         dossier_transfert: "",
+        annee_scolaire: inscription.annee_scolaire
     });
 
     const submit = (e) => {
@@ -69,7 +70,7 @@ export default function Create({ apprenants, inscription }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 panel-title">
-                    <CIcon className='text-success' icon={cilPencil} /> Mofication de l'inscription de <span className="badge bg-light border rounded text-success">{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</span>
+                    <CIcon className='text-success' icon={cilPencil} /> Modification de l'inscription de <span className="badge bg-light border rounded text-success">{`${inscription.apprenant?.firstname} - ${inscription.apprenant?.lastname}`}</span>
                 </h2>
             }
         >
@@ -140,12 +141,12 @@ export default function Create({ apprenants, inscription }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants
                                                     .map((apprenant) => ({
                                                         value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname}`,
+                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
                                                 onChange={(option) => setData('apprenant_id', option.value)} // update state with id
@@ -167,6 +168,24 @@ export default function Create({ apprenants, inscription }) {
                                                 autoComplete="numero_educ_master"
                                             />
                                             <InputError className="mt-2" message={errors.numero_educ_master} />
+                                        </div>
+
+                                        {/* Annee scolaire */}
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="annee_scolaire" value="Anné scolaire" ><span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="annee_scolaire"
+                                                type="number"
+                                                min={2000}
+                                                max={2030}
+                                                required
+                                                className="mt-1 block w-full"
+                                                placeholder="2026"
+                                                value={data.annee_scolaire}
+                                                onChange={(e) => setData('annee_scolaire', e.target.value)}
+                                                autoComplete="annee_scolaire"
+                                            />
+                                            <InputError className="mt-2" message={errors.annee_scolaire} />
                                         </div>
 
                                     </div>

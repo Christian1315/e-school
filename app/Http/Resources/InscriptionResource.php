@@ -25,6 +25,7 @@ class InscriptionResource extends JsonResource
             "createdBy" => $this->createdBy, //UserResource::collection($this->createdBy),
             "updatedBy" => $this->updatedBy, //UserResource::collection($this->updatedBy),
             "numero_educ_master" => $this->numero_educ_master,
+            "annee_scolaire" => $this->annee_scolaire,
             "dossier_transfert" => $this->dossier_transfert,
             "frais_inscription" => number_format($this->frais_inscription, 2, ".", " "),
         ];

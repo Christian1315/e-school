@@ -19,10 +19,10 @@ class ApprenantResource extends JsonResource
         return [
             "id" => $this->id,
 
-            "parent"=>$this->parent,//UserResource::collection($this->parent),
-            "school"=>$this->school,//SchoolResource::collection($this->school),
-            "classe"=>$this->classe,//ClasseResource::collection($this->classe),
-            "serie"=>$this->serie,
+            "parent" => $this->parent, //UserResource::collection($this->parent),
+            "school" => $this->school, //SchoolResource::collection($this->school),
+            "classe" => $this->classe, //ClasseResource::collection($this->classe),
+            "serie" => $this->serie,
 
             "firstname" => $this->firstname,
             "lastname" => $this->lastname,

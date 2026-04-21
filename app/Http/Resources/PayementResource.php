@@ -20,7 +20,7 @@ class PayementResource extends JsonResource
             "id" => $this->id,
             "numero" => $this->numero,
             "receipted" => $this->receipted,
-            "date_paiement" => Carbon::parse($this->date_paiement)->locale('fr')->isoFormat("D MMMM YYYY"),
+            "date_paiement" => $this->date_paiement ? Carbon::parse($this->date_paiement)->locale('fr')->isoFormat("D MMMM YYYY") : '',
             "annee_scolaire" => $this->annee_scolaire,
             "school" => $this->school, //SchoolResource::collection($this->school),
             "apprenant" => $this->apprenant, //ApprenantResource::collection($this->apprenant),

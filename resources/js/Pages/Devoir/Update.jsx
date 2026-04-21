@@ -5,12 +5,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 
 export default function Create({ apprenants, trimestres, matieres, devoir }) {
+    const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
     const checkPermission = (name) => {
@@ -87,6 +88,33 @@ export default function Create({ apprenants, trimestres, matieres, devoir }) {
 
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
+                                    {!authUser.school &&
+                                        <div className="col-md-6">
+                                            <div className='mb-3'>
+                                                <InputLabel htmlFor="school_id" value="L'école concernée" > </InputLabel>
+
+                                                <Select
+                                                    placeholder="Rechercher une école ..."
+                                                    name="school_id"
+                                                    id="school_id"
+                                                    // required
+                                                    className="form-control mt-1 block w-full"
+                                                    options={schools.map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))}
+                                                    value={schools.map((school) => ({
+                                                        value: school.id,
+                                                        label: `${school.raison_sociale}`,
+                                                    }))
+                                                        .find((option) => option.value === data.school_id)} // set selected option
+                                                    onChange={(option) => setData('school_id', option.value)} // update state with id
+                                                />
+
+                                                <InputError className="mt-2" message={errors.school_id} />
+                                            </div>
+                                        </div>
+                                    }
                                     <div className="col-md-6">
                                         <div className='mb-3'>
                                             <InputLabel htmlFor="apprenant_id" value="L'apprenant concerné" >  <span className="text-danger">*</span> </InputLabel>

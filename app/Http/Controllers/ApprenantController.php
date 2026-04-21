@@ -56,9 +56,9 @@ class ApprenantController extends Controller
             })->get();
 
         return Inertia::render('Apprenant/Create', [
-            "parents" => $parents,
-            "classes" => $classesQuery->get(),
-            "series" => $seriesQuery->get(),
+            "parents" => $parents->load("school")->unique("id"),
+            "classes" => $classesQuery->with("school")->get(),
+            "series" => $seriesQuery->with("school")->get(),
         ]);
     }
 
@@ -183,9 +183,8 @@ class ApprenantController extends Controller
     /**
      * Edit
      */
-    function edit(Request $request, Apprenant $apprenant)
+    function edit(Apprenant $apprenant)
     {
-
         $parentsQuery = User::query();
         $classesQuery = Classe::query();
         $seriesQuery = Serie::query();
@@ -202,12 +201,12 @@ class ApprenantController extends Controller
             })->get();
 
         return Inertia::render('Apprenant/Update', [
-            "parents" => $parents,
+            "parents" => $parents->load("school")->unique("id"),
             "schools" => Auth::user()->school_id ?
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),
-            "classes" => $classesQuery->get(),
-            "series" => $seriesQuery->get(),
+            "classes" => $classesQuery->with("school")->get(),
+            "series" => $seriesQuery->with("school")->get(),
             "apprenant" => $apprenant,
         ]);
     }

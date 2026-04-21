@@ -47,7 +47,7 @@ class ClasseController extends Controller
 
         return Inertia::render('Classe/Create', [
             "schools" => $schools,
-            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->get(),
+            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs->load("school") : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->with("school")->get(),
         ]);
     }
 
@@ -62,7 +62,7 @@ class ClasseController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                'professeur_ids' => 'array|exists:users,id',
+                'professeur_ids' => 'nullable|array|exists:users,id',
                 "school_id" => "nullable|integer",
                 "libelle" => "required",
                 "scolarite" => "required|numeric",
@@ -78,7 +78,9 @@ class ClasseController extends Controller
 
             $classe = Classe::create($validated);
 
-            $classe->professeurs()->sync($validated["professeur_ids"]);
+            if ($request->professeur_ids) {
+                $classe->professeurs()->sync($validated["professeur_ids"]);
+            }
 
             Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();
@@ -109,7 +111,7 @@ class ClasseController extends Controller
 
         return Inertia::render('Classe/Update', [
             "schools" => $schools,
-            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->get(),
+            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs->load("school") : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->with("school")->get(),
             "classe" => $classe,
             "professeurs_ids" => $classe->professeurs->pluck("id")->toArray(),
         ]);
@@ -126,7 +128,7 @@ class ClasseController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                'professeur_ids' => 'array|exists:users,id',
+                'professeur_ids' => 'nullable|array|exists:users,id',
                 "school_id" => "nullable|integer",
                 "libelle" => "required",
                 "scolarite" => "required|numeric",
@@ -142,7 +144,9 @@ class ClasseController extends Controller
 
             $classe->update($validated);
 
-            $classe->professeurs()->sync($validated["professeur_ids"]);
+            if ($request->professeur_ids) {
+                $classe->professeurs()->sync($validated["professeur_ids"]);
+            }
 
             Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();

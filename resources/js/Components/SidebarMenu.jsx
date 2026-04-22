@@ -7,7 +7,7 @@ import {
 } from '@coreui/react'
 
 import CIcon from '@coreui/icons-react'
-import { cilSchool, cilSmilePlus, cilWallet, cilPeople, cilApplications, cilBraille, cibAmazonPay, cilList, cilBlur, cilGrain, cilHealing, cilLayers, cilLibrary, cilBook, cilAudioSpectrum, cilLockUnlocked, cilWc, cibBuffer, cibGooglesCholar, cibMyspace, cibMendeley, cibPatreon, cibReadme, cibSamsungPay, cibCoOp, cibFitbit, cibMastodon, cibMeetup, cibReadTheDocs, cibAsana, cibBathasu, cibBing, cibCodacy, cibCoderwall, cibCoursera } from '@coreui/icons'
+import { cibBuffer, cibGooglesCholar, cibMyspace, cibMendeley, cibPatreon, cibReadme, cibSamsungPay, cibCoOp, cibFitbit, cibMastodon, cibMeetup, cibReadTheDocs, cibAsana, cibBathasu, cibBing, cibCodacy, cibCoderwall, cibCoursera, cilContact, cibBancontact, cibMailRu } from '@coreui/icons'
 import { Link, useForm, usePage } from '@inertiajs/react'
 import ApplicationLogo from './ApplicationLogo'
 import Modal from '@/Components/Modal';
@@ -17,6 +17,7 @@ import Swal from "sweetalert2"
 
 export default function SidebarMenu(props) {
 
+    const authUser = usePage().props.auth;
     const user = usePage().props.auth.user;
     const permissions = usePage().props.auth.permissions;
     const trimestres = usePage().props.auth.trimestres;
@@ -87,7 +88,6 @@ export default function SidebarMenu(props) {
         });
     };
 
-
     return (
         <>
             <div className="">
@@ -97,7 +97,6 @@ export default function SidebarMenu(props) {
                     unfoldable
                     overlaid={false}   // ⬅️ enlève l’overlay sombre
                 >
-
                     <div className="m-2">
                         <Link href="/">
                             <ApplicationLogo className="block text-gray-800 dark:text-gray-200" />
@@ -589,7 +588,6 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-
                         {(checkPermission('role.view') || checkPermission('role.view')) &&
                             <CNavTitle>Gestion des Rôles</CNavTitle>}
 
@@ -609,11 +607,27 @@ export default function SidebarMenu(props) {
                                         Liste des rôles
                                     </Link>
                                 </CNavGroup>) : null
-
                         }
+
+                        {/* // contact */}
+                        {!authUser.school &&
+                            <CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMailRu} /> Les Contacts
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('contact.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des contacts
+                                </Link>
+                            </CNavGroup>}
                     </CSidebarNav>
                 </CSidebar>
-            </div>
+            </div>  
 
             {/*Interro Modal */}
             <Modal show={showInterroTrimestreModal} onClose={() => setShowInterroTrimestreModal(false)}>

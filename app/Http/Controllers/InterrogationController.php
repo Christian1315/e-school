@@ -154,7 +154,7 @@ class InterrogationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::debug("Erreure lors de la création de l'interrogation ", ["exception" => $e->getMessage()]);
-            return back()->withErrors($e->getMessage());
+            return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 

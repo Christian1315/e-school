@@ -1,20 +1,52 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import logo from "../../../public/fichiers/images/logo.png";
 import icon from "../../../public/fichiers/images/icon.png";
 import icon2 from "../../../public/fichiers/images/icon2.png";
 import slide3 from "../../../public/fichiers/images/slides/school1.jpg";
 import slide1 from "../../../public/fichiers/images/slides/school3.jpg";
+import Swal from 'sweetalert2';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
-    const handleImageError = () => {
-        document
-            .getElementById('screenshot-container')
-            ?.classList.add('!hidden');
-        document.getElementById('docs-card')?.classList.add('!row-span-1');
-        document
-            .getElementById('docs-card-content')
-            ?.classList.add('!flex-row');
-        document.getElementById('background')?.classList.add('!hidden');
+export default function Welcome({ auth }) {
+    const { data, setData, errors, reset, post } = useForm({
+        fullname: '',
+        phone: '',
+        email: '',
+        message: ''
+    })
+
+    const submitContact = (e) => {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Opération en cours...',
+            text: 'Veuillez patienter pendant que nous traitons vos données.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        post(route('contact.store'), {
+            onSuccess: () => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Opération réussie',
+                    text: 'Message envoyé avec succès. Une suite vous sera donnée sous peu.',
+                }).then(() => {
+                    reset();
+                });
+            },
+            onError: (e) => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opération échouée',
+                    text: `${e.exception ?? 'Veuillez vérifier vos informations et réessayer.'}`,
+                });
+                console.log(e);
+            },
+        });
     };
 
     return (
@@ -342,42 +374,68 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             <h2 className="text-center section-title text-white box-border" data-uk-scrollspy="cls: uk-animation-slide-top; repeat: true"> <img src={icon} alt="" srcSet="" />Restez informé!</h2>
                             {/* <br /> */}
                             <br /><br />
-                            <form action="" method="post" className='border border-white p-3 rounded shadow-sm' style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}>
+                            <form onSubmit={(e) => submitContact(e)} className='border border-white p-3 rounded shadow-sm' style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} id='contactForm'>
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label text-white">Email address</label>
-                                            <input type="email" class="form-control shadow-sm rounded bg-transparent text-white border-white" autoFocus id="exampleFormControlInput1" placeholder="name@example.com" />
+                                            <label for="fullname" class="form-label text-white">Nom & Prénom <span className="text-danger">*</span> </label>
+                                            <input type="text"
+                                                name='fullname'
+                                                id='fullname'
+                                                required
+                                                class="form-control shadow-sm rounded bg-transparent text-white border-white"
+                                                autoFocus
+                                                placeholder="Ex: John Doe"
+                                                onChange={(e) => setData("fullname", e.target.value)}
+                                            />
+                                            {errors.fullname && <span className='text-danger'>{errors.fullname}</span>}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label text-white">Email address</label>
-                                            <input type="email" class="form-control shadow-sm rounded bg-transparent text-white border-white" id="exampleFormControlInput1" placeholder="name@example.com" />
+                                            <label for="phone" class="form-label text-white">Télephone <span className="text-danger">*</span></label>
+                                            <input type="phone"
+                                                name='phone'
+                                                id='phone'
+                                                required
+                                                class="form-control shadow-sm rounded bg-transparent text-white border-white"
+                                                placeholder="Ex: +2290156854397"
+                                                onChange={(e) => setData("phone", e.target.value)} />
+                                            {errors.phone && <span className='text-danger'>{errors.phone}</span>}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="row">
-                                    <div className="col-md-6">
+                                    <div className="col-md-12">
                                         <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label text-white">Email address</label>
-                                            <input type="email" class="form-control shadow-sm rounded bg-transparent text-white border-white" id="exampleFormControlInput1" placeholder="name@example.com" />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label text-white">Email address</label>
-                                            <input type="email" class="form-control shadow-sm rounded bg-transparent text-white border-white" id="exampleFormControlInput1" placeholder="name@example.com" />
+                                            <label for="email" class="form-label text-white">Address email <span className="text-danger">*</span></label>
+                                            <input type="email"
+                                                name='email'
+                                                class="form-control shadow-sm rounded bg-transparent text-white border-white"
+                                                id="email"
+                                                required
+                                                placeholder="Ex: name@example.com"
+                                                onChange={(e) => setData("email", e.target.value)} />
+                                            {errors.email && <span className='text-danger'>{errors.email}</span>}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="exampleFormControlTextarea1" class="form-label text-white">Example textarea</label>
-                                    <textarea class="form-control shadow-sm rounded bg-transparent text-white border-white" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <label for="message" class="form-label text-white">Message <span className="text-danger">*</span></label>
+                                    <textarea
+                                        name='message'
+                                        id="message"
+                                        required
+                                        class="form-control shadow-sm rounded bg-transparent text-white border-white"
+                                        rows="3" placeholder='Laisser votre message'
+                                        onChange={(e) => setData("message", e.target.value)}></textarea>
+                                    {errors.message && <span className='text-danger'>{errors.message}</span>}
+
                                 </div>
 
                                 <div className="flex justify-content-center">
                                     <button
+                                        type='submit'
                                         className="text-center space-x-3  btn btn-lg w-50 rounded shadow-sm border bg-light text-success transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500"
                                         uk-scrollspy="cls: uk-animation-slide-bottom; repeat: true">
                                         <span className="">

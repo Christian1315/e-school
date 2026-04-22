@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevoirController;
@@ -23,8 +24,11 @@ use Illuminate\Support\Facades\Route;
 
 
 /**Unprotected routes */
-Route::get('/', HomeController::class)->name('home');
+Route::get('/', [HomeController::class, "index"])->name('home');
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
+
+// contact
+Route::resource("contact", ContactController::class);
 
 /**protected routes */
 Route::middleware('auth')->group(function () {

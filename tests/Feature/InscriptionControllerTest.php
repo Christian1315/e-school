@@ -1,151 +1,116 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Apprenant;
 use App\Models\Inscription;
 use App\Models\School;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class InscriptionControllerTest extends TestCase
-{
-    use RefreshDatabase, WithFaker;
+beforeEach(function () {
+    $this->school = School::factory()->create();
+    $this->user = User::factory()->create(['school_id' => $this->school->id]);
+    $this->apprenant = Apprenant::factory()->create(['school_id' => $this->school->id]);
+    actingAs($this->user);
+});
 
-    protected User $user;
-    protected School $school;
-    protected Apprenant $apprenant;
+test('can view inscriptions list', function () {
+    Inscription::factory()->count(3)->create(['school_id' => $this->school->id]);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $response = get(route('inscription.index'));
 
-        $this->school = School::factory()->create();
-        $this->user = User::factory()->create(['school_id' => $this->school->id]);
-        $this->apprenant = Apprenant::factory()->create(['school_id' => $this->school->id]);
-        $this->actingAs($this->user);
-    }
+    $response->assertStatus(200);
+    $response->assertViewHas('inscriptions');
+});
 
-    /** @test */
-    public function test_can_view_inscriptions_list()
-    {
-        Inscription::factory()->count(3)->create(['school_id' => $this->school->id]);
+test('can view create inscription page', function () {
+    $response = get(route('inscription.create'));
 
-        $response = $this->get(route('inscription.index'));
+    $response->assertStatus(200);
+    $response->assertViewHas('apprenants');
+});
 
-        $response->assertStatus(200);
-        $response->assertViewHas('inscriptions');
-    }
+test('can create inscription', function () {
+    $data = [
+        'apprenant_id' => $this->apprenant->id,
+        'numero_educ_master' => 'NEM-2024-001',
+        'frais_inscription' => 50000,
+        'annee_scolaire' => 2024,
+    ];
 
-    /** @test */
-    public function test_can_view_create_inscription_page()
-    {
-        $response = $this->get(route('inscription.create'));
+    $response = post(route('inscription.store'), $data);
 
-        $response->assertStatus(200);
-        $response->assertViewHas('apprenants');
-    }
+    $response->assertRedirect(route('inscription.index'));
+    assertDatabaseHas('inscriptions', ['numero_educ_master' => 'NEM-2024-001']);
+});
 
-    /** @test */
-    public function test_can_create_inscription()
-    {
-        $data = [
-            'apprenant_id' => $this->apprenant->id,
-            'numero_educ_master' => 'NEM-2024-001',
-            'frais_inscription' => 50000,
-            'annee_scolaire' => 2024,
-        ];
+test('can view edit inscription page', function () {
+    $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
 
-        $response = $this->post(route('inscription.store'), $data);
+    $response = get(route('inscription.edit', $inscription));
 
-        $response->assertRedirect(route('inscription.index'));
-        $this->assertDatabaseHas('inscriptions', ['numero_educ_master' => 'NEM-2024-001']);
-    }
+    $response->assertStatus(200);
+    $response->assertViewHas('inscription');
+});
 
-    /** @test */
-    public function test_can_view_edit_inscription_page()
-    {
-        $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
+test('can update inscription', function () {
+    $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
 
-        $response = $this->get(route('inscription.edit', $inscription));
+    $data = [
+        'apprenant_id' => $this->apprenant->id,
+        'numero_educ_master' => 'NEM-2024-UPDATE',
+        'frais_inscription' => 60000,
+        'annee_scolaire' => 2024,
+    ];
 
-        $response->assertStatus(200);
-        $response->assertViewHas('inscription');
-    }
+    $response = patch(route('inscription.update', $inscription), $data);
 
-    /** @test */
-    public function test_can_update_inscription()
-    {
-        $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
+    $response->assertRedirect(route('inscription.index'));
+    assertDatabaseHas('inscriptions', ['numero_educ_master' => 'NEM-2024-UPDATE']);
+});
 
-        $data = [
-            'apprenant_id' => $this->apprenant->id,
-            'numero_educ_master' => 'NEM-2024-UPDATE',
-            'frais_inscription' => 60000,
-            'annee_scolaire' => 2024,
-        ];
+test('can delete inscription', function () {
+    $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
 
-        $response = $this->patch(route('inscription.update', $inscription), $data);
+    $response = delete(route('inscription.destroy', $inscription));
 
-        $response->assertRedirect(route('inscription.index'));
-        $this->assertDatabaseHas('inscriptions', ['numero_educ_master' => 'NEM-2024-UPDATE']);
-    }
+    $response->assertRedirect(route('inscription.index'));
+    assertDatabaseMissing('inscriptions', ['id' => $inscription->id]);
+});
 
-    /** @test */
-    public function test_can_delete_inscription()
-    {
-        $inscription = Inscription::factory()->create(['school_id' => $this->school->id]);
+test('cannot create inscription without apprenant', function () {
+    $data = [
+        'numero_educ_master' => 'NEM-2024-001',
+        'frais_inscription' => 50000,
+        'annee_scolaire' => 2024,
+    ];
 
-        $response = $this->delete(route('inscription.destroy', $inscription));
+    $response = post(route('inscription.store'), $data);
 
-        $response->assertRedirect(route('inscription.index'));
-        $this->assertDatabaseMissing('inscriptions', ['id' => $inscription->id]);
-    }
+    $response->assertSessionHasErrors('apprenant_id');
+});
 
-    /** @test */
-    public function test_cannot_create_inscription_without_apprenant()
-    {
-        $data = [
-            'numero_educ_master' => 'NEM-2024-001',
-            'frais_inscription' => 50000,
-            'annee_scolaire' => 2024,
-        ];
+test('cannot create inscription with invalid frais', function () {
+    $data = [
+        'apprenant_id' => $this->apprenant->id,
+        'numero_educ_master' => 'NEM-2024-001',
+        'frais_inscription' => 'invalid',
+        'annee_scolaire' => 2024,
+    ];
 
-        $response = $this->post(route('inscription.store'), $data);
+    $response = post(route('inscription.store'), $data);
 
-        $response->assertSessionHasErrors('apprenant_id');
-    }
+    $response->assertSessionHasErrors('frais_inscription');
+});
 
-    /** @test */
-    public function test_cannot_create_inscription_with_invalid_frais()
-    {
-        $data = [
-            'apprenant_id' => $this->apprenant->id,
-            'numero_educ_master' => 'NEM-2024-001',
-            'frais_inscription' => 'invalid',
-            'annee_scolaire' => 2024,
-        ];
+test('inscription has reference on creation', function () {
+    $data = [
+        'apprenant_id' => $this->apprenant->id,
+        'numero_educ_master' => 'NEM-2024-001',
+        'frais_inscription' => 50000,
+        'annee_scolaire' => 2024,
+    ];
 
-        $response = $this->post(route('inscription.store'), $data);
+    post(route('inscription.store'), $data);
 
-        $response->assertSessionHasErrors('frais_inscription');
-    }
-
-    /** @test */
-    public function test_inscription_has_reference_on_creation()
-    {
-        $data = [
-            'apprenant_id' => $this->apprenant->id,
-            'numero_educ_master' => 'NEM-2024-001',
-            'frais_inscription' => 50000,
-            'annee_scolaire' => 2024,
-        ];
-
-        $this->post(route('inscription.store'), $data);
-
-        $inscription = Inscription::where('numero_educ_master', 'NEM-2024-001')->first();
-        $this->assertNotNull($inscription->reference);
-    }
-}
+    $inscription = Inscription::where('numero_educ_master', 'NEM-2024-001')->first();
+    expect($inscription->reference)->not->toBeNull();
+});

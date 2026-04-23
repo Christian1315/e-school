@@ -1,49 +1,33 @@
 <?php
 
-namespace Tests\Unit\Models;
-
 use App\Models\Apprenant;
 use App\Models\School;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class ApprenantTest extends TestCase
-{
-    use RefreshDatabase;
+test('apprenant belongs to school', function () {
+    $school = School::factory()->create();
+    $apprenant = Apprenant::factory()->create(['school_id' => $school->id]);
 
-    /** @test */
-    public function test_apprenant_belongs_to_school()
-    {
-        $school = School::factory()->create();
-        $apprenant = Apprenant::factory()->create(['school_id' => $school->id]);
+    expect($apprenant->school()->exists())->toBeTrue();
+    expect($apprenant->school->id)->toBe($school->id);
+});
 
-        $this->assertTrue($apprenant->school()->exists());
-        $this->assertEquals($school->id, $apprenant->school->id);
-    }
+test('apprenant can have inscriptions', function () {
+    $apprenant = Apprenant::factory()->create();
 
-    /** @test */
-    public function test_apprenant_can_have_inscriptions()
-    {
-        $apprenant = Apprenant::factory()->create();
+    // This test is a bit vague, perhaps check the relationship
+    expect(method_exists($apprenant, 'inscriptions'))->toBeTrue();
+});
 
-        $this->assertTrue($apprenant->inscriptions()->exists() || !$apprenant->inscriptions()->exists());
-    }
+test('apprenant has required fields', function () {
+    $apprenant = Apprenant::factory()->create();
 
-    /** @test */
-    public function test_apprenant_has_required_fields()
-    {
-        $apprenant = Apprenant::factory()->create();
+    expect($apprenant->firstname)->not->toBeNull();
+    expect($apprenant->lastname)->not->toBeNull();
+    expect($apprenant->school_id)->not->toBeNull();
+});
 
-        $this->assertNotNull($apprenant->firstname);
-        $this->assertNotNull($apprenant->lastname);
-        $this->assertNotNull($apprenant->school_id);
-    }
+test('apprenant reference is generated', function () {
+    $apprenant = Apprenant::factory()->create();
 
-    /** @test */
-    public function test_apprenant_reference_is_generated()
-    {
-        $apprenant = Apprenant::factory()->create();
-
-        $this->assertNotNull($apprenant->reference);
-    }
-}
+    expect($apprenant->reference)->not->toBeNull();
+});

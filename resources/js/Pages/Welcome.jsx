@@ -14,6 +14,27 @@ export default function Welcome({ auth }) {
         message: ''
     })
 
+    const testimonials = [
+        {
+            quote: 'Une équipe professionnelle, des résultats visibles et un accompagnement à chaque étape. Je recommande vivement cette plateforme aux parents et enseignants.',
+            name: 'Marie Dupont',
+            title: 'Mère d’élève',
+            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+            quote: 'Une interface claire, une prise en main rapide et un support réactif. Notre gestion scolaire n’a jamais été aussi simple.',
+            name: 'Ahmed Traoré',
+            title: 'Directeur d’établissement',
+            avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+            quote: 'Les outils pédagogiques sont bien pensés, et les relations avec les parents sont plus fluides. Un vrai plus pour l’école.',
+            name: 'Sophie Koffi',
+            title: 'Professeur',
+            avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+    ];
+
     const submitContact = (e) => {
         e.preventDefault();
 
@@ -228,8 +249,10 @@ export default function Welcome({ auth }) {
                                 {/* <br /> */}
                                 <p
                                     data-uk-parallax="opacity: 0,1; y: 100,0; scale: 0.5,1; end: 50vh + 50%;">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                    tempor incididunt ut labore et dolore magna aliqua.
+                                    Rejoignez une communauté scolaire moderne qui simplifie la vie des
+                                    parents, des enseignants et des administrateurs.
+                                    Ensemble, bâtissons une éducation plus fluide, plus connectée et
+                                    plus performante pour chaque élève.
 
                                     <br /><br />
                                     <Link
@@ -456,9 +479,9 @@ export default function Welcome({ auth }) {
 
             {/*  Testimony */}
             <div className="row section px-0 mx-0 d-flex justify-content-center align-items-center" id='tertimonies'>
-                <div className="col-md-6">
-                    <div className="rounded-lg shadow-sm border">
-                        <div className="text-center">
+                <div className="col-md-6 text-center">
+                    <div className="rounded-lg shadow-sm border text-center">
+                        <div className="text-center p-1">
                             <h1 className="section-title">Témoignages</h1>
                         </div>
                         {/*  */}
@@ -466,86 +489,37 @@ export default function Welcome({ auth }) {
 
                             <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1">
 
-                                <div class="uk-slideshow-items">
-                                    <div>
-                                        <section className="relative isolate overflow-hidden bg-white px-6 py-5 sm:py-32 lg:px-8"
-                                            uk-cover>
-                                            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20"></div>
-                                            <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
-                                            <div className="mx-auto max-w-2xl lg:max-w-4xl">
-                                                <img src="https://tailwindcss.com/plus-assets/img/logos/workcation-logo-indigo-600.svg" alt="" className="mx-auto h-12" />
-                                                <figure className="mt-10">
-                                                    <blockquote className="text-dark text-center text-xl/8 font-semibold text-gray-900 sm:text-2xl/9">
-                                                        <p>“Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo expedita voluptas culpa sapiente alias molestiae. Numquam corrupti in laborum sed rerum et corporis.”</p>
-                                                    </blockquote>
-                                                    <figcaption className="mt-10">
-                                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" className="mx-auto size-10 rounded-full" />
-                                                        <div className="mt-4 flex items-center justify-center space-x-3 text-base">
-                                                            <div className="font-semibold text-gray-900">Judith Black</div>
-                                                            <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" className="fill-gray-900">
-                                                                <circle r="1" cx="1" cy="1" />
-                                                            </svg>
-                                                            <div className="text-gray-600">CEO of Workcation</div>
-                                                        </div>
-                                                    </figcaption>
-                                                </figure>
-                                            </div>
-                                        </section>
-                                    </div>
-                                    <div>
-                                        <section className="relative isolate overflow-hidden bg-white px-6 py-5 sm:py-32 lg:px-8"
-                                            uk-cover>
-                                            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20"></div>
-                                            <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
-                                            <div className="mx-auto max-w-2xl lg:max-w-4xl">
-                                                <img src="https://tailwindcss.com/plus-assets/img/logos/workcation-logo-indigo-600.svg" alt="" className="mx-auto h-12" />
-                                                <figure className="mt-10">
-                                                    <blockquote className="text-dark text-center text-xl/8 font-semibold text-gray-900 sm:text-2xl/9">
-                                                        <p>“Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo expedita voluptas culpa sapiente alias molestiae. Numquam corrupti in laborum sed rerum et corporis.”</p>
-                                                    </blockquote>
-                                                    <figcaption className="mt-10">
-                                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" className="mx-auto size-10 rounded-full" />
-                                                        <div className="mt-4 flex items-center justify-center space-x-3 text-base">
-                                                            <div className="font-semibold text-gray-900">Judith Black</div>
-                                                            <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" className="fill-gray-900">
-                                                                <circle r="1" cx="1" cy="1" />
-                                                            </svg>
-                                                            <div className="text-gray-600">CEO of Workcation</div>
-                                                        </div>
-                                                    </figcaption>
-                                                </figure>
-                                            </div>
-                                        </section>
-                                    </div>
-                                    <div>
-                                        <section className="relative isolate overflow-hidden bg-white px-6 py-5 sm:py-32 lg:px-8"
-                                            uk-cover>
-                                            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20"></div>
-                                            <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
-                                            <div className="mx-auto max-w-2xl lg:max-w-4xl">
-                                                <img src="https://tailwindcss.com/plus-assets/img/logos/workcation-logo-indigo-600.svg" alt="" className="mx-auto h-12" />
-                                                <figure className="mt-10">
-                                                    <blockquote className="text-dark text-center text-xl/8 font-semibold text-gray-900 sm:text-2xl/9">
-                                                        <p>“Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo expedita voluptas culpa sapiente alias molestiae. Numquam corrupti in laborum sed rerum et corporis.”</p>
-                                                    </blockquote>
-                                                    <figcaption className="mt-10">
-                                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" className="mx-auto size-10 rounded-full" />
-                                                        <div className="mt-4 flex items-center justify-center space-x-3 text-base">
-                                                            <div className="font-semibold text-gray-900">Judith Black</div>
-                                                            <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" className="fill-gray-900">
-                                                                <circle r="1" cx="1" cy="1" />
-                                                            </svg>
-                                                            <div className="text-gray-600">CEO of Workcation</div>
-                                                        </div>
-                                                    </figcaption>
-                                                </figure>
-                                            </div>
-                                        </section>
-                                    </div>
+                                <div className="uk-slideshow-items">
+                                    {testimonials.map((testimonial, index) => (
+                                        <div key={index}>
+                                            <section className="relative isolate overflow-hidden bg-white px-6 py-5 sm:py-32 lg:px-8" uk-cover>
+                                                <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20"></div>
+                                                <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+                                                <div className="mx-auto max-w-2xl lg:max-w-4xl">
+                                                    {/* <img src="https://tailwindcss.com/plus-assets/img/logos/workcation-logo-indigo-600.svg" alt="" className="mx-auto h-12" /> */}
+                                                    <figure className="mt-10">
+                                                        <blockquote className="text-dark text-center text-xl/8 font-semibold text-gray-900 sm:text-2xl/9">
+                                                            <p>{testimonial.quote}</p>
+                                                        </blockquote>
+                                                        <figcaption className="mt-10">
+                                                            <img src={testimonial.avatar} alt={testimonial.name} className="mx-auto size-10 rounded-full" />
+                                                            <div className="mt-4 flex items-center justify-center space-x-3 text-base">
+                                                                <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                                                                <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" className="fill-gray-900">
+                                                                    <circle r="1" cx="1" cy="1" />
+                                                                </svg>
+                                                                <div className="text-gray-600">{testimonial.title}</div>
+                                                            </div>
+                                                        </figcaption>
+                                                    </figure>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    ))}
                                 </div>
 
-                                <a class="uk-position-center-left uk-position-small uk-hidden-hover" href uk-slidenav-previous uk-slideshow-item="previous"></a>
-                                <a class="uk-position-center-right uk-position-small uk-hidden-hover" href uk-slidenav-next uk-slideshow-item="next"></a>
+                                <a className="uk-position-center-left uk-position-small uk-hidden-hover" href uk-slidenav-previous uk-slideshow-item="previous"></a>
+                                <a className="uk-position-center-right uk-position-small uk-hidden-hover" href uk-slidenav-next uk-slideshow-item="next"></a>
 
                             </div>
 

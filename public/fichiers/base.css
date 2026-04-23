@@ -1,6 +1,6 @@
-* {
+/* * {
     font-family: "Montserrat", sans-serif;
-}
+} */
 
 a {
     text-decoration: none !important;
@@ -9,6 +9,7 @@ a {
 
 p {
     font-size: 20px;
+    font-family: "Montserrat", sans-serif !important;
 }
 
 .section-title {
@@ -164,4 +165,4 @@ figcaption img {
 }
 
 /* CONTACT FORM*/
-#contactForm{}
+/* #contactForm{} */

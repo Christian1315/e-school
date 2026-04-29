@@ -41,9 +41,14 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
             throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le sexe doit être soit (Masculin ou Féminin) $row[5] n'existe pas!");
         }
 
-        /**Classe */
-        $isClasseExiste = isset($row[5]) ?
-            Classe::firstWhere(["libelle" => $row[5]]) : null;
+        /**Classe **/
+        if (Auth::user()->school_id) {
+            $isClasseExiste = isset($row[5]) ?
+                Classe::where("school_id", Auth::user()->school_id)->firstWhere(["libelle" => $row[5]]) : null;
+        } else {
+            $isClasseExiste = isset($row[5]) ?
+                Classe::firstWhere(["libelle" => $row[5]]) : null;
+        }
 
         if (!$isClasseExiste) {
             throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La classe $row[5] n'existe pas!");
@@ -52,7 +57,8 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         /**Serie */
         if (Auth::user()->school_id) {
             $isSerieExiste = isset($row[3]) ?
-                Serie::where("school_id", Auth::user()->school_id)->firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
+                Serie::where("school_id", Auth::user()->school_id)
+                ->firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
         } else {
             $isSerieExiste = isset($row[3]) ?
                 Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
@@ -60,7 +66,6 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
 
         /**Parent */
         $isParentExiste = Detail::firstWhere("phone", $row[2]);
-
         if (!$isParentExiste) {
             throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le parent dont le numéro de telephone est $row[2] n'existe pas!");
         }

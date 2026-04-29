@@ -19,28 +19,30 @@ class DashboardController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke()
     {
-        if (Auth::user()->school) {
+        $user = Auth::user();
+        if ($user->school) {
             $apprenants = Apprenant::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
 
             $inscriptions = Inscription::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
 
             $users = User::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
         } else {
             $apprenants = Apprenant::latest()->get();
             $inscriptions = Inscription::latest()->get();
             $users = User::latest()->get();
         }
+
         
         return Inertia::render('Dashboard', [
             "apprenants" => ApprenantResource::collection($apprenants),
             "inscriptions" => InscriptionResource::collection($inscriptions),
             "users" => UserResource::collection($users),
-            "schools" => SchoolResource::collection(School::all()), 
+            "schools" => SchoolResource::collection(School::all()),
         ]);
     }
 }

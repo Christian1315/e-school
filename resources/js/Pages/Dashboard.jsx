@@ -12,7 +12,6 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
     const dailyChartRef = useRef(null);
     const school = usePage().props.auth.school;
 
-
     useEffect(() => {
         if (!monthlyChartRef.current || !dailyChartRef.current) return;
 
@@ -71,7 +70,6 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
             dailyChart.destroy();
         };
     });
-
 
     return (
         <AuthenticatedLayout

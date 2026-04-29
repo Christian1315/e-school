@@ -4,7 +4,6 @@ use App\Http\Controllers\ApprenantController;
 use App\Http\Controllers\BulletinController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevoirController;
 use App\Http\Controllers\HomeController;

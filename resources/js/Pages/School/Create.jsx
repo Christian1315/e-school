@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilLibraryAdd, cibAddthis, cilList } from "@coreui/icons";
+import { cilSend, cibAddthis, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 
 export default function Create() {
@@ -37,7 +37,6 @@ export default function Create() {
     });
 
     const submit = (e) => {
-        // alert("gogog")
         e.preventDefault();
 
         Swal.fire({

@@ -23,11 +23,16 @@ class ApprenantController extends Controller
      */
     function index()
     {
-        if (Auth::user()->school) {
-            $apprenants = Apprenant::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $apprenants = $user->apprenants;
+            } else {
+                $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+            }
         } else {
-            $apprenants = Apprenant::latest()->get();
+            $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
         }
 
         return Inertia::render('Apprenant/List', [

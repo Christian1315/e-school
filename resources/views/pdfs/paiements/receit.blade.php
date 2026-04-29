@@ -93,9 +93,9 @@
                         <!-- Texte centre -->
                         <td style="width: 50%; text-align: center;">
                             <p class="school-description text-upercase my-2" style="text-transform: uppercase!important;">République du Bénin</p>
-                            <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$paiement->school?->raison_sociale}}</h1>
+                            <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase;color:red">{{$paiement->school?->raison_sociale}}</h1>
                             <h3 style="margin: 2px 0;"></h3>
-                            <p class="school-description" style="margin: 0;">{{$paiement->school?->description}}</p>
+                            <p class="school-description" style="margin: 0;color:green">{{$paiement->school?->description}}</p>
                             <p class="school-contact" style="margin: 0;">Tel: {{$paiement->school?->phone}}</p>
                             <p class="school-slogan" style="margin: 0;">{{$paiement->school?->slogan}}</p>
                         </td>

@@ -118,7 +118,7 @@ export default function Create({ schools }) {
                                     }
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="libelle" value="Libelle de la classe" > <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="libelle" value="Libelle de la série" > <span className="text-danger">*</span> </InputLabel>
                                             <TextInput
                                                 id="libelle"
                                                 className="mt-1 block w-full"

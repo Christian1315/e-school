@@ -154,15 +154,13 @@ export default function List({ role, permissions }) {
                             </table>
                             <br />
                             {/* Bouton */}
-                            {!authUser.school_id ?
-                                (<div className="row d-flex justify-content-center">
-                                    <div className="w-50">
-                                        <PrimaryButton disabled={processing}>
-                                            <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
-                                        </PrimaryButton>
-                                    </div>
-                                </div>) : ''
-                            }
+                            <div className="row d-flex justify-content-center">
+                                <div className="w-50">
+                                    <PrimaryButton disabled={processing}>
+                                        <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer les modifications'}
+                                    </PrimaryButton>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>

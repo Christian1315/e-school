@@ -31,19 +31,26 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-
         try {
-           DB::beginTransaction();
+            DB::beginTransaction();
 
             $request->authenticate();
             $request->session()->regenerate();
 
-            // 
             if (Auth::user()->school_id && !Auth::user()->school->statut) {
                 throw new \Exception("L'école à laquelle vous appartenez a été désactivée. Vous ne pouvez plus vous connetez jusqu'à nouvel ordre!");
             }
 
             DB::commit();
+            $user = Auth::user();
+
+            /***
+             *  un utilisateur qui n'a pas le role Super Administrateur ou Administrateur
+             * */
+            if ($user && !$user->hasRole(["Super Administrateur", "Administrateur"])) {
+                return redirect()->intended(route('apprenant.index', absolute: false));
+            }
+
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Illuminate\Validation\ValidationException $e) {
             // dd("errorrr Validation");
@@ -59,7 +66,7 @@ class AuthenticatedSessionController extends Controller
             $request->session()->regenerateToken();
 
             // return redirect('/login');
-            
+
             return redirect("/login")->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
@@ -76,8 +83,8 @@ class AuthenticatedSessionController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect('/login');
             DB::commit();
+            return redirect('/login');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Erreur lors de la tentative de déconnexion: " . $e->getMessage());

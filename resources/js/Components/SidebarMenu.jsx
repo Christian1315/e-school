@@ -18,9 +18,12 @@ import Swal from "sweetalert2"
 export default function SidebarMenu(props) {
 
     const authUser = usePage().props.auth;
+    const showDashboard = usePage().props.auth.showDashboard;
     const user = usePage().props.auth.user;
     const permissions = usePage().props.auth.permissions;
     const trimestres = usePage().props.auth.trimestres;
+
+    console.log("Show Dashboard : ", showDashboard);
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -105,21 +108,25 @@ export default function SidebarMenu(props) {
 
                     <CSidebarNav>
                         {/* Dashboard */}
-                        <CNavTitle>Dashboard</CNavTitle>
-                        <CNavGroup
-                            toggler={
-                                <>
-                                    <CIcon customClassName="nav-icon text-success" icon={cibBuffer} /> Tableau de board
-                                </>
-                            }
-                        >
-                            <Link href={route('dashboard')} className="nav-link">
-                                <span className="nav-icon">
-                                    <span className="nav-icon-bullet text-danger"></span>
-                                </span>
-                                Dashboard
-                            </Link>
-                        </CNavGroup>
+                        {showDashboard ?
+                            (<>
+                                <CNavTitle>Dashboard</CNavTitle>
+                                <CNavGroup
+                                    toggler={
+                                        <>
+                                            <CIcon customClassName="nav-icon text-success" icon={cibBuffer} /> Tableau de board
+                                        </>
+                                    }
+                                >
+                                    <Link href={route('dashboard')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet text-danger"></span>
+                                        </span>
+                                        Dashboard
+                                    </Link>
+                                </CNavGroup>
+                            </>) : null
+                        }
 
                         {(checkPermission('ecole.view') || checkPermission('ecole.create') ||
                             checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ||
@@ -362,7 +369,7 @@ export default function SidebarMenu(props) {
                                                     <span className="nav-icon">
                                                         <span className="nav-icon-bullet text-danger"></span>
                                                     </span>
-                                                    {trimestre.libelle}
+                                                    {trimestre.libelle} <small className="mx-1">{!user.school_id ? trimestre.school?.raison_sociale : ''}</small>
                                                 </Link>
                                             ))
                                         ) : (
@@ -394,7 +401,7 @@ export default function SidebarMenu(props) {
                                                 <span className="nav-icon">
                                                     <span className="nav-icon-bullet text-danger"></span>
                                                 </span>
-                                                {trimestre.libelle}
+                                                {trimestre.libelle} <small className="mx-1">{!user.school_id ? trimestre.school?.raison_sociale : ''}</small>
                                             </Link>
                                         ))
                                     ) : (
@@ -428,7 +435,7 @@ export default function SidebarMenu(props) {
                                                 <span className="nav-icon">
                                                     <span className="nav-icon-bullet text-danger"></span>
                                                 </span>
-                                                {trimestre.libelle}
+                                                {trimestre.libelle} <small className="mx-1">{!user.school_id ? trimestre.school?.raison_sociale : ''}</small>
                                             </Link>
                                         ))
                                     ) : (
@@ -627,7 +634,7 @@ export default function SidebarMenu(props) {
                             </CNavGroup>}
                     </CSidebarNav>
                 </CSidebar>
-            </div>  
+            </div>
 
             {/*Interro Modal */}
             <Modal show={showInterroTrimestreModal} onClose={() => setShowInterroTrimestreModal(false)}>

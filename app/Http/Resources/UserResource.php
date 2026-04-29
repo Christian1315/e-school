@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             "firstname" => $this->firstname,
             "lastname" => $this->lastname,
             "classes" => $this->classes,
+            "matieres" => $this->matieres,
             "email" => $this->email,
             "detail" => $this->detail, //DetailResource::collection($this->detail),
             "roles" => $this->roles, //DetailResource::collection($this->detail),

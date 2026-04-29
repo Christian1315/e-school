@@ -78,10 +78,12 @@ export default function List({ apprenants, trimestre ,annee_scolaire}) {
                                                     onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} />
                                                 </button></td>
                                             <td>
+                                                {apprenant.photo?
                                                 <img src={apprenant.photo}
                                                     onClick={() => showImg(apprenant)}
                                                     className='img-fluid img-circle shadow' srcSet=""
-                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />
+                                                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'solid 5px #f6f6f6', cursor: 'pointer' }} />:'---'
+                                            }
                                             </td>
                                             <td><span className="badge bg-light border text-dark border">{apprenant.school?.raison_sociale}</span></td>
                                             <td>{apprenant.firstname}</td>

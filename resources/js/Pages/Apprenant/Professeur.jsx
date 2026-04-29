@@ -17,6 +17,7 @@ export default function List({ users }) {
 
     const [showModal, setShowModal] = useState(false)
     const [showClasseModal, setShowClasseModal] = useState(false)
+    const [showMatiereModal, setShowMatiereModal] = useState(false)
     const [currentProf, setCurrentProf] = useState(null)
     const [showUpdateModal, setShowUpdateModal] = useState(false)
     const [currentProfesseur, setCurrentProfesseur] = useState(null);
@@ -46,6 +47,19 @@ export default function List({ users }) {
     const closeClasseModal = () => {
         setShowClasseModal(false);
     };
+
+    const confirmShowMatieresModal = (e, prof) => {
+        e.preventDefault();
+
+        console.log("Professeur sélectionné : ", prof);
+        setShowMatiereModal(true);
+        setCurrentProf(prof)
+    }
+
+    const closeMatiereModal = () => {
+        setShowMatiereModal(false);
+    };
+
 
     const showUserProfile = (user) => {
         Swal.fire({
@@ -229,6 +243,7 @@ export default function List({ users }) {
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email</th>
                                     <th scope='col'>Les classes</th>
+                                    <th scope='col'>Les matières</th>
                                     <th scope="col">Phone</th>
                                     <th scope="col">Rôles</th>
                                 </tr>
@@ -276,6 +291,9 @@ export default function List({ users }) {
                                             <td>{user.email ?? '---'}</td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"
                                                 onClick={(e) => confirmShowClasseModal(e, user)}> {user.classes.length} <CIcon icon={cilList} className='text-success' /> </button>
+                                            </td>
+                                            <td><button className="badge bg-light border rounded text-dark shadow"
+                                                onClick={(e) => confirmShowMatieresModal(e, user)}> {user.matieres.length} <CIcon icon={cilList} className='text-success' /> </button>
                                             </td>
                                             <td>{user.detail?.phone ?? '---'}</td>
                                             <td className='text-center'>
@@ -327,6 +345,41 @@ export default function List({ users }) {
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeClasseModal}>
+                            Fermer
+                        </SecondaryButton>
+                    </div>
+                </div>
+            </Modal>
+
+            {/* Modal des Matieres */}
+            <Modal show={showMatiereModal} onClose={closeMatiereModal}>
+                <div className="p-3">
+                    <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Liste des matières  du professeur: <em className='text-success'>{`${currentProf?.lastname}-${currentProf?.firstname}`} </em>
+                    </h2>
+
+                    <table className="table table-striped min-w-full" >
+                        <thead>
+                            <tr>
+                                <th scope="col">Libelle</th>
+                                <th scope="col">Coeficient</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                currentProf?.matieres ?
+                                    currentProf?.matieres?.map((matiere) => (
+                                        <tr key={matiere.id}>
+                                            <td>{matiere.libelle}</td>
+                                            <td><span className="badge bg-light text-dark border rounded">{matiere.coefficient} </span> </td>
+                                        </tr>
+                                    )) : <tr><td>Aucun element trouvé</td> </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <div className="mt-6 flex justify-end">
+                        <SecondaryButton onClick={closeMatiereModal}>
                             Fermer
                         </SecondaryButton>
                     </div>

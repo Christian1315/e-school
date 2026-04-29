@@ -30,27 +30,39 @@ class InterrogationController extends Controller
      */
     function index()
     {
-        if (Auth::user()->school) {
-            $interrogations = Interrogation::orderByDesc("id")
-                ->where("school_id", Auth::user()->school_id)->get();
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $interrogations = Interrogation::orderByDesc("id")
+                    ->where("created_by", $user->id)
+                    ->where("school_id", $user->school_id)->get();
+
+                $matieres = $user->matieres; // les matières du professeur
+                $classes = $user->classes; // les classes du professeur
+            } else {
+                $interrogations = Interrogation::orderByDesc("id")
+                    ->where("school_id", $user->school_id)->get();
+
+                $matieres = Matiere::latest()
+                    ->where("school_id", $user->school_id)->get();
+
+                $classes = Classe::latest()
+                    ->where("school_id", $user->school_id)->get();
+            }
+
             // 
             $schools = School::latest()
-                ->where("id", Auth::user()->school_id)->get();
+                ->where("id", $user->school_id)->get();
 
             $apprenants = Apprenant::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
 
             $trimestres = Trimestre::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
 
-            $matieres = Matiere::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
-
-            $classes = Classe::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
 
             $series = Serie::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
         } else {
             $interrogations = Interrogation::orderByDesc("id")->get();
 
@@ -82,16 +94,30 @@ class InterrogationController extends Controller
      */
     function create()
     {
-        if (Auth::user()->school) {
-            $apprenants = Apprenant::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $matieres = $user->matieres; // les matières du professeur
+
+                $apprenants = $user->apprenants;
+            } else {
+                $matieres = Matiere::latest()
+                    ->where("school_id", $user->school_id)->get();
+
+                $apprenants = Apprenant::latest()
+                    ->where("school_id", $user->school_id)->get();
+            }
+
+            // 
+            $schools = School::latest()
+                ->where("id", $user->school_id)->get();
 
             $trimestres = Trimestre::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
-
-            $matieres = Matiere::latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+                ->where("school_id", $user->school_id)->get();
         } else {
+            // 
+            $schools = School::latest()->get();
+
             $apprenants = Apprenant::latest()->get();
 
             $trimestres = Trimestre::latest()->get();
@@ -100,7 +126,7 @@ class InterrogationController extends Controller
         }
 
         return Inertia::render('Interrogation/Create', [
-            "schools" => School::all(),
+            "schools" => SchoolResource::collection($schools),
             "apprenants" => ApprenantResource::collection($apprenants),
             "trimestres" => TrimestreResource::collection($trimestres),
             "matieres" => MatiereResource::collection($matieres),
@@ -289,17 +315,29 @@ class InterrogationController extends Controller
 
             $interrogation->load(["apprenant"]);
 
-            if (Auth::user()->school) {
+            $user = Auth::user();
+            if ($user->school) {
+                if ($user->hasRole("Professeur")) {
+                    $matieres = $user->matieres; // les matières du professeur
 
-                $apprenants = Apprenant::latest()
-                    ->where("school_id", Auth::user()->school_id)->get();
+                    $apprenants = $user->apprenants;
+                } else {
+                    $matieres = Matiere::latest()
+                        ->where("school_id", $user->school_id)->get();
+
+                    $apprenants = Apprenant::latest()
+                        ->where("school_id", $user->school_id)->get();
+                }
+
+                // 
+                $schools = School::latest()
+                    ->where("id", $user->school_id)->get();
 
                 $trimestres = Trimestre::latest()
-                    ->where("school_id", Auth::user()->school_id)->get();
-
-                $matieres = Matiere::latest()
-                    ->where("school_id", Auth::user()->school_id)->get();
+                    ->where("school_id", $user->school_id)->get();
             } else {
+                // 
+                $schools = School::latest()->get();
 
                 $apprenants = Apprenant::latest()->get();
 
@@ -309,7 +347,7 @@ class InterrogationController extends Controller
             }
 
             return Inertia::render('Interrogation/Update', [
-                "schools" => School::all(),
+                "schools" => SchoolResource::collection($schools),
                 "apprenants" => ApprenantResource::collection($apprenants),
                 "trimestres" => TrimestreResource::collection($trimestres),
                 "matieres" => MatiereResource::collection($matieres),

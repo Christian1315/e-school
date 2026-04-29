@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import Select from 'react-select'
 
 
-export default function Create({ schools }) {
+export default function Create({ schools,professeurs }) {
     const permissions = usePage().props.auth.permissions;
     const authUser = usePage().props.auth.user;
 
@@ -28,7 +28,8 @@ export default function Create({ schools }) {
     } = useForm({
         libelle: "",
         school_id: "",
-        coefficient: ''
+        coefficient: '',
+        professeur_ids: null
     });
 
     const submit = (e) => {
@@ -91,13 +92,13 @@ export default function Create({ schools }) {
                                     {!authUser.school_id &&
                                         <div className="col-md-6">
                                             <div className='mb-3'>
-                                                <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                                <InputLabel htmlFor="school_id" value="L'école concernée" >  </InputLabel>
 
                                                 <Select
                                                     placeholder="Rechercher une école ..."
                                                     name="school_id"
                                                     id="school_id"
-                                                    required
+                                                    // required
                                                     className="form-control mt-1 block w-full"
                                                     options={schools.map((school) => ({
                                                         value: school.id,
@@ -116,6 +117,47 @@ export default function Create({ schools }) {
                                             </div>
 
                                         </div>}
+
+                                    {/* professeurs */}
+                                    <div className="col-md-6">
+                                        <div className='mb-3'>
+                                            <InputLabel htmlFor="professeur_ids" value="Les professeurs" >  </InputLabel>
+
+                                            <Select
+                                                placeholder="Rechercher un professeur ..."
+                                                name="professeur_ids"
+                                                id="professeur_ids"
+                                                // required
+                                                isMulti
+                                                className="mt-1 block w-full"
+                                                options={professeurs.map((professeur) => ({
+                                                    value: professeur.id,
+                                                    label: `${professeur.firstname} ${professeur.lastname} ${!authUser.school ? professeur.school?.raison_sociale ?? '' : ''}`,
+                                                }))}
+
+                                                // Valeurs sélectionnées (tableau)
+                                                value={professeurs
+                                                    .map((professeur) => ({
+                                                        value: professeur.id,
+                                                        label: `${professeur.firstname} ${professeur.lastname} ${!authUser.school ? professeur.school?.raison_sociale ?? '' : ''}`,
+                                                    }))
+                                                    .filter((option) =>
+                                                        data.professeur_ids?.includes(option.value)
+                                                    )
+                                                }
+
+                                                // Mise à jour du state (tableau d'IDs)
+                                                onChange={(options) =>
+                                                    setData(
+                                                        'professeur_ids',
+                                                        options ? options.map((opt) => opt.value) : []
+                                                    )
+                                                }
+                                            />
+
+                                            <InputError className="mt-2" message={errors.school_id} />
+                                        </div>
+                                    </div>
 
                                     <div className="col-md-6">
                                         <div className='mb-3'>

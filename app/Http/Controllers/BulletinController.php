@@ -6,7 +6,6 @@ use App\Models\Apprenant;
 use App\Models\Matiere;
 use App\Models\Trimestre;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -18,9 +17,14 @@ class BulletinController extends Controller
      */
     function __invoke(Trimestre $trimestre)
     {
-        if (Auth::user()->school) {
-            $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $apprenants = $user->apprenants;
+            } else {
+                $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+            }
         } else {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
         }
@@ -28,9 +32,13 @@ class BulletinController extends Controller
         /**
          * Moyennes formatage
          */
-        $apprenants->transform(function ($apprenant) use ($trimestre) {
-            if (Auth::user()->school_id) {
-                $matieres = $apprenant->school?->matieres;
+        $apprenants->transform(function ($apprenant) use ($trimestre, $user) {
+            if ($user->school_id) {
+                if ($user->hasRole("Professeur")) {
+                    $matieres = $user->matieres; //les matières du prof
+                } else {
+                    $matieres = $apprenant->school?->matieres;
+                }
             } else {
                 $matieres = Matiere::latest()->get();
             }

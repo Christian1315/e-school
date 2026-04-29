@@ -14,7 +14,7 @@ import TextInput from '@/Components/TextInput';
 
 export default function List({ interrogations, schools, trimestres, matieres, classes, series }) {
     const auth = usePage().props.auth.user;
-    const authUser= usePage().props.auth;
+    const authUser = usePage().props.auth;
 
     const permissions = usePage().props.auth.permissions;
 
@@ -39,9 +39,6 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
 
     const [classe, setClasse] = useState(false);
     const [_classes, setClasses] = useState(classes.data);
-
-    const [serie, setSerie] = useState(false);
-    const [_series, setSeries] = useState(series.data);
 
     const [selectedSchool, setSelectedSchool] = useState({})
 
@@ -387,14 +384,16 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                 </tbody>
                             </table>
 
-                            <br />
-                            <div className="row justify-content-center d-flex">
-                                <div className="col-6">
-                                    <PrimaryButton className="ms-3 w-50" disabled={processing}>
-                                        <CIcon icon={cilSave} />  Valider ma selection
-                                    </PrimaryButton>
+                            {checkPermission("interrogation.edit") &&
+                                <div className="row justify-content-center d-flex mt-3">
+                                    <div className="col-6">
+                                        <PrimaryButton className="ms-3 w-50" disabled={processing}>
+                                            <CIcon icon={cilSave} />  Valider ma selection
+                                        </PrimaryButton>
+                                    </div>
                                 </div>
-                            </div>
+                            }
+
                         </form>
                     </div>
                 </div>
@@ -453,11 +452,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle} ${!authUser.school?trimestre.school?.raison_sociale??'':''}`,
+                                            label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.trimestres ?? trimestres.data).map((trimestre) => ({
                                             value: trimestre.id,
-                                            label: `${trimestre.libelle} ${!authUser.school?trimestre.school?.raison_sociale??'':''}`,
+                                            label: `${trimestre.libelle} ${!authUser.school ? trimestre.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.trimestre_id)} // set selected option
                                         onChange={(option) => setData('trimestre_id', option.value)} // update state with id
@@ -483,11 +482,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle} ${!authUser.school?matiere.school?.raison_sociale??'':''}`,
+                                            label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.matieres ?? matieres.data).map((matiere) => ({
                                             value: matiere.id,
-                                            label: `${matiere.libelle} ${!authUser.school?matiere.school?.raison_sociale??'':''}`,
+                                            label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.matiere_id)} // set selected option
                                         onChange={(option) => setData('matiere_id', option.value)} // update state with id
@@ -512,11 +511,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale??'':''}`,
+                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale??'':''}`,
+                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.classe_id)} // set selected option
                                         onChange={(option) => setData('classe_id', option.value)} // update state with id
@@ -541,11 +540,11 @@ export default function List({ interrogations, schools, trimestres, matieres, cl
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale??'':''}`,
+                                            label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.series ?? series.data).map((serie) => ({
                                             value: serie.id,
-                                            label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale??'':''}`,
+                                            label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.serie_id)} // set selected option
                                         onChange={(option) => setData('serie_id', option.value)} // update state with id

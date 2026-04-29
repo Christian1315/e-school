@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
-import { cibAddthis, cibBuffer, cilDelete, cilLibraryAdd, cilList, cilMenu, cilPencil } from "@coreui/icons";
+import { cibAddthis, cibBuffer, cilDelete, cilList, cilMenu, cilPencil } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
 import SecondaryButton from '@/Components/SecondaryButton';

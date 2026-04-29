@@ -102,11 +102,11 @@ export default function Create({ schools, apprenants, trimestres, matieres, inte
                                                     id="school_id"
                                                     // required
                                                     className="form-control mt-1 block w-full"
-                                                    options={schools.map((school) => ({
+                                                    options={schools.data?.map((school) => ({
                                                         value: school.id,
                                                         label: `${school.raison_sociale}`,
                                                     }))}
-                                                    value={schools.map((school) => ({
+                                                    value={schools.data?.map((school) => ({
                                                         value: school.id,
                                                         label: `${school.raison_sociale}`,
                                                     }))

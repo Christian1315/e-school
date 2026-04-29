@@ -16,9 +16,14 @@ class MoyenneInterrogationController extends Controller
     {
         Log::info("Calcul des moyennes d'interrogation pour le trimestre: {$trimestre->libelle} et l'année scolaire: {$annee_scolaire}");
 
-        if (Auth::user()->school) {
-            $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
-                ->where("school_id", Auth::user()->school_id)->get();
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $apprenants = $user->apprenants;
+            } else {
+                $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
+                    ->where("school_id", Auth::user()->school_id)->get();
+            }
         } else {
             $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
         }
@@ -26,10 +31,14 @@ class MoyenneInterrogationController extends Controller
         /**
          * Moyennes formatage
          */
-        $apprenants->transform(function ($apprenant) use ($trimestre, $annee_scolaire) {
+        $apprenants->transform(function ($apprenant) use ($trimestre, $annee_scolaire, $user) {
 
-            if (Auth::user()->school_id) {
-                $matieres = $apprenant->school?->matieres;
+            if ($user->school_id) {
+                if ($user->hasRole("Professeur")) {
+                    $matieres = $user->matieres; //les matières du prof
+                } else {
+                    $matieres = $apprenant->school?->matieres;
+                }
             } else {
                 $matieres = Matiere::latest()->get();
             }
@@ -56,7 +65,6 @@ class MoyenneInterrogationController extends Controller
 
             return $apprenant;
         });
-
 
         return Inertia::render('MoyennesInterro/List', [
             'apprenants' => $apprenants,

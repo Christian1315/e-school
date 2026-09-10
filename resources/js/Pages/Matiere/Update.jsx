@@ -11,7 +11,7 @@ import Select from 'react-select'
 import { useEffect } from 'react';
 
 
-export default function Create({ schools, professeurs, matiere, professeurs_ids }) {
+export default function Create({ schools, matiere }) {
     const permissions = usePage().props.auth.permissions;
     const authUser = usePage().props.auth;
 
@@ -30,7 +30,6 @@ export default function Create({ schools, professeurs, matiere, professeurs_ids 
     } = useForm({
         libelle: matiere?.libelle || '',
         school_id: matiere?.school_id || '',
-        professeur_ids: professeurs_ids || [], // Initialiser avec les professeurs sélectionnés ou un tableau vide
     });
 
     useEffect(() => {
@@ -38,7 +37,6 @@ export default function Create({ schools, professeurs, matiere, professeurs_ids 
     }, [data])
 
     const submit = (e) => {
-        // alert("gogog")
         e.preventDefault();
 
         Swal.fire({
@@ -125,54 +123,14 @@ export default function Create({ schools, professeurs, matiere, professeurs_ids 
                                         </div>
                                     }
 
-                                    {/* professeurs */}
                                     <div className="col-md-6">
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="professeur_ids" value="Les professeurs" ></InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher un professeur ..."
-                                                name="professeur_ids"
-                                                id="professeur_ids"
-                                                // required
-                                                isMulti
-                                                className="mt-1 block w-full"
-                                                options={professeurs.map((professeur) => ({
-                                                    value: professeur.id,
-                                                    label: `${professeur.firstname} ${professeur.lastname} ${authUser.user.id == 1 ? professeur.school?.raison_sociale ?? '' : ''}`,
-                                                }))}
-
-                                                // Valeurs sélectionnées (tableau)
-                                                value={professeurs
-                                                    .map((professeur) => ({
-                                                        value: professeur.id,
-                                                        label: `${professeur.firstname} ${professeur.lastname} ${authUser.user.id == 1 ? professeur.school?.raison_sociale ?? '' : ''}`,
-                                                    }))
-                                                    .filter((option) =>
-                                                        data.professeur_ids?.includes(option.value)
-                                                    )
-                                                }
-
-                                                // Mise à jour du state (tableau d'IDs)
-                                                onChange={(options) =>
-                                                    setData(
-                                                        'professeur_ids',
-                                                        options ? options.map((opt) => opt.value) : []
-                                                    )
-                                                }
-                                            />
-
-                                            <InputError className="mt-2" message={errors.school_id} />
-                                        </div>
-                                    </div>
-                                    <div className={authUser.school ? "col-md-12" : "col-md-6"}>
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="libelle" value="Libelle de la matiere" > <span className="text-danger">*</span> </InputLabel>
+                                            <InputLabel htmlFor="libelle" value="Libelle de la matière" > <span className="text-danger">*</span> </InputLabel>
                                             <TextInput
                                                 id="libelle"
                                                 className="mt-1 block w-full"
                                                 value={data.libelle}
-                                                placeholder="Ex: Tle (Terminale)"
+                                                placeholder="Ex: Mathématique"
                                                 onChange={(e) => setData('libelle', e.target.value)}
                                                 autoComplete="libelle"
                                                 required
@@ -181,10 +139,10 @@ export default function Create({ schools, professeurs, matiere, professeurs_ids 
                                             <InputError className="mt-2" message={errors.libelle} />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>
+                                    <div className="flex items-center gap-4">
+                                        <PrimaryButton disabled={processing}> <CIcon icon={cilSend} /> {processing ? 'Enregistrement ...' : 'Enregistrer'} </PrimaryButton>
+                                    </div>
                                 </div>
                             </form>
                         </div>

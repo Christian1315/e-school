@@ -426,7 +426,7 @@ class UserController extends Controller
             event(new Registered($user));
 
             DB::commit();
-            return redirect()->route("user.index");;
+            return redirect()->back();
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             Log::debug("Erreure lors de la modification de l'utilisateur", ["error" => $e->errors()]);

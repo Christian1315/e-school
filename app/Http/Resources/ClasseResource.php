@@ -19,9 +19,11 @@ class ClasseResource extends JsonResource
             "id" => $this->id,
             "libelle" => $this->libelle,
             "school" => $this->school,
+            "serie" => $this->serie,
             "scolarite" => $this->scolarite,
-            "apprenants" => $this->apprenants->load("serie","parent"),
-            "professeurs" => $this->professeurs
+            "apprenants" => $this->apprenants?->load("parent"),
+            "lignes" => $this->lignes?->load(["professeur", "matiere"]),
+            "professeurs" => $this->professeurs,
         ];
     }
 }

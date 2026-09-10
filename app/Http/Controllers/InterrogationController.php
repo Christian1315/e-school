@@ -7,14 +7,12 @@ use App\Http\Resources\ClasseResource;
 use App\Http\Resources\InterrogationResource;
 use App\Http\Resources\MatiereResource;
 use App\Http\Resources\SchoolResource;
-use App\Http\Resources\SerieResource;
 use App\Http\Resources\TrimestreResource;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\Interrogation;
 use App\Models\Matiere;
 use App\Models\School;
-use App\Models\Serie;
 use App\Models\Trimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,13 +30,19 @@ class InterrogationController extends Controller
     {
         $user = Auth::user();
         if ($user->school) {
-            if ($user->hasRole("Professeur")) {
-                $interrogations = Interrogation::orderByDesc("id")
-                    ->where("created_by", $user->id)
-                    ->where("school_id", $user->school_id)->get();
+            if ($user->hasRole(["Professeur", "Parent"])) {
+                if ($user->hasRole("Parent")) {
+                    // on recupere juste les interrogations de ses apprenants(elèves)
+                    $interrogations = $user->apprenants->flatMap->interrogations->unique("id")->values();
+                } else {
+                    $interrogations = Interrogation::orderByDesc("id")
+                        ->where("created_by", $user->id)
+                        ->where("school_id", $user->school_id)->get();
+                }
 
-                $matieres = $user->matieres; // les matières du professeur
-                $classes = $user->classes; // les classes du professeur
+                $matieres = $user->matieres?->pluck("matiere")->unique("id")->values(); // les matières du professeur
+                $classes = $user->classes?->pluck("classe")->unique("id")->values(); // les classes du professeur
+                $apprenants = $user->apprenants;
             } else {
                 $interrogations = Interrogation::orderByDesc("id")
                     ->where("school_id", $user->school_id)->get();
@@ -47,61 +51,6 @@ class InterrogationController extends Controller
                     ->where("school_id", $user->school_id)->get();
 
                 $classes = Classe::latest()
-                    ->where("school_id", $user->school_id)->get();
-            }
-
-            // 
-            $schools = School::latest()
-                ->where("id", $user->school_id)->get();
-
-            $apprenants = Apprenant::latest()
-                ->where("school_id", $user->school_id)->get();
-
-            $trimestres = Trimestre::latest()
-                ->where("school_id", $user->school_id)->get();
-
-
-            $series = Serie::latest()
-                ->where("school_id", $user->school_id)->get();
-        } else {
-            $interrogations = Interrogation::orderByDesc("id")->get();
-
-            // 
-            $schools = School::latest()->get();
-
-            $apprenants = Apprenant::latest()->get();
-
-            $trimestres = Trimestre::latest()->get();
-
-            $matieres = Matiere::latest()->get();
-            $classes = Classe::latest()->get();
-            $series = Serie::latest()->get();
-        }
-
-        return Inertia::render("Interrogation/List", [
-            "interrogations" => InterrogationResource::collection($interrogations),
-            "schools" => SchoolResource::collection($schools),
-            "apprenants" => ApprenantResource::collection($apprenants),
-            "trimestres" => TrimestreResource::collection($trimestres),
-            "matieres" => MatiereResource::collection($matieres),
-            "classes" => ClasseResource::collection($classes),
-            "series" => SerieResource::collection($series),
-        ]);
-    }
-
-    /**
-     * Create
-     */
-    function create()
-    {
-        $user = Auth::user();
-        if ($user->school) {
-            if ($user->hasRole("Professeur")) {
-                $matieres = $user->matieres; // les matières du professeur
-
-                $apprenants = $user->apprenants;
-            } else {
-                $matieres = Matiere::latest()
                     ->where("school_id", $user->school_id)->get();
 
                 $apprenants = Apprenant::latest()
@@ -115,6 +64,8 @@ class InterrogationController extends Controller
             $trimestres = Trimestre::latest()
                 ->where("school_id", $user->school_id)->get();
         } else {
+            $interrogations = Interrogation::orderByDesc("id")->get();
+
             // 
             $schools = School::latest()->get();
 
@@ -123,7 +74,60 @@ class InterrogationController extends Controller
             $trimestres = Trimestre::latest()->get();
 
             $matieres = Matiere::latest()->get();
+            $classes = Classe::latest()->get();
         }
+
+        return Inertia::render("Interrogation/List", [
+            "interrogations" => InterrogationResource::collection($interrogations),
+            "schools" => SchoolResource::collection($schools),
+            "apprenants" => ApprenantResource::collection($apprenants),
+            "trimestres" => TrimestreResource::collection($trimestres),
+            "matieres" => MatiereResource::collection($matieres),
+            "classes" => ClasseResource::collection($classes),
+        ]);
+    }
+
+    /**
+     * Create
+     */
+    function create()
+    {
+        $user = Auth::user();
+        if ($user->school) {
+            if ($user->hasRole("Professeur")) {
+                $matieres = $user->matieres?->pluck("matiere")->unique("id")->values(); // les matières du professeur
+
+                $apprenants = $user->apprenants->unique("id")->values();
+            } else {
+                $matieres = Matiere::latest()
+                    ->where("school_id", $user->school_id)->get();
+
+                $apprenants = Apprenant::latest()
+                    ->with([
+                        "classe.serie",
+                        "classe.lignes",
+                        "classe.lignes.professeur",
+                        "classe.lignes.matiere",
+                    ])
+                    ->where("school_id", $user->school_id)->get();
+            }
+
+            $schools = School::latest()
+                ->where("id", $user->school_id)->get();
+
+            $trimestres = Trimestre::latest()
+                ->where("school_id", $user->school_id)->get();
+        } else {
+            $schools = School::latest()->get();
+            $apprenants = Apprenant::latest()->get();
+            $trimestres = Trimestre::latest()->get();
+            $matieres = Matiere::latest()->get();
+        }
+
+        $apprenants->load([
+            "classe.serie",
+            "classe.lignes.matiere",
+        ]);
 
         return Inertia::render('Interrogation/Create', [
             "schools" => SchoolResource::collection($schools),
@@ -195,49 +199,51 @@ class InterrogationController extends Controller
             Log::debug("Store multiple Donnees entrees", ["data" => $request->all()]);
 
             $request->validate([
-                // "school_id"     => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
-                "serie_id"          => "required|integer",
             ], [
-                // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
-
                 "classe_id.required" => "La classe doit être obligatoire.",
                 "classe_id.integer"  => "La classe doit  être un nombre entier.",
 
-                "serie_id.required" => "La série doit être obligatoire.",
-                "serie_id.integer"  => "La série doit  être un nombre entier.",
-
-                "trimestre_id.required" => "L'identifiant du trimestre est obligatoire.",
-                "trimestre_id.integer"  => "L'identifiant du trimestre doit être un nombre entier.",
+                "trimestre_id.required" => "Le trimestre est obligatoire.",
+                "trimestre_id.integer"  => "Le trimestre doit être un nombre entier.",
 
                 "matiere_id.required"   => "L'identifiant de la matière est obligatoire.",
                 "matiere_id.integer"    => "L'identifiant de la matière doit être un nombre entier.",
             ]);
 
-            $Query = Apprenant::where(["classe_id" => $request->classe_id, "serie_id" => $request->serie_id])
-                ->latest();
-
-            if (Auth::user()->school) {
-                $apprenants = $Query
-                    ->where("school_id", Auth::user()->school_id)->get();
+            $user = Auth::user();
+            if ($user->school) {
+                if ($user->hasRole("Professeur")) {
+                    $apprenants = $user->apprenants
+                        ->where("classe_id", $request->classe_id);
+                } else {
+                    $apprenants = Apprenant::latest()
+                        ->with([
+                            "classe.serie",
+                            "classe.lignes",
+                            "classe.lignes.professeur",
+                            "classe.lignes.matiere",
+                        ])
+                        ->where("school_id", $user->school_id)
+                        ->where("classe_id", $request->classe_id)
+                        ->get();
+                }
             } else {
-                $apprenants = $Query->get();
+                $apprenants = Apprenant::latest()->get();
             }
 
             return Inertia::render("Interrogation/StoreMultiple", [
-                // "school" => School::find($request->school_id),
                 "trimestre" => Trimestre::find($request->trimestre_id),
                 "matiere" => Matiere::find($request->matiere_id),
-                "classe" => Classe::find($request->classe_id),
+                "classe" => Classe::with("serie")->find($request->classe_id),
                 "apprenants" => ApprenantResource::collection($apprenants),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::debug("Erreure lors de la création de l'interrogation ", ["exception" => $e->getMessage()]);
-            return back()->withErrors($e->getMessage());
+            return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
 
@@ -252,7 +258,6 @@ class InterrogationController extends Controller
             Log::debug("Donnees entrees", ["data" => $request->all()]);
 
             $validated = $request->validate([
-                // "school_id"     => "required|integer",
                 "trimestre_id"  => "required|integer",
                 "matiere_id"    => "required|integer",
                 "classe_id"          => "required|integer",
@@ -261,9 +266,6 @@ class InterrogationController extends Controller
                 "apprenants*note" => "required|numeric",
                 "annee_scolaire" => "required|numeric"
             ], [
-                // "school_id.required"    => "L'identifiant de l'école est obligatoire.",
-                // "school_id.integer"     => "L'identifiant de l'école doit être un nombre entier.",
-
                 "classe_id.required" => "La classe doit être obligatoire.",
                 "classe_id.integer"  => "La classe doit  être un nombre entier.",
 
@@ -345,6 +347,11 @@ class InterrogationController extends Controller
 
                 $matieres = Matiere::latest()->get();
             }
+
+            $apprenants->load([
+                "classe.serie",
+                "classe.lignes.matiere",
+            ]);
 
             return Inertia::render('Interrogation/Update', [
                 "schools" => SchoolResource::collection($schools),

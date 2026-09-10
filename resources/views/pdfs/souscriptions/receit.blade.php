@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{public_path('fichiers/images/logo.png')}}" type="image/x-icon">
+    <link rel="stylesheet" href="{{public_path('fichiers/base.css')}}">
 
-    <title>Reçu</title>
+    <title>Inscription</title>
     <style>
         * {
             font-family: "Poppins";
@@ -71,6 +72,7 @@
             border: solid 2px #f6f6f6;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
+
     </style>
 </head>
 
@@ -82,21 +84,23 @@
                 <table id="header">
                     <tr>
                         <!-- Logo gauche -->
-                        <td style="width: 25%; text-align: left;">
+                         <td style="width: 25%; text-align: left;">
                             <img src="{{ public_path($logo) }}"
                                 id="logo"
                                 alt="Logo de l'école"
                                 class="shadow"
-                                style="max-width: 100px; height: 50px;border-radius:50px;border:solid 5px #fff">
+                                style="max-width: 50px; height: 50px;border-radius:50px;border:solid 5px #fff">
                         </td>
 
                         <!-- Texte centre -->
                         <td style="width: 50%; text-align: center;">
-                            <h1 class="school-name" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$inscription->school?->raison_sociale}}</h1>
+                            <p class="school-description text-upercase my-2" style="text-transform: uppercase!important;">République du Bénin</p>
+                            <h1 class="school-name text-danger" style="margin: 0; font-size: 18px; text-transform:uppercase">{{$inscription->school?->raison_sociale}}</h1>
                             <h3 style="margin: 2px 0;"></h3>
                             <p class="school-description" style="margin: 0;">{{$inscription->school?->description}}</p>
                             <p class="school-contact" style="margin: 0;">Tel: {{$inscription->school?->phone}}</p>
-                            <p class="school-slogan" style="margin: 0;">{{$inscription->school?->slogan}}</p>
+                            <p class="school-slogan  text-success" style="margin: 0;">{{$inscription->school?->slogan}}</p>
+                            <br>
                         </td>
 
                         <!-- Logo reçu -->

@@ -32,6 +32,22 @@ export default function Create({ apprenants, trimestres, matieres, devoir }) {
         annee_scolaire: devoir.annee_scolaire || ""
     });
 
+    const selectedApprenant = apprenants.data.find(
+        (apprenant) => apprenant.id === data.apprenant_id
+    );
+    const isProfessor = authUser.user?.roles?.some(
+        (role) => role.name === 'Professeur'
+    );
+    const professeurMatiereIds = new Set(
+        (matieres?.data ?? []).map((matiere) => matiere.id)
+    );
+    const apprenantMatieres = selectedApprenant?.classe?.lignes
+        ?.map((ligne) => ligne.matiere)
+        .filter((matiere) =>
+            matiere && (!isProfessor || professeurMatiereIds.has(matiere.id))
+        ) ?? [];
+    const selectedMatiereId = data.matiere_id || devoir.matiere_id;
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -134,7 +150,11 @@ export default function Create({ apprenants, trimestres, matieres, devoir }) {
                                                     label: `${apprenant.firstname} - ${apprenant.lastname}`,
                                                 }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
-                                                onChange={(option) => setData('apprenant_id', option.value)} // update state with id
+                                                   onChange={(option) => setData((currentData) => ({
+                                                       ...currentData,
+                                                       apprenant_id: option?.value ?? '',
+                                                       matiere_id: '',
+                                                   }))} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.apprenant_id} />
@@ -177,15 +197,15 @@ export default function Create({ apprenants, trimestres, matieres, devoir }) {
                                                 id="matiere_id"
                                                 required
                                                 className="form-control mt-1 block w-full"
-                                                options={matieres.data.map((matiere) => ({
+                                                options={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle}`,
                                                 }))}
-                                                value={matieres.data.map((matiere) => ({
+                                                value={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle}`,
                                                 }))
-                                                    .find((option) => option.value === data.matiere_id)} // set selected option
+                                                    .find((option) => option.value === selectedMatiereId)} // set selected option
                                                 onChange={(option) => setData('matiere_id', option.value)} // update state with id
                                             />
 

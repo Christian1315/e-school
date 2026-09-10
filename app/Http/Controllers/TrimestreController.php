@@ -54,9 +54,8 @@ class TrimestreController extends Controller
     function store(Request $request)
     {
         try {
-            DB::beginTransaction();
-
             Log::debug("Donnees entrees", ["data" => $request->all()]);
+            DB::beginTransaction();
 
             $validated = $request->validate([
                 "school_id" => "nullable|integer",
@@ -66,6 +65,8 @@ class TrimestreController extends Controller
                 "school_id.integer" => "L'école est invalide",
                 "libelle.required" => "Le libelle est réquis!",
             ]);
+
+            Log::debug("Validated :", ["data" => $validated]);
 
             Trimestre::create($validated);
 

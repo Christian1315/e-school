@@ -1,9 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import Dropdown from '@/Components/Dropdown';
 import CIcon from '@coreui/icons-react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilCenterFocus, cilAlignCenter, cilLibraryAdd, cilList, cilTrash, cilSave, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu, cilPencil, cibBuffer, cibAddthis } from "@coreui/icons";
+import { cilCenterFocus, cilLink, cilInfo, cilSend, cilCloudDownload, cilMenu, cilPencil, cibBuffer, cibAddthis } from "@coreui/icons";
 import Modal from '@/Components/Modal';
 import { useEffect, useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
@@ -265,7 +264,7 @@ export default function List({ users, roles }) {
                 </div>
             </div>
 
-            {/* Modal d'affcetation */}
+            {/* Modal d'affectation */}
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={submit} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">

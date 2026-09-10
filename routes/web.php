@@ -14,6 +14,7 @@ use App\Http\Controllers\MoyenneDevoirController;
 use App\Http\Controllers\MoyenneInterrogationController;
 use App\Http\Controllers\PayementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReglementController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SerieController;
@@ -89,9 +90,13 @@ Route::middleware('auth')->group(function () {
     Route::post("inscription/update/{inscription}", [InscriptionController::class, "update"])->name("inscription.update");
     Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
 
-    // Paiements
+    // Paiements scolarité
     Route::resource("paiement", PayementController::class);
     Route::get("/paiement/generate-receit/{paiement}", [PayementController::class, "generateReceit"])->name("paiement.generate-receit");
+
+    // Reglements factures
+    Route::resource("reglement", ReglementController::class);
+    Route::post("reglement/validate/{reglement?}", [ReglementController::class, "validate"])->name("reglement.validate");
 
     //Les moyennes 
     Route::prefix("moyennes")->group(function () {

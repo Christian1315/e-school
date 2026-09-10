@@ -160,7 +160,7 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
                                             <TextInput
                                                 className="form-control mt-1 block w-full"
                                                 readOnly
-                                                value={classe.libelle} />
+                                                value={`${classe.libelle} ${classe.serie?.libelle ?? ''}`} />
 
                                             <InputError className="mt-2" message={errors.classe_id} />
                                         </div>

@@ -9,7 +9,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
-import { cilCenterFocus, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibBuffer, cibAddthis } from "@coreui/icons";
+import { cilCenterFocus, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibBuffer, cibAddthis } from "@coreui/icons";
 
 export default function List({ inscriptions }) {
     const permissions = usePage().props.auth.permissions;
@@ -143,7 +143,7 @@ export default function List({ inscriptions }) {
                                     <th scope="col">Reference</th>
                                     <th scope="col">Ecole</th>
                                     <th scope="col">Apprenant</th>
-                                    <th scope="col">Annéé Scolire</th>
+                                    <th scope="col">Annéé Scolaire</th>
                                     <th scope="col">Numero Educ Master</th>
                                     <th scope="col">Dossier Transfert</th>
                                     <th scope="col">Frais d'inscription</th>

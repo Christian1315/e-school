@@ -130,7 +130,7 @@ p {
 }
 
 #collToAction {
-    background-image: url('/fichiers/images/bg-attechement.jpg') !important;
+    background-image: url('./images/bg-attechement.jpg') !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat;
     background-position: center;
@@ -138,7 +138,7 @@ p {
 }
 
 #newsletter {
-    background-image: url('/fichiers/images/newsletter.jpg') !important;
+    background-image: url('./images/newsletter.jpg') !important;
     background-attachment: fixed !important;
     background-repeat: no-repeat;
     background-position: center;

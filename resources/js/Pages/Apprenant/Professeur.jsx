@@ -48,7 +48,7 @@ export default function List({ users }) {
         setShowClasseModal(false);
     };
 
-    const confirmShowMatieresModal = (e, prof) => {
+    const confirmShowMatiereModal = (e, prof) => {
         e.preventDefault();
 
         console.log("Professeur sélectionné : ", prof);
@@ -242,8 +242,8 @@ export default function List({ users }) {
                                     <th scope="col">Nom</th>
                                     <th scope="col">Prénom</th>
                                     <th scope="col">Email</th>
-                                    <th scope='col'>Les classes</th>
-                                    <th scope='col'>Les matières</th>
+                                    <th scope='col'>Matières</th>
+                                    <th scope='col'>Classes</th>
                                     <th scope="col">Phone</th>
                                     <th scope="col">Rôles</th>
                                 </tr>
@@ -289,11 +289,11 @@ export default function List({ users }) {
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
                                             <td>{user.email ?? '---'}</td>
-                                            <td><button className="badge bg-light border rounded text-dark shadow"
-                                                onClick={(e) => confirmShowClasseModal(e, user)}> {user.classes.length} <CIcon icon={cilList} className='text-success' /> </button>
+                                           <td><button className="badge bg-light border rounded text-dark shadow"
+                                                onClick={(e) => confirmShowMatiereModal(e, user)}> {user.matieres.length} <CIcon icon={cilList} className='text-success' /> </button>
                                             </td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"
-                                                onClick={(e) => confirmShowMatieresModal(e, user)}> {user.matieres.length} <CIcon icon={cilList} className='text-success' /> </button>
+                                                onClick={(e) => confirmShowClasseModal(e, user)}> {user.classes.length} <CIcon icon={cilList} className='text-success' /> </button>
                                             </td>
                                             <td>{user.detail?.phone ?? '---'}</td>
                                             <td className='text-center'>

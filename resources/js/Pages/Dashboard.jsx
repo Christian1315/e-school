@@ -7,7 +7,7 @@ import { cilWallet, cilSmilePlus, cilPeople } from "@coreui/icons";
 import { useEffect, useRef } from 'react';
 import Chart from "chart.js/auto";
 
-export default function Dashboard({ schools, apprenants, inscriptions, users }) {
+export default function Dashboard({ schools, apprenants, inscriptions, users, factureAmount, reglementAmount, dette }) {
     const monthlyChartRef = useRef(null);
     const dailyChartRef = useRef(null);
     const school = usePage().props.auth.school;
@@ -86,6 +86,24 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                 <div className="mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
+                            {/* Les montants */}
+                            {/*  */}
+                            <div className="row d-flex justify-content-center bg-light p-2">
+                                <div className="col-md-3 border shadow rounded text-center p-3 bg-white">
+                                    <h3>Montant facturé</h3> <br />
+                                    <span className="badge bg-light border rounded shadow text-dark">{factureAmount} FCFA</span>
+                                </div>
+                                <div className="col-md-3 border shadow rounded text-center p-3 bg-white mx-2">
+                                    <h3>Montant réglé</h3> <br />
+                                    <span className="badge bg-light border rounded shadow text-success">{reglementAmount} FCFA</span>
+                                </div>
+                                <div className="col-md-3 border shadow rounded text-center p-3 bg-white">
+                                    <h3>Reste à regler</h3> <br />
+                                    <span className="badge bg-light border rounded shadow text-danger">{dette} FCFA</span>
+                                </div>
+                            </div>
+
+                            <hr />
                             {/* Totaux */}
                             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 mb-6">
                                 {!school &&
@@ -115,6 +133,8 @@ export default function Dashboard({ schools, apprenants, inscriptions, users }) 
                                     <h2 className="text-xl text-gray-500"> <CIcon className="nav-icon text-success" icon={cilPeople} /> Utilisateurs </h2>
                                 </div>
                             </div>
+
+                            <hr />
 
                             <br /><br />
                             {/* Graphics */}

@@ -60,13 +60,22 @@ export default function List({ matieres }) {
 
     const { data, delete: destroy } = useForm({})
 
-    const [showProfModal, setShowProfModal] = useState(false);
     const [currentMatiere, setCurrentMatiere] = useState(null);
+    const [showProfModal, setShowProfModal] = useState(false);
+    const [showClassModal, setShowClassModal] = useState(false);
 
-    const confirmShowProfModal = (e, matiere) => {
+    const professeursModal = (e, matiere) => {
         e.preventDefault();
         setCurrentMatiere(matiere)
         setShowProfModal(true);
+
+        console.log("La matiere actuelle :", currentMatiere)
+    };
+
+    const classesModal = (e, matiere) => {
+        e.preventDefault();
+        setCurrentMatiere(matiere)
+        setShowClassModal(true);
 
         console.log("La matiere actuelle :", currentMatiere)
     };
@@ -97,10 +106,10 @@ export default function List({ matieres }) {
                                 <tr>
                                     <th scope="col">N°</th>
                                     <th scope="col">Action</th>
-                                    <th scope="col">Ecole</th>
                                     <th scope="col">Libelle</th>
-                                    <th scope="col">Coeficient</th>
+                                    <th scope="col">Ecole</th>
                                     <th scope="col">Professeurs</th>
+                                    <th scope="col">Classes</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -143,14 +152,16 @@ export default function List({ matieres }) {
                                                     </div>
                                                 }
                                             </td>
-                                            <td>{matiere.school?.raison_sociale ?? '---'}</td>
                                             <td>{matiere.libelle}</td>
-                                            <td><span className="badge bg-light text-dark border rounded">{matiere.coefficient} </span> </td>
+                                            <td>{matiere.school?.raison_sociale ?? '---'}</td>
                                             <td className='text-center'>
-                                                <button
-                                                    className="badge bg-light border rounded text-dark shadow"
-                                                    onClick={(e) => confirmShowProfModal(e, matiere)}>
-                                                    {matiere.professeurs?.length} <CIcon icon={cilList} className='text-success' />
+                                                <button className="btn btn-sm shadow-sm text-success" onClick={() => professeursModal(event, matiere)}>
+                                                    <CIcon icon={cilList} />
+                                                </button>
+                                            </td>
+                                            <td className='text-center'>
+                                                <button className="btn btn-sm shadow-sm text-success" onClick={() => classesModal(event, matiere)}>
+                                                    <CIcon icon={cilList} />
                                                 </button>
                                             </td>
                                         </tr>
@@ -161,6 +172,44 @@ export default function List({ matieres }) {
                     </div>
                 </div>
             </div>
+
+            {/* Modal des classes */}
+            <Modal show={showClassModal} onClose={() => setShowClassModal(false)}>
+                {({ tableRef }) =>
+                    <div className="p-3">
+                        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Liste des classes de la matiere: <em className='text-success'>{currentMatiere?.libelle} </em>
+                        </h2>
+
+                        <table className="table table-striped min-w-full" id='modalTable' ref={tableRef} >
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    currentMatiere?.classes?.length > 0 ?
+                                        currentMatiere?.classes?.map((classe, index) => (
+                                            <tr key={classe.id}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{`${classe.name || '--'}`}</td>
+                                                <td>{`${classe.description || '--'}`}</td>
+                                            </tr>
+                                        )) : <tr className='text-center'><td>Aucun element trouvé!</td></tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div className="mt-6 flex justify-end">
+                            <SecondaryButton onClick={() => setShowClassModal(false)}>
+                                Fermer
+                            </SecondaryButton>
+                        </div>
+                    </div>
+                }
+            </Modal>
 
             {/* Modal des professeurs */}
             <Modal show={showProfModal} onClose={() => setShowProfModal(false)}>
@@ -173,7 +222,6 @@ export default function List({ matieres }) {
                         <table className="table table-striped min-w-full" id='modalTable' ref={tableRef} >
                             <thead>
                                 <tr>
-                                    <th scope="col">N°</th>
                                     <th scope="col">Nom & Prénom</th>
                                     <th scope="col">Email</th>
                                 </tr>
@@ -181,11 +229,10 @@ export default function List({ matieres }) {
                             <tbody>
                                 {
                                     currentMatiere?.professeurs?.length > 0 ?
-                                        currentMatiere?.professeurs?.map((prof, index) => (
-                                            <tr key={prof.id}>
-                                                <th scope="row">{index + 1}</th>
-                                                <td>{`${prof.firstname || '--'}-${prof?.lastname || '--'}`}</td>
-                                                <td>{`${prof.email}`}</td>
+                                        currentMatiere?.professeurs?.map((professeur, index) => (
+                                            <tr key={professeur.id}>
+                                                <td>{`${professeur.firstname || '--'} ${professeur.lastname || '--'}`}</td>
+                                                <td>{`${professeur.email || '--'}`}</td>
                                             </tr>
                                         )) : <tr className='text-center'><td>Aucun element trouvé!</td></tr>
                                 }

@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ClasseResource;
 use App\Models\Classe;
 use App\Models\School;
-use App\Models\User;
-use Exception;
+use App\Models\Serie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ClasseController extends Controller
@@ -22,10 +20,13 @@ class ClasseController extends Controller
     function index()
     {
         if (Auth::user()->school) {
-            $classes = Classe::orderByDesc("id")
+            $classes = Classe::with(['school', 'serie', 'apprenants', 'lignes.professeur', 'lignes.matiere'])
+                ->orderByDesc("id")
                 ->where("school_id", Auth::user()->school_id)->get();
         } else {
-            $classes = Classe::orderByDesc("id")->get();
+            $classes = Classe::with(['school', 'serie', 'apprenants', 'lignes.professeur', 'lignes.matiere'])
+                ->orderByDesc("id")
+                ->get();
         }
 
         return Inertia::render("Classe/List", [
@@ -45,55 +46,79 @@ class ClasseController extends Controller
             $schools = School::latest()->get();
         }
 
+        $professeurs = Auth::user()->school ? Auth::user()->school->professeurs : [];
+        $matieres = Auth::user()->school ? Auth::user()->school->matieres : [];
+        $series = Auth::user()->school ? Auth::user()->school->series()->latest()->get() : Serie::latest()->get();
+
         return Inertia::render('Classe/Create', [
             "schools" => $schools,
-            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs->load("school") : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->with("school")->get(),
+            "professeurs" => $professeurs,
+            "matieres" => $matieres,
+            "series" => $series,
         ]);
     }
 
     /**
      * Store des datas
      */
-    function store(Request $request)
+    public function store(Request $request)
     {
+        $validated = $request->validate([
+            "school_id" => "nullable|integer",
+            "serie_id" => "required|integer|exists:series,id",
+            "libelle" => "required",
+            "scolarite" => "required|numeric",
+            "lignes" => "required|array|min:1",
+            "lignes.*.professeur_id" => "required|integer|exists:users,id",
+            "lignes.*.matiere_id" => "required|integer|exists:matieres,id",
+            "lignes.*.coefficient" => "required|numeric",
+        ], [
+            "school_id.integer" => "L'école est invalide",
+            "serie_id.required" => "La série est requise",
+            "serie_id.integer" => "La série est invalide",
+            "serie_id.exists" => "La série n'existe pas",
+            "libelle.required" => "Le libelle est réquis!",
+            "scolarite.required" => "La scolarité est requise",
+            "scolarite.numeric" => "Le format n'est pas valide",
+
+            "lignes.required" => "Au moins une ligne est requise",
+            "lignes.array" => "Le format des lignes est invalide",
+            "lignes.min" => "Au moins une ligne est requise",
+
+            "lignes.*.professeur_id.required" => "Le professeur est requis",
+            "lignes.*.professeur_id.integer" => "Le professeur est invalide",
+            "lignes.*.professeur_id.exists" => "Le professeur n'existe pas",
+
+            "lignes.*.matiere_id.required" => "La matière est requise",
+            "lignes.*.matiere_id.integer" => "La matière est invalide",
+            "lignes.*.matiere_id.exists" => "La matière n'existe pas",
+
+            "lignes.*.coefficient.required" => "Le coefficient est requis",
+            "lignes.*.coefficient.numeric" => "Le format du coefficient est invalide",
+        ]);
+
+        $lignes = $validated['lignes'];
+        unset($validated['lignes']);
+
         try {
             DB::beginTransaction();
 
-            Log::debug("Donnees entrees", ["data" => $request->all()]);
-
-            $validated = $request->validate([
-                'professeur_ids' => 'nullable|array|exists:users,id',
-                "school_id" => "nullable|integer",
-                "libelle" => "required",
-                "scolarite" => "required|numeric",
-            ], [
-                // "school_id.required" => "L'école est réquise",
-                "professeur_ids.array" => "Le format des professeurs est invalide",
-                "professeur_ids.exists" => "Un ou plusieurs professeurs sélectionnés sont invalides",
-                "school_id.integer" => "L'école est invalide",
-                "libelle.required" => "Le libelle est réquis!",
-                "scolarite.required" => "La scolarité est réquise",
-                "scolarite.numeric" => "Le format n'est pas valide",
-            ]);
-
             $classe = Classe::create($validated);
 
-            if ($request->professeur_ids) {
-                $classe->professeurs()->sync($validated["professeur_ids"]);
-            }
+            $classe->lignes()->createMany($lignes);
 
-            Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();
 
             return redirect()->route("classe.index");
-        } catch (ValidationException $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::debug("Erreure de validation lors de la création de la classe ", ["error" => $e->errors()]);
-            return back()->withErrors($e->errors());
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::debug("Erreure lors de la création de la classe ", ["exception" => $e->getMessage()]);
-            return back()->withErrors($e->getMessage());
+            Log::error("Erreur lors de la création de la classe", [
+                "exception" => $e->getMessage(),
+                "trace" => $e->getTraceAsString(),
+            ]);
+            return back()
+                ->withInput()
+                ->withErrors("Une erreur est survenue lors de la création de la classe.");
         }
     }
 
@@ -102,6 +127,8 @@ class ClasseController extends Controller
      */
     function edit(Classe $classe)
     {
+        $classe->load(['serie', 'lignes.professeur', 'lignes.matiere']);
+
         if (Auth::user()->school) {
             $schools = School::latest()
                 ->where("id", Auth::user()->school_id)->get();
@@ -109,57 +136,83 @@ class ClasseController extends Controller
             $schools = School::latest()->get();
         }
 
+        $professeurs = Auth::user()->school ? Auth::user()->school->professeurs : [];
+        $matieres = Auth::user()->school ? Auth::user()->school->matieres : [];
+        $series = Auth::user()->school ? Auth::user()->school->series()->latest()->get() : Serie::latest()->get();
+
         return Inertia::render('Classe/Update', [
             "schools" => $schools,
-            "professeurs" => Auth::user()->school ? Auth::user()->school->professeurs->load("school") : User::whereHas("roles", fn($query) => $query->where("name", "Professeur"))->with("school")->get(),
             "classe" => $classe,
-            "professeurs_ids" => $classe->professeurs->pluck("id")->toArray(),
+            "professeurs" => $professeurs,
+            "matieres" => $matieres,
+            "series" => $series,
         ]);
     }
 
     /**
      * Update
      */
-    function update(Request $request, Classe $classe)
+    public function update(Request $request, Classe $classe)
     {
+        $validated = $request->validate([
+            "school_id" => "nullable|integer",
+            "serie_id" => "required|integer|exists:series,id",
+            "libelle" => "required",
+            "scolarite" => "required|numeric",
+            "lignes" => "required|array|min:1",
+            "lignes.*.professeur_id" => "required|integer|exists:users,id",
+            "lignes.*.matiere_id" => "required|integer|exists:matieres,id",
+            "lignes.*.coefficient" => "required|numeric",
+        ], [
+            "school_id.integer" => "L'école est invalide",
+            "serie_id.required" => "La série est requise",
+            "serie_id.integer" => "La série est invalide",
+            "serie_id.exists" => "La série n'existe pas",
+            "libelle.required" => "Le libelle est réquis!",
+            "scolarite.required" => "La scolarité est requise",
+            "scolarite.numeric" => "Le format n'est pas valide",
+
+            "lignes.required" => "Au moins une ligne est requise",
+            "lignes.array" => "Le format des lignes est invalide",
+            "lignes.min" => "Au moins une ligne est requise",
+
+            "lignes.*.professeur_id.required" => "Le professeur est requis",
+            "lignes.*.professeur_id.integer" => "Le professeur est invalide",
+            "lignes.*.professeur_id.exists" => "Le professeur n'existe pas",
+
+            "lignes.*.matiere_id.required" => "La matière est requise",
+            "lignes.*.matiere_id.integer" => "La matière est invalide",
+            "lignes.*.matiere_id.exists" => "La matière n'existe pas",
+
+            "lignes.*.coefficient.required" => "Le coefficient est requis",
+            "lignes.*.coefficient.numeric" => "Le format du coefficient est invalide",
+        ]);
+
+        $lignes = $validated['lignes'];
+        unset($validated['lignes']);
+
         try {
             DB::beginTransaction();
 
-            Log::debug("Donnees entrees", ["data" => $request->all()]);
-
-            $validated = $request->validate([
-                'professeur_ids' => 'nullable|array|exists:users,id',
-                "school_id" => "nullable|integer",
-                "libelle" => "required",
-                "scolarite" => "required|numeric",
-            ], [
-                // "school_id.required" => "L'école est réquise",
-                "professeur_ids.array" => "Le format des professeurs est invalide",
-                "professeur_ids.exists" => "Un ou plusieurs professeurs sélectionnés sont invalides",
-                "school_id.integer" => "L'école est invalide",
-                "libelle.required" => "Le libelle est réquis!",
-                "scolarite.required" => "La scolarité est réquise",
-                "scolarite.numeric" => "Le format n'est pas valide",
-            ]);
-
             $classe->update($validated);
 
-            if ($request->professeur_ids) {
-                $classe->professeurs()->sync($validated["professeur_ids"]);
-            }
+            // on remplace toutes les lignes existantes par les nouvelles
+            $classe->lignes()->delete();
+            $classe->lignes()->createMany($lignes);
 
-            Log::debug("Donnees validées", ["data" => $validated]);
             DB::commit();
 
             return redirect()->route("classe.index");
-        } catch (ValidationException $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            Log::debug("Erreure de validation lors de la création de la classe ", ["error" => $e->errors()]);
-            return back()->withErrors($e->errors());
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::debug("Erreure lors de la création de la classe ", ["exception" => $e->getMessage()]);
-            return back()->withErrors($e->getMessage());
+            Log::error("Erreur lors de la mise à jour de la classe", [
+                "classe_id" => $classe->id,
+                "exception" => $e->getMessage(),
+                "trace" => $e->getTraceAsString(),
+            ]);
+            return back()
+                ->withInput()
+                ->withErrors("Une erreur est survenue lors de la mise à jour de la classe.");
         }
     }
 
@@ -168,6 +221,7 @@ class ClasseController extends Controller
      */
     function destroy(Classe $classe)
     {
+        Log::info("Début de suppression de la classe");
         try {
             DB::beginTransaction();
 

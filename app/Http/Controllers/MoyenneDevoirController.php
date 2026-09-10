@@ -6,7 +6,6 @@ use App\Http\Resources\DevoirResource;
 use App\Models\Apprenant;
 use App\Models\Matiere;
 use App\Models\Trimestre;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -19,14 +18,14 @@ class MoyenneDevoirController extends Controller
 
         $user = Auth::user();
         if ($user->school) {
-            if ($user->hasRole("Professeur")) {
+            if ($user->hasRole(["Professeur", "Parent"])) {
                 $apprenants = $user->apprenants;
             } else {
-                $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
-                    ->where("school_id", Auth::user()->school_id)->get();
+                $apprenants = Apprenant::with(["school", "parent", "classe.serie"])->latest()
+                    ->where("school_id", $user->school_id)->get();
             }
         } else {
-            $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
+            $apprenants = Apprenant::with(["school", "parent", "classe.serie"])->latest()->get();
         }
 
         /**
@@ -35,9 +34,15 @@ class MoyenneDevoirController extends Controller
         $apprenants->transform(function ($apprenant) use ($trimestre, $annee_scolaire, $user) {
             if ($user->school_id) {
                 if ($user->hasRole("Professeur")) {
-                    $matieres = $user->matieres; //les matières du prof
+                    $matieres = $user->matieres()
+                        ->with("matiere")
+                        ->get()
+                        ->pluck("matiere")
+                        ->filter()
+                        ->unique("id")
+                        ->values(); // les matières du professeur
                 } else {
-                    $matieres = $apprenant->school?->matieres;
+                    $matieres = $apprenant->school?->matieres ?? collect();
                 }
             } else {
                 $matieres = Matiere::latest()->get();

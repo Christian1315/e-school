@@ -36,6 +36,21 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
         annee_scolaire: new Date().getFullYear()
     });
 
+    const selectedApprenant = apprenants.data.find(
+        (apprenant) => apprenant.id === data.apprenant_id
+    );
+    const isProfessor = authUser.user?.roles?.some(
+        (role) => role.name === 'Professeur'
+    );
+    const professeurMatiereIds = new Set(
+        (matieres?.data ?? []).map((matiere) => matiere.id)
+    );
+    const apprenantMatieres = selectedApprenant?.classe?.lignes
+        ?.map((ligne) => ligne.matiere)
+        .filter((matiere) =>
+            matiere && (!isProfessor || professeurMatiereIds.has(matiere.id))
+        ) ?? [];
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -139,7 +154,11 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                     label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
-                                                onChange={(option) => setData('apprenant_id', option.value)} // update state with id
+                                                onChange={(option) => setData((currentData) => ({
+                                                    ...currentData,
+                                                    apprenant_id: option?.value ?? '',
+                                                    matiere_id: '',
+                                                }))} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.apprenant_id} />
@@ -182,11 +201,11 @@ export default function Create({ schools, apprenants, trimestres, matieres }) {
                                                 id="matiere_id"
                                                 required
                                                 className="form-control mt-1 block w-full"
-                                                options={matieres.data.map((matiere) => ({
+                                                options={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
-                                                value={matieres.data.map((matiere) => ({
+                                                value={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle} ${!authUser.school ? matiere.school?.raison_sociale ?? '' : ''}`,
                                                 }))

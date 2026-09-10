@@ -5,7 +5,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import CIcon from '@coreui/icons-react';
-import { cilSend, cilArrowCircleLeft, cilPencil, cibBuffer, cilList } from "@coreui/icons";
+import { cilSend, cibBuffer, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import { useEffect, useState } from 'react';
 
@@ -24,7 +24,6 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
         post,
         processing,
     } = useForm({
-        // school_id: school.id || "",
         apprenant_id: "",
         trimestre_id: trimestre.id || "",
         matiere_id: matiere.id || "",
@@ -91,7 +90,7 @@ export default function StoreMultiple({ trimestre, matiere, classe, apprenants }
                     Swal.fire({
                         icon: 'success',
                         title: 'Opération réussie',
-                        text: 'Devoir(s) crée(s) avec succès',
+                        text: 'Devoir(s) créé(s) avec succès',
                     });
                 },
                 onError: (e) => {

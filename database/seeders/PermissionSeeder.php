@@ -16,6 +16,7 @@ class PermissionSeeder extends Seeder
             "Voir les $name" => "$permission.view",
             "Créer des $name" => "$permission.create",
             "Modifier les $name" => "$permission.edit",
+            "Valider des $name" => "$permission.validate",
             "Supprimer des $name" => "$permission.delete",
         ];
     }
@@ -36,6 +37,8 @@ class PermissionSeeder extends Seeder
                 $this->createCrudValidatePermissions("paiements", "paiement"),
                 ["Imprimer un reçu" => "paiement.imprimer.receit"]
             ),
+
+            'Reglements' => $this->createCrudValidatePermissions('reglements', 'reglement'),
 
             "Interrogations" => $this->createCrudValidatePermissions("interrogations", "interrogation"),
             "Devoirs" => $this->createCrudValidatePermissions("devoirs", "devoir"),

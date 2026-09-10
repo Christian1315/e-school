@@ -12,7 +12,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 
-export default function List({ _devoirs, schools, trimestres, matieres, classes, series }) {
+export default function List({ _devoirs, schools, trimestres, matieres, classes }) {
     const authUser = usePage().props.auth;
     const auth = usePage().props.auth.user;
 
@@ -38,7 +38,6 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
         trimestre_id: "",
         classe_id: "",
         matiere_id: "",
-        serie_id: "",
         devoirscheckeds: []
     })
 
@@ -482,11 +481,11 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                                         className="form-control mt-1 block w-full"
                                         options={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
+                                            label: `${classe.libelle} ${classe.serie?.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))}
                                         value={(selectedSchool.classes ?? classes.data).map((classe) => ({
                                             value: classe.id,
-                                            label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
+                                            label: `${classe.libelle} ${classe.serie?.libelle} ${!authUser.school ? classe.school?.raison_sociale ?? '' : ''}`,
                                         }))
                                             .find((option) => option.value === data.classe_id)} // set selected option
                                         onChange={(option) => setData('classe_id', option.value)} // update state with id
@@ -497,9 +496,8 @@ export default function List({ _devoirs, schools, trimestres, matieres, classes,
                             </div>
                         }
 
-                        {/* Les series */}
-                        {(selectedSchool.series ?? series.data).length > 0 &&
-                            <div className="col-md-12">
+                        {/* Series are intentionally not part of a Devoir. */}
+                        {false && <div className="col-md-12">
                                 <div className='mb-3'>
                                     <InputLabel htmlFor="serie_id" value="La série concernée" >  <span className="text-danger">*</span> </InputLabel>
 

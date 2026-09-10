@@ -42,18 +42,17 @@ class AuthenticatedSessionController extends Controller
             }
 
             DB::commit();
-            $user = Auth::user();
 
             /***
              *  un utilisateur qui n'a pas le role Super Administrateur ou Administrateur
              * */
+            $user = Auth::user();
             if ($user && !$user->hasRole(["Super Administrateur", "Administrateur"])) {
                 return redirect()->intended(route('apprenant.index', absolute: false));
             }
 
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // dd("errorrr Validation");
             DB::rollBack();
             Log::debug("Erreure de Validation: ", ["error" => $e->errors()]);
             return redirect()->back()->withErrors($e->errors())->withInput();

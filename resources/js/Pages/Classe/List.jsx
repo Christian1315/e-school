@@ -5,6 +5,7 @@ import { cibAddthis, cibBuffer, cilDelete, cilList, cilMenu, cilPencil } from "@
 import Modal from '@/Components/Modal';
 import { useState } from 'react';
 import SecondaryButton from '@/Components/SecondaryButton';
+import Swal from 'sweetalert2';
 
 export default function List({ classes }) {
     const permissions = usePage().props.auth.permissions;
@@ -18,7 +19,7 @@ export default function List({ classes }) {
     const { data, delete: destroy } = useForm({})
 
     const [showModal, setShowModal] = useState(false);
-    const [showProfModal, setShowProfModal] = useState(false);
+    const [showLignesModal, setShowLignesModal] = useState(false);
     const [currentClasse, setCurrentClasse] = useState(null);
 
     const confirmShowModal = (e, classe) => {
@@ -33,15 +34,15 @@ export default function List({ classes }) {
         setShowModal(false);
     };
 
-    // Prof modal
-    const confirmShowProfModal = (e, classe) => {
+    // Modal lignes (professeur / matière / coefficient)
+    const confirmShowLignesModal = (e, classe) => {
         e.preventDefault();
         setCurrentClasse(classe)
-        setShowProfModal(true);
+        setShowLignesModal(true);
     }
 
-    const closeProfModal = () => {
-        setShowProfModal(false);
+    const closeLignesModal = () => {
+        setShowLignesModal(false);
     };
 
     // suppression de la classe
@@ -111,12 +112,13 @@ export default function List({ classes }) {
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
-                                    <th scope="col">N°</th>
+                                    <th scope="col">ID</th>
                                     <th scope="col">Action</th>
                                     <th scope="col">Libelle</th>
+                                    <th scope="col">Série</th>
                                     <th scope="col">Scolarité</th>
                                     <th scope="col">Apprenants</th>
-                                    <th scope="col">Professeurs</th>
+                                    <th scope="col">Prof / Matière / Coeff</th>
                                     <th scope="col">Ecole</th>
                                 </tr>
                             </thead>
@@ -124,7 +126,7 @@ export default function List({ classes }) {
                                 {
                                     classes.data.map((classe, index) => (
                                         <tr key={classe.id}>
-                                            <th scope="row">{index + 1}</th>
+                                            <th scope="row">{classe.id}</th>
                                             <td className='text-center'>
                                                 {
                                                     <div className="dropstart">
@@ -161,11 +163,12 @@ export default function List({ classes }) {
                                                 }
                                             </td>
                                             <td>{classe.libelle}</td>
+                                            <td>{classe.serie?.libelle ?? '---'}</td>
                                             <td><span className="badge bg-light text-dark border rounded"> {classe.scolarite ?? '00'} FCFA</span></td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"
                                                 onClick={(e) => confirmShowModal(e, classe)}> {classe.apprenants.length} <CIcon icon={cilList} className='text-success' /> </button></td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"
-                                                onClick={(e) => confirmShowProfModal(e, classe)}> {classe.professeurs.length} <CIcon icon={cilList} className='text-success' /> </button></td>
+                                                onClick={(e) => confirmShowLignesModal(e, classe)}> {classe.lignes?.length ?? 0} <CIcon icon={cilList} className='text-success' /> </button></td>
                                             <td><span className="badge bg-light border rounded text-dark shadow">{classe.school?.raison_sociale ?? '---'}</span></td>
                                         </tr>
                                     ))
@@ -176,39 +179,43 @@ export default function List({ classes }) {
                 </div>
             </div>
 
-            {/* Modal des professeurs */}
-            <Modal show={showProfModal} onClose={closeProfModal}>
+            {/* Modal des lignes (professeur / matière / coefficient) */}
+            <Modal show={showLignesModal} onClose={closeLignesModal}>
                 {({ tableRef }) =>
                     <div className="p-3">
                         <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            Liste des professeurs de la classe: <em className='text-success'>{currentClasse?.libelle} </em>
+                            Professeurs, matières & coefficients de la classe: <em className='text-success'>{currentClasse?.libelle} </em>
                         </h2>
 
                         <table className="table table-striped min-w-full" id='modalTable' ref={tableRef} >
                             <thead>
                                 <tr>
                                     <th scope="col">N°</th>
-                                    <th scope="col">Nom & Prénom</th>
-                                    <th scope="col">Email</th>
+                                    <th scope="col">Professeur</th>
+                                    <th scope="col">Matière</th>
+                                    <th scope="col">Coefficient</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    currentClasse?.professeurs.length > 0 ?
-                                        currentClasse?.professeurs.map((prof, index) => (
-                                            <tr key={prof.id}>
+                                    currentClasse?.lignes?.length > 0 ?
+                                        currentClasse.lignes.map((ligne, index) => (
+                                            <tr key={ligne.id}>
                                                 <th scope="row">{index + 1}</th>
-                                                <td>{`${prof.firstname || '--'}-${prof?.lastname || '--'}`}</td>
-                                                <td>{`${prof.email}`}</td>
+                                                <td>{`${ligne.professeur?.firstname || '--'} ${ligne.professeur?.lastname || '--'}`}</td>
+                                                <td>{ligne.matiere?.libelle ?? ligne.matiere?.nom ?? '--'}</td>
+                                                <td>{ligne.coefficient ?? '--'}</td>
                                             </tr>
                                         )) :
-                                        <tr className='text-center'>Aucun element trouvé</tr>
+                                        <tr>
+                                            <td colSpan={4} className='text-center'>Aucun element trouvé</td>
+                                        </tr>
                                 }
                             </tbody>
                         </table>
 
                         <div className="mt-6 flex justify-end">
-                            <SecondaryButton onClick={closeProfModal}>
+                            <SecondaryButton onClick={closeLignesModal}>
                                 Fermer
                             </SecondaryButton>
                         </div>
@@ -230,7 +237,6 @@ export default function List({ classes }) {
                                     <th scope="col">N°</th>
                                     <th scope="col">Nom & Prénom</th>
                                     <th scope="col">Parent</th>
-                                    <th scope="col">Serie</th>
                                     <th scope="col">Télephone</th>
                                     <th scope="col">Edu cMaster</th>
                                 </tr>
@@ -243,9 +249,8 @@ export default function List({ classes }) {
                                                 <th scope="row">{index + 1}</th>
                                                 <td>{`${apprenant.firstname}-${apprenant.lastname}`}</td>
                                                 <td>{`${apprenant.parent?.firstname || '--'}-${apprenant.parent?.lastname || '--'}`}</td>
-                                                <td>{`${apprenant.serie?.libelle}`}</td>
-                                                <td>{apprenant.phone}</td>
-                                                <td>{apprenant.educ_master}</td>
+                                                <td>{apprenant.phone || '---'}</td>
+                                                <td>{apprenant.educ_master || '---'}</td>
                                             </tr>
                                         )) :
                                         <tr className='text-center'>Aucun element trouvé</tr>

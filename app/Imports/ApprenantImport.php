@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\Detail;
-use App\Models\Serie;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithSkipDuplicates;
@@ -32,36 +31,26 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
         /**
          * 
          */
-        if (!isset($row[0]) || !isset($row[1]) || !isset($row[2]) || !isset($row[4]) || !isset($row[5])) {
+        if (!isset($row[0]) || !isset($row[1]) || !isset($row[2]) || !isset($row[3]) || !isset($row[4])) {
             throw new \Exception("Tous les champs (nom, Prénom, Parent,Série, Classe) sont réquis!");
         }
 
         /**Sexe */
-        if (!in_array($row[4], ['Masculin', 'Féminin'])) {
-            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le sexe doit être soit (Masculin ou Féminin) $row[5] n'existe pas!");
+        if (!in_array($row[3], ['Masculin', 'Féminin'])) {
+            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . Le sexe doit être soit (Masculin ou Féminin) $row[4] n'existe pas!");
         }
 
         /**Classe **/
         if (Auth::user()->school_id) {
-            $isClasseExiste = isset($row[5]) ?
-                Classe::where("school_id", Auth::user()->school_id)->firstWhere(["libelle" => $row[5]]) : null;
+            $isClasseExiste = isset($row[4]) ?
+                Classe::where("school_id", Auth::user()->school_id)->firstWhere("id", $row[4]) : null;
         } else {
-            $isClasseExiste = isset($row[5]) ?
-                Classe::firstWhere(["libelle" => $row[5]]) : null;
+            $isClasseExiste = isset($row[4]) ?
+                Classe::firstWhere("id" , $row[4]) : null;
         }
 
         if (!$isClasseExiste) {
-            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La classe $row[5] n'existe pas!");
-        }
-
-        /**Serie */
-        if (Auth::user()->school_id) {
-            $isSerieExiste = isset($row[3]) ?
-                Serie::where("school_id", Auth::user()->school_id)
-                ->firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
-        } else {
-            $isSerieExiste = isset($row[3]) ?
-                Serie::firstWhere(["libelle" => isset($row[3]) ? $row[3] : null]) : null;
+            throw new \Exception("Erreure lors de l'insertion de la ligne: $rowIndex . La classe $row[4] n'existe pas!");
         }
 
         /**Parent */
@@ -78,7 +67,6 @@ class ApprenantImport implements OnEachRow, WithSkipDuplicates
             'lastname' => $rowData[1],
             'parent_id' => $isParentExiste?->id,
             'classe_id' => $isClasseExiste?->id,
-            'serie_id' => $isSerieExiste?->id,
             'school_id' => Auth::user()->school_id,
         ]);
     }

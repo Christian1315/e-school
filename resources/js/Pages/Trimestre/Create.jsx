@@ -22,11 +22,8 @@ export default function Create({ schools }) {
         data,
         setData,
         errors,
-        put,
         post,
-        reset,
         processing,
-        progress
     } = useForm({
         libelle: "",
         school_id: "",
@@ -92,13 +89,13 @@ export default function Create({ schools }) {
                                     {!authUser.school_id &&
                                         <div className="col-md-6">
                                             <div className='mb-3'>
-                                                <InputLabel htmlFor="school_id" value="L'école concernée" >  <span className="text-danger">*</span> </InputLabel>
+                                                <InputLabel htmlFor="school_id" value="L'école concernée" > </InputLabel>
 
                                                 <Select
                                                     placeholder="Rechercher une école ..."
                                                     name="school_id"
                                                     id="school_id"
-                                                    required
+                                                    // required
                                                     className="form-control mt-1 block w-full"
                                                     options={schools.map((school) => ({
                                                         value: school.id,
@@ -115,7 +112,6 @@ export default function Create({ schools }) {
 
                                                 <InputError className="mt-2" message={errors.school_id} />
                                             </div>
-
                                         </div>
                                     }
                                     <div className="col-md-6">
@@ -130,7 +126,6 @@ export default function Create({ schools }) {
                                                 autoComplete="libelle"
                                                 required
                                             />
-
                                             <InputError className="mt-2" message={errors.libelle} />
                                         </div>
                                     </div>

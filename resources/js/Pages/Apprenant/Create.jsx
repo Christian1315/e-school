@@ -9,7 +9,7 @@ import { cilSend, cilList, cibAddthis } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function Create({ parents, classes, series }) {
+export default function Create({ parents, classes }) {
     const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
@@ -29,7 +29,6 @@ export default function Create({ parents, classes, series }) {
     } = useForm({
         school_id: "",
         classe_id: "",
-        serie_id: "",
         firstname: "",
         lastname: "",
         adresse: "",
@@ -137,43 +136,18 @@ export default function Create({ parents, classes, series }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={classes.map((classe) => ({
                                                     value: classe.id,
-                                                    label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
+                                                    label: `${classe.libelle} - ${classe.serie?.libelle || ''} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
                                                 }))}
                                                 value={classes
                                                     .map((classe) => ({
                                                         value: classe.id,
-                                                        label: `${classe.libelle} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
+                                                        label: `${classe.libelle} - ${classe.serie?.libelle || ''} ${!authUser.school ? classe.school?.raison_sociale || '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.classe_id)} // set selected option
                                                 onChange={(option) => setData('classe_id', option.value)} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.classe_id} />
-                                        </div>
-
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="serie_id" value="Série concernée" >  </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une série ..."
-                                                name="serie_id"
-                                                id="serie_id"
-                                                // required
-                                                className="form-control mt-1 block w-full"
-                                                options={series.map((serie) => ({
-                                                    value: serie.id,
-                                                    label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale || '' : ''}`,
-                                                }))}
-                                                value={series
-                                                    .map((serie) => ({
-                                                        value: serie.id,
-                                                        label: `${serie.libelle} ${!authUser.school ? serie.school?.raison_sociale || '' : ''}`,
-                                                    }))
-                                                    .find((option) => option.value === data.serie_id)} // set selected option
-                                                onChange={(option) => setData('serie_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.serie_id} />
                                         </div>
 
                                         <div className='mb-3'>

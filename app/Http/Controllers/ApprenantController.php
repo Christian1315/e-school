@@ -7,7 +7,6 @@ use App\Imports\ApprenantImport;
 use App\Models\Apprenant;
 use App\Models\Classe;
 use App\Models\School;
-use App\Models\Serie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,14 +24,14 @@ class ApprenantController extends Controller
     {
         $user = Auth::user();
         if ($user->school) {
-            if ($user->hasRole("Professeur")) {
+            if ($user->hasRole(["Professeur", "Parent"])) {
                 $apprenants = $user->apprenants;
             } else {
-                $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()
+                    $apprenants = Apprenant::with(["school", "parent", "classe.serie"])->latest()
                     ->where("school_id", Auth::user()->school_id)->get();
             }
         } else {
-            $apprenants = Apprenant::with(["school", "parent", "classe", "serie"])->latest()->get();
+                $apprenants = Apprenant::with(["school", "parent", "classe.serie"])->latest()->get();
         }
 
         return Inertia::render('Apprenant/List', [
@@ -46,13 +45,12 @@ class ApprenantController extends Controller
     function create()
     {
         $parentsQuery = User::query();
-        $classesQuery = Classe::query();
-        $seriesQuery = Serie::query();
+        $classesQuery = Classe::query()->with('serie');
 
-        if (Auth::user()->school_id) {
-            $parentsQuery->where('school_id', Auth::user()->school_id);
-            $classesQuery->where('school_id', Auth::user()->school_id);
-            $seriesQuery->where('school_id', Auth::user()->school_id);
+        $user = Auth::user();
+        if ($user->school_id) {
+            $parentsQuery->where('school_id', $user->school_id);
+            $classesQuery->where('school_id', $user->school_id);
         }
 
         $parents = $parentsQuery
@@ -63,7 +61,6 @@ class ApprenantController extends Controller
         return Inertia::render('Apprenant/Create', [
             "parents" => $parents->load("school")->unique("id"),
             "classes" => $classesQuery->with("school")->get(),
-            "series" => $seriesQuery->with("school")->get(),
         ]);
     }
 
@@ -78,7 +75,6 @@ class ApprenantController extends Controller
                     'apprenants' => 'required|file|mimes:xlsx,xls|max:5120',
                 ],
                 [
-                    'apprenants.required' => 'Le fichier est obligatoire.',
                     'apprenants.file'     => 'Vous devez envoyer un fichier valide.',
                     'apprenants.mimes'    => 'Le fichier doit être au format : .xlsx ou .xls.',
                     'apprenants.max'      => 'Le fichier ne doit pas dépasser 5 Mo.',
@@ -99,7 +95,6 @@ class ApprenantController extends Controller
                 'erreur' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return back()->withErrors($e->errors());
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Erreur générale lors de l'import", [
@@ -121,7 +116,6 @@ class ApprenantController extends Controller
                 "parent_id"      => "required|integer",
                 // "school_id"      => "required|integer",
                 "classe_id"      => "nullable|integer",
-                "serie_id"      => "nullable|integer",
                 "firstname"      => "required|string",
                 "lastname"       => "required|string",
                 "adresse"        => "required|string",
@@ -141,9 +135,6 @@ class ApprenantController extends Controller
 
                 "classe_id.required"      => "La classe est obligatoire.",
                 "classe_id.integer"       => "La classe doit être un identifiant valide.",
-
-                "serie_id.integer"       => "La serie doit être un identifiant valide.",
-
 
                 "firstname.required"      => "Le prénom de l'apprenant est obligatoire.",
                 "lastname.required"       => "Le nom de l'apprenant est obligatoire.",
@@ -191,13 +182,12 @@ class ApprenantController extends Controller
     function edit(Apprenant $apprenant)
     {
         $parentsQuery = User::query();
-        $classesQuery = Classe::query();
-        $seriesQuery = Serie::query();
+        $classesQuery = Classe::query()->with('serie');
 
-        if (Auth::user()->school_id) {
-            $parentsQuery->where('school_id', Auth::user()->school_id);
-            $classesQuery->where('school_id', Auth::user()->school_id);
-            $seriesQuery->where('school_id', Auth::user()->school_id);
+        $user = Auth::user();
+        if ($user->school_id) {
+            $parentsQuery->where('school_id', $user->school_id);
+            $classesQuery->where('school_id', $user->school_id);
         }
 
         $parents = $parentsQuery
@@ -207,11 +197,10 @@ class ApprenantController extends Controller
 
         return Inertia::render('Apprenant/Update', [
             "parents" => $parents->load("school")->unique("id"),
-            "schools" => Auth::user()->school_id ?
-                School::where("id", Auth::user()->school_id)->get() :
-                School::all(),
+            "schools" => Auth::user()->school_id
+                ? School::where("id", Auth::user()->school_id)->get()
+                : School::all(),
             "classes" => $classesQuery->with("school")->get(),
-            "series" => $seriesQuery->with("school")->get(),
             "apprenant" => $apprenant,
         ]);
     }
@@ -231,7 +220,6 @@ class ApprenantController extends Controller
                 "parent_id"      => "required|integer",
                 "school_id"      => "required|integer",
                 "classe_id"      => "nullable|integer",
-                "serie_id"      => "nullable|integer",
                 "firstname"      => "required|string",
                 "lastname"       => "required|string",
                 "adresse"        => "required|string",
@@ -251,9 +239,6 @@ class ApprenantController extends Controller
 
                 "classe_id.required"      => "La classe est obligatoire.",
                 "classe_id.integer"       => "La classe doit être un identifiant valide.",
-
-                "serie_id.integer"       => "La serie doit être un identifiant valide.",
-
 
                 "firstname.required"      => "Le prénom de l'apprenant est obligatoire.",
                 "lastname.required"       => "Le nom de l'apprenant est obligatoire.",
@@ -298,7 +283,7 @@ class ApprenantController extends Controller
     /**
      * Destroy
      */
-    function destroy(Request $request, Apprenant $apprenant)
+    function destroy(Apprenant $apprenant)
     {
         try {
             DB::beginTransaction();

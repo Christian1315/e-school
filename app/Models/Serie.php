@@ -26,6 +26,14 @@ class Serie extends Model
         return $this->belongsTo(School::class, "school_id");
     }
 
+    /**
+     * Classes
+     */
+    function classes(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Classe::class);
+    }
+
     static function booted()
     {
         static::creating(function ($serie) {

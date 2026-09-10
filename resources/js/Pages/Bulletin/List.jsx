@@ -112,8 +112,8 @@ export default function List({ apprenants, trimestre }) {
                                             <th scope="row">{index + 1}</th>
                                             <td className='text-center'>
                                                 {checkPermission('bulletin.imprimer') ?
-                                                    (<button className="btn bg-light border rounded text-dark"
-                                                        onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} /> </button>) : null
+                                                    (<button className="btn btn-success border rounded shadow-sm"
+                                                        onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-white' icon={cilFilterPhoto} /> </button>) : null
                                                 }
                                             </td>
                                             <td>
@@ -128,8 +128,7 @@ export default function List({ apprenants, trimestre }) {
                                             <td>{apprenant.firstname}</td>
                                             <td>{apprenant.lastname}</td>
                                             <td>{apprenant.parent?.firstname} {apprenant.parent?.lastname}</td>
-                                            <td>{apprenant.classe?.libelle} - {apprenant.serie?.libelle} </td>
-
+                                            <td>{apprenant.classe?.libelle} - {apprenant.classe?.serie?.libelle} </td>
                                         </tr>
                                     ))
                                 }

@@ -20,6 +20,7 @@ class Classe extends Model
     protected $fillable = [
         "libelle",
         "school_id",
+        "serie_id",
         "scolarite",
         "created_by",
         "updated_by",
@@ -31,17 +32,34 @@ class Classe extends Model
     protected $casts = [
         "libelle"      => "string",
         "school_id"     => "integer",
+        "serie_id"      => "integer",
         "scolarite"     => "decimal:2",
         "created_by"     => "integer",
         "updated_by"     => "integer",
     ];
 
     /**
-     * Eccole
+     * Ecole
      */
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    /**
+     * Série de la classe
+     */
+    public function serie(): BelongsTo
+    {
+        return $this->belongsTo(Serie::class);
+    }
+
+    /**
+     * Lignes
+     */
+    public function lignes()
+    {
+        return $this->hasMany(ClasseProfesseur::class);
     }
 
     /**
@@ -58,6 +76,14 @@ class Classe extends Model
     public function professeurs(): BelongsToMany
     {
         return $this->belongsToMany(User::class, "classe_professeur", "classe_id", "professeur_id");
+    }
+
+    /**
+     * Matieres
+     */
+    public function matieres(): BelongsToMany
+    {
+        return $this->belongsToMany(Matiere::class, "classe_matiere", "classe_id", "matiere_id")->withPivot("coefficient");
     }
 
     /**
@@ -89,11 +115,6 @@ class Classe extends Model
             $model->created_by = Auth::id();
             $model->school_id = Auth::user()->school_id;
         });
-
-        // // created
-        // static::created(function ($model) {
-        //     $model->school_id = Auth::user()->school_id;
-        // });
 
         // updating
         static::updating(function ($model) {

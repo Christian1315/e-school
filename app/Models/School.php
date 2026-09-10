@@ -142,6 +142,14 @@ class School extends Model
     }
 
     /**
+     * Series 
+     */
+    function series(): HasMany
+    {
+        return $this->hasMany(Serie::class);
+    }
+
+    /**
      * Interrogations 
      */
     function interrogations(): HasMany

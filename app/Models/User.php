@@ -77,17 +77,17 @@ class User extends Authenticatable
     /**
      * Classes
      */
-    public function classes(): BelongsToMany
+    public function classes(): HasMany
     {
-        return $this->belongsToMany(Classe::class, "classe_professeur", "professeur_id", "classe_id");
+        return $this->hasMany(ClasseProfesseur::class, "professeur_id");
     }
 
     /**
      * Matieres
      */
-    public function matieres(): BelongsToMany
+    public function matieres(): HasMany
     {
-        return $this->belongsToMany(Matiere::class, "matiere_professeur", "professeur_id", "matiere_id");
+        return $this->hasMany(ClasseProfesseur::class, "professeur_id");
     }
 
     /**
@@ -96,12 +96,32 @@ class User extends Authenticatable
     function getApprenantsAttribute()
     {
         $apprenants = [];
+
+        // les apprennants du Professeur connecté
         if ($this->hasRole("Professeur")) {
-            $classes = $this->classes()
-                ->with("apprenants")->get();
-            $apprenants = $classes->flatMap->apprenants->unique("id")->values();
+            $classeIds = $this->classes
+                ->pluck("classe_id")
+                ->toArray();
+            $apprenants = Apprenant::whereIn("classe_id", $classeIds)
+                ->with(["school", "parent", "classe.serie"])
+                ->get();
         }
+
+        // les apprenents du Parent connecté
+        if ($this->hasRole("Parent")) {
+            $apprenants = $this->ParentApprenants;
+        }
+
         return $apprenants;
+    }
+
+    /**
+     * Parent' apprenants
+     */
+    public function ParentApprenants(): HasMany
+    {
+        return $this->hasMany(Apprenant::class, "parent_id")
+            ->with(["classe.serie"]);
     }
 
     /**

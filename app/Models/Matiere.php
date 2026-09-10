@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,13 +49,20 @@ class Matiere extends Model
     }
 
     /**
-     * Professeurs
+     * Classes
      */
-    public function professeurs(): BelongsToMany
+    public function classes(): HasMany
     {
-        return $this->belongsToMany(User::class, "matiere_professeur", "matiere_id", "professeur_id");
+        return $this->hasMany(ClasseProfesseur::class, "matiere_id", "matiere_id");
     }
 
+    /**
+     * Porfesseur
+     */
+    public function professeurs(): HasMany
+    {
+        return $this->hasMany(ClasseProfesseur::class, "matiere_id");
+    }
     /**
      * Interrogations
      */

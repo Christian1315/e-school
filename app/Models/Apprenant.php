@@ -22,7 +22,6 @@ class Apprenant extends Model
         "parent_id",
         "school_id",
         "classe_id",
-        "serie_id",
         "firstname",
         "lastname",
         "adresse",
@@ -42,7 +41,6 @@ class Apprenant extends Model
      */
     protected $casts = [
         "parent_id"      => "integer",
-        "serie_id"      => "integer",
         "school_id"      => "integer",
         "classe_id"      => "integer",
         "firstname"      => "string",
@@ -81,14 +79,6 @@ class Apprenant extends Model
     public function classe(): BelongsTo
     {
         return $this->belongsTo(Classe::class, "classe_id");
-    }
-
-    /**
-     * Serie
-     */
-    public function serie(): BelongsTo
-    {
-        return $this->belongsTo(Serie::class, "serie_id");
     }
 
     /**

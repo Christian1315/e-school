@@ -9,7 +9,7 @@ import { cilSend,cilPencil, cilList } from "@coreui/icons";
 import Swal from 'sweetalert2';
 import Select from 'react-select'
 
-export default function update({ classes, parents, series, apprenant }) {
+export default function update({ classes, parents, apprenant }) {
     const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
 
@@ -37,7 +37,6 @@ export default function update({ classes, parents, series, apprenant }) {
         parent_id: apprenant.parent_id,
         school_id: apprenant.school_id || "",
         classe_id: apprenant.classe_id || "",
-        serie_id: apprenant.serie_id || "",
         firstname: apprenant.firstname || "",
         lastname: apprenant.lastname || "",
         adresse: apprenant.adresse || "",
@@ -146,43 +145,18 @@ export default function update({ classes, parents, series, apprenant }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={classes.map((classe) => ({
                                                     value: classe.id,
-                                                    label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale || '':''}`,
+                                                    label: `${classe.libelle} - ${classe.serie?.libelle || ''} ${!authUser.school?classe.school?.raison_sociale || '':''}`,
                                                 }))}
                                                 value={classes
                                                     .map((classe) => ({
                                                         value: classe.id,
-                                                        label: `${classe.libelle} ${!authUser.school?classe.school?.raison_sociale || '':''}`,
+                                                        label: `${classe.libelle} - ${classe.serie?.libelle || ''} ${!authUser.school?classe.school?.raison_sociale || '':''}`,
                                                     }))
                                                     .find((option) => option.value === data.classe_id)} // set selected option
                                                 onChange={(option) => setData('classe_id', option.value)} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.classe_id} />
-                                        </div>
-
-                                        <div className='mb-3'>
-                                            <InputLabel htmlFor="serie_id" value="Série concernée" >  </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher une série ..."
-                                                name="serie_id"
-                                                id="serie_id"
-                                                // required
-                                                className="form-control mt-1 block w-full"
-                                                options={series.map((serie) => ({
-                                                    value: serie.id,
-                                                    label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale || '':''}`,
-                                                }))}
-                                                value={series
-                                                    .map((serie) => ({
-                                                        value: serie.id,
-                                                        label: `${serie.libelle} ${!authUser.school?serie.school?.raison_sociale || '':''}`,
-                                                    }))
-                                                    .find((option) => option.value === data.serie_id)} // set selected option
-                                                onChange={(option) => setData('serie_id', option.value)} // update state with id
-                                            />
-
-                                            <InputError className="mt-2" message={errors.serie_id} />
                                         </div>
 
                                         <div className='mb-3'>

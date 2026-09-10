@@ -73,8 +73,8 @@ export default function List({ apprenants, trimestre, annee_scolaire }) {
                                     apprenants.map((apprenant, index) => (
                                         <tr key={apprenant.id}>
                                             <th scope="row">{index + 1}</th>
-                                            <td className='text-center'><button className="btn bg-light border rounded text-dark"
-                                                onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-success' icon={cilFilterPhoto} /> </button></td>
+                                            <td className='text-center'><button className="btn btn-success border shadow-sm rounded"
+                                                onClick={(e) => confirmShowModal(e, apprenant)}> <CIcon className='text-white' icon={cilFilterPhoto} /> </button></td>
                                             <td>
                                                 <img src={apprenant.photo}
                                                     onClick={() => showImg(apprenant)}
@@ -100,12 +100,12 @@ export default function List({ apprenants, trimestre, annee_scolaire }) {
             <Modal show={showModal} onClose={closeModal}>
                 <div className="p-3">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Liste des moyennes pour l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
+                        Moyennes de l'apprenant : <em className='text-success'>{currentApprenant?.firstname} -  {currentApprenant?.lastname} </em>
                     </h2>
 
                     <ul className="nav nav-pills" id="pills-tab" role="tablist">
                         {
-                            currentApprenant?.matieres.length > 0 ?
+                            currentApprenant?.matieres?.length > 0 ?
                                 currentApprenant?.matieres.map((matiere, index) => (
                                     <li className="nav-item" role="presentation" key={matiere.id}>
                                         <button
@@ -126,28 +126,28 @@ export default function List({ apprenants, trimestre, annee_scolaire }) {
 
                     <div className="tab-content mt-3">
                         {
-                            currentApprenant?.matieres.map((matiere, index) => (
+                            currentApprenant?.matieres?.map((matiere, index) => (
                                 <div key={matiere.id} className={`tab-pane fade ${index == 0 ? 'show active' : ''}`}
                                     id={`pills-${matiere.id}`}>
                                     {/* Table Content */}
 
                                     <table className="border-separate border-spacing-2 border border-gray-400 dark:border-gray-500">
                                         <thead>
-                                            <tr>
-                                                <th className="border border-gray-300 dark:border-gray-600">Devoir</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Fait le</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Note</th>
-                                                <th className="border border-gray-300 dark:border-gray-600">Professeur</th>
+                                            <tr className='bg-dark'>
+                                                <th className="border border-gray-300 dark:border-gray-600 text-white rounded">Devoir</th>
+                                                <th className="border border-gray-300 dark:border-gray-600 text-white rounded">Fait le</th>
+                                                <th className="border border-gray-300 dark:border-gray-600 text-white rounded">Note</th>
+                                                <th className="border border-gray-300 dark:border-gray-600 text-white rounded">Professeur</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
-                                                matiere.devoirs.data.length > 0 ?
+                                                matiere.devoirs?.data?.length > 0 ?
                                                     matiere.devoirs.data.map((devoir, index) => (
-                                                        <tr>
+                                                        <tr key={devoir.id ?? `${matiere.id}-${index}`}>
                                                             <th className="border border-gray-100 dark:border-gray-700">Devoir : {index + 1}</th>
                                                             <td className="border border-gray-300 dark:border-gray-700">{devoir.createdAt}</td>
-                                                            <td className="border border-gray-300 dark:border-gray-700">{devoir.note}</td>
+                                                            <td className="border border-gray-300 dark:border-gray-700 text-success">{devoir.note}</td>
                                                             <td className="border border-gray-300 dark:border-gray-700">{`${devoir.createdBy?.firstname} - ${devoir.createdBy?.lastname}`}</td>
                                                         </tr>
                                                     )) : <tr><td colSpan={4}><small className="text-center text-danger">Aucun devoir éffectué</small></td></tr>
@@ -155,7 +155,7 @@ export default function List({ apprenants, trimestre, annee_scolaire }) {
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <td colSpan={3}>Moyenne de devoir: <strong className='text-success'>{matiere.moyenne_devoir}</strong> </td>
+                                                <td colSpan={3}>Moyenne de devoir: <strong className='text-danger'>{matiere.moyenne_devoir}</strong> </td>
                                             </tr>
                                         </tfoot>
                                     </table>

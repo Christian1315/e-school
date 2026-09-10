@@ -183,24 +183,6 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        {/* professeurs */}
-                        {checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ?
-                            (<CNavGroup
-                                toggler={
-                                    <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cibMendeley} /> Les Professeurs
-                                    </>
-                                }
-                            >
-                                {checkPermission('utilisateur.view') ?
-                                    (<Link href={route('professeur.index')} className="nav-link">
-                                        <span className="nav-icon">
-                                            <span className="nav-icon-bullet text-danger"></span>
-                                        </span>
-                                        Liste des professeurs
-                                    </Link>) : null}
-                            </CNavGroup>) : null
-                        }
 
                         {/* apprenants */}
                         {checkPermission("apprenant.view") || checkPermission("apprenant.create") ?
@@ -261,7 +243,7 @@ export default function SidebarMenu(props) {
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cibSamsungPay} /> Les paiements
+                                        <CIcon customClassName="nav-icon text-success" icon={cibSamsungPay} /> Paiements de scolarité
                                     </>
                                 }
                             >
@@ -508,32 +490,22 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        {/* Classes */}
-                        {checkPermission('classe.view') || checkPermission('classe.create') ?
+                        {/* professeurs */}
+                        {checkPermission("utilisateur.view") || checkPermission("utilisateur.create") ?
                             (<CNavGroup
                                 toggler={
                                     <>
-                                        <CIcon customClassName="nav-icon text-success" icon={cibBing} /> Les Classes
+                                        <CIcon customClassName="nav-icon text-success" icon={cibMendeley} /> Les Professeurs
                                     </>
                                 }
                             >
-                                {checkPermission('classe.view') ?
-                                    (<Link component={Link} href={route('classe.index')} className="nav-link">
+                                {checkPermission('utilisateur.view') ?
+                                    (<Link href={route('professeur.index')} className="nav-link">
                                         <span className="nav-icon">
                                             <span className="nav-icon-bullet text-danger"></span>
                                         </span>
-                                        Liste des classes
-                                    </Link>) : null
-                                }
-
-                                {checkPermission('classe.create') ?
-                                    (<Link href={route('classe.create')} className="nav-link">
-                                        <span className="nav-icon">
-                                            <span className="nav-icon-bullet"></span>
-                                        </span>
-                                        Ajouter une classe
-                                    </Link>) : null
-                                }
+                                        Liste des professeurs
+                                    </Link>) : null}
                             </CNavGroup>) : null
                         }
 
@@ -561,6 +533,35 @@ export default function SidebarMenu(props) {
                                             <span className="nav-icon-bullet"></span>
                                         </span>
                                         Ajouter une matière
+                                    </Link>) : null
+                                }
+                            </CNavGroup>) : null
+                        }
+
+                        {/* Classes */}
+                        {checkPermission('classe.view') || checkPermission('classe.create') ?
+                            (<CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cibBing} /> Les Classes
+                                    </>
+                                }
+                            >
+                                {checkPermission('classe.view') ?
+                                    (<Link component={Link} href={route('classe.index')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet text-danger"></span>
+                                        </span>
+                                        Liste des classes
+                                    </Link>) : null
+                                }
+
+                                {checkPermission('classe.create') ?
+                                    (<Link href={route('classe.create')} className="nav-link">
+                                        <span className="nav-icon">
+                                            <span className="nav-icon-bullet"></span>
+                                        </span>
+                                        Ajouter une classe
                                     </Link>) : null
                                 }
                             </CNavGroup>) : null
@@ -595,11 +596,31 @@ export default function SidebarMenu(props) {
                             </CNavGroup>) : null
                         }
 
-                        {(checkPermission('role.view') || checkPermission('role.view')) &&
-                            <CNavTitle>Gestion des Rôles</CNavTitle>}
+                        {checkPermission('reglement.view') && (
+                            <CNavTitle>Facturation</CNavTitle>
+                        )}
 
+                        {checkPermission('reglement.view') || checkPermission('reglement.create') ?
+                            (<CNavGroup
+                                toggler={
+                                    <>
+                                        <CIcon customClassName="nav-icon text-success" icon={cibSamsungPay} /> Les reglements
+                                    </>
+                                }
+                            >
+                                <Link component={Link} href={route('reglement.index')} className="nav-link">
+                                    <span className="nav-icon">
+                                        <span className="nav-icon-bullet text-danger"></span>
+                                    </span>
+                                    Liste des reglements
+                                </Link>
+                            </CNavGroup>) : null
+                        }
+
+                        {(checkPermission('role.view') || checkPermission('role.create')) &&
+                            <CNavTitle>Gestion des Rôles</CNavTitle>}
                         {
-                            checkPermission('role.view') || checkPermission('role.view') ?
+                            checkPermission('role.view') || checkPermission('role.create') ?
                                 (<CNavGroup
                                     toggler={
                                         <>

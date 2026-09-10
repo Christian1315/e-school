@@ -31,7 +31,6 @@ class Trimestre extends Model
      * Casts
      */
     protected $casts = [
-        "school_id"      => "integer",
 
         "created_by"     => "integer",
         "updated_by"     => "integer",

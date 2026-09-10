@@ -35,6 +35,13 @@ export default function Create({ schools, apprenants, trimestres, matieres, inte
         annee_scolaire: interrogation.annee_scolaire || ""
     });
 
+    const selectedApprenant = apprenants.data.find(
+        (apprenant) => apprenant.id === data.apprenant_id
+    );
+    const apprenantMatieres = selectedApprenant?.classe?.lignes
+        ?.map((ligne) => ligne.matiere)
+        .filter(Boolean) ?? [];
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -137,7 +144,11 @@ export default function Create({ schools, apprenants, trimestres, matieres, inte
                                                     label: `${apprenant.firstname} - ${apprenant.lastname}`,
                                                 }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
-                                                onChange={(option) => setData('apprenant_id', option.value)} // update state with id
+                                                onChange={(option) => setData((currentData) => ({
+                                                    ...currentData,
+                                                    apprenant_id: option?.value ?? '',
+                                                    matiere_id: '',
+                                                }))} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.apprenant_id} />
@@ -180,16 +191,16 @@ export default function Create({ schools, apprenants, trimestres, matieres, inte
                                                 id="matiere_id"
                                                 required
                                                 className="form-control mt-1 block w-full"
-                                                options={matieres.data.map((matiere) => ({
+                                                options={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle}`,
                                                 }))}
-                                                value={matieres.data.map((matiere) => ({
+                                                value={apprenantMatieres.map((matiere) => ({
                                                     value: matiere.id,
                                                     label: `${matiere.libelle}`,
                                                 }))
                                                     .find((option) => option.value === data.matiere_id)} // set selected option
-                                                onChange={(option) => setData('matiere_id', option.value)} // update state with id
+                                                onChange={(option) => setData('matiere_id', option?.value ?? '')} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.matiere_id} />

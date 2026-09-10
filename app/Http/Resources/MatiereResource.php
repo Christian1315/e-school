@@ -18,9 +18,11 @@ class MatiereResource extends JsonResource
         return [
             "id" => $this->id,
             "school" => $this->school,
+            "classes" => $this->classes,
+            "professeurs"=>$this->professeurs,
             "libelle" => $this->libelle,
             "coefficient" => $this->coefficient,
-            "professeurs" => $this->professeurs
+            "professeur" => $this->professeur?->professeur
         ];
     }
 }

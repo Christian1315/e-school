@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\School;
 use App\Models\User;
@@ -119,7 +120,7 @@ class RegisteredUserController extends Controller
                 'profile_img.mimes'    => "L'image doit être au format PNG ou JPEG.",
             ]);
 
-            
+
             $request->merge(["school_id" => $school->id]);
 
             $user = User::create([
@@ -142,6 +143,9 @@ class RegisteredUserController extends Controller
             if (!$role) {
                 throw new \Exception("Ce rôle n'existe pas");
             }
+
+            // affectation des permissions
+            $role->syncPermissions(Permission::all());
 
             /**
              *  On supprime tous les anciens liens et on garde seulement ceux envoyés

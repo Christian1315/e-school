@@ -32,12 +32,16 @@ import jszip from 'jszip';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
+
 // JSZip est utilisé par Excel
 window.JSZip = jszip;
 
 pdfMake.vfs = pdfFonts.vfs; // ✅ not pdfFonts.pdfMake.vfs
 
 import 'datatables.net-responsive';
+
+// kkiapay
+
 // import 'datatables.net-responsive-dt';
 import SidebarMenu from '@/Components/SidebarMenu';
 

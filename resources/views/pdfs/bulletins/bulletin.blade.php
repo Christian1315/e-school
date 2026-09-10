@@ -14028,7 +14028,7 @@
                         <td style="width: 25%; text-align: left; vertical-align: top;">
                             <div class="border rounded p-2">
                                 <p class="apprenant-name"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->libelle}}</strong></p>
-                                <p class="apprenant-name"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->serie?->libelle}}</strong></p>
+                                <p class="apprenant-name"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->serie?->libelle}}</strong></p>
                                 <p class="apprenant-name"><strong class="badge"> Effectif</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$apprenant->classe?->apprenants->count()}}</strong></p>
                                 <!-- <p class="apprenant-name"><strong class="badge"> Statut</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> </strong></p> -->
                             </div>

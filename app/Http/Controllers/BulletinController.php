@@ -78,23 +78,33 @@ class BulletinController extends Controller
     {
         Log::info("Génération du bulletin pour l'apprenant: {$apprenant->nom} {$apprenant->prenom}, trimestre: {$trimestre->libelle} et année scolaire: {$annee_scolaire}");
         try {
-            $apprenant->load(["school", "parent", "classe.apprenants", "serie"]);
+            $apprenant->load([
+                "school",
+                "parent",
+                "classe.apprenants",
+                "classe.serie",
+                "classe.lignes.matiere",
+            ]);
 
             $logoPath = explode(env("APP_URL"), $apprenant->school->logo);
 
             $apprenantProfilPath = $apprenant->photo ? explode(env("APP_URL"), $apprenant->photo) : null;
 
-            if (Auth::user()->school_id) {
-                $_matieres = $apprenant->school?->matieres;
-            } else {
-                $_matieres = Matiere::latest()->get();
-            }
-
             /**
              * Moyennes formatage
-             */
-            $matieres = $_matieres->map(function ($matiere) use ($apprenant, $trimestre, $annee_scolaire) {
+             **/
+            $matieres = $apprenant->classe?->lignes
+                ?->map(function ($ligne) {
+                    $matiere = $ligne->matiere;
+                    if ($matiere) {
+                        $matiere->coefficient = $ligne->coefficient;
+                    }
 
+                    return $matiere;
+                })
+                ->filter()
+                ->values()
+                ->map(function ($matiere) use ($apprenant, $trimestre, $annee_scolaire) {
                 $matiere_interros = $apprenant->interrogations()
                     ->where([
                         "matiere_id" => $matiere->id,
@@ -119,7 +129,7 @@ class BulletinController extends Controller
 
                 $sommeDevoirsNote = $matiere_devoirs->sum("note");
                 $moyenne = ($moyenne_interro + $sommeDevoirsNote) / ($matiere_devoirs->count() + 1);
-                $moyenneCoefficie = $moyenne * $matiere->coefficient;
+                $moyenneCoefficie = $moyenne * ($matiere->coefficient ?? 0);
 
                 // 2️⃣ Calculer la moyenne faible & forte pour la matière
                 $allMoyennes = $apprenant->school->apprenants->map(function ($eleve) use ($matiere, $trimestre, $annee_scolaire) {

@@ -77,6 +77,10 @@ export default function List({ users }) {
         professeurs: '',
     })
 
+    useEffect(() => {
+        console.log("currentProf :", currentProf)
+    }, [currentProf])
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -232,6 +236,7 @@ export default function List({ users }) {
                                     onClick={(e) => confirmShowModal(e)}> <CIcon className='' icon={cilCloudDownload} /> Importer des professeurs</button>
                             </div>) : null
                         }
+
                         <table className="table table-striped" id='myTable' style={{ width: '100%' }}>
                             <thead>
                                 <tr>
@@ -289,7 +294,7 @@ export default function List({ users }) {
                                             <td>{user.firstname}</td>
                                             <td>{user.lastname}</td>
                                             <td>{user.email ?? '---'}</td>
-                                           <td><button className="badge bg-light border rounded text-dark shadow"
+                                            <td><button className="badge bg-light border rounded text-dark shadow"
                                                 onClick={(e) => confirmShowMatiereModal(e, user)}> {user.matieres.length} <CIcon icon={cilList} className='text-success' /> </button>
                                             </td>
                                             <td><button className="badge bg-light border rounded text-dark shadow"

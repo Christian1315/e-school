@@ -19,8 +19,6 @@ export default function List({ reglements, callback, KKIAPAY_SECRET_KEY }) {
     const validateReglement = (e) => {
         e.preventDefault();
 
-        alert("gogoog")
-
         try {
             openKkiapayWidget({
                 amount: amount,

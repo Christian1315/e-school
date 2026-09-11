@@ -38,6 +38,7 @@
             border-radius: 10px;
             border: solid 2px #f6f6f6 !important;
             padding: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .school-contact,
@@ -79,7 +80,7 @@
 <body class="p-0 m-0">
     <div class="container-fluid mx-0 px-0">
         <div id="block">
-            <div id="block-content">
+            <div id="block-content" class="">
                 <!-- HEADER -->
                 <table id="header">
                     <tr>
@@ -119,8 +120,8 @@
                         <!-- Colonne gauche -->
                         <td style="width: 50%; text-align: left; vertical-align: top;">
                             <p class="apprenant-name"><strong class="badge"> Nom & Prénom</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$inscription->apprenant?->firstname}} {{$inscription->apprenant?->lastname}}</strong></p>
-                            <p class="apprenant-class"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$inscription->apprenant?->classe?->libelle}}</strong></p>
-                            <p class="apprenant-class"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$inscription->apprenant?->serie?->libelle}}</strong></p>
+                            <p class="apprenant-class"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$inscription->apprenant?->classe?->libelle}} |   Scolarité: {{$inscription->apprenant?->classe?->scolarite}} FCFA </strong></p>
+                            <p class="apprenant-class"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$inscription->apprenant?->classe?->serie?->libelle}}</strong></p>
                         </td>
 
                         <!-- Colonne droite -->

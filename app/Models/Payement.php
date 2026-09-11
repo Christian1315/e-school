@@ -116,12 +116,13 @@ class Payement extends Model
         // creating
         static::creating(function ($model) {
             $model->created_by = Auth::id();
-            $model->school_id = Auth::user()->school_id;
+            $model->paiement_receit = $model->handlePaiementReceit();
+            $model->school_id ??= Auth::user()->school_id;
         });
 
         // 
         static::created(function ($model) {
-            $model->numero = "PAY-" . date("y-m-d") . '-' . $model->id;
+            $model->numero = "PAY" . date("ymd"). $model->id;
             // Save once, no update inside update loop
             $model->saveQuietly(); // avoids triggering events again
         });
@@ -129,6 +130,12 @@ class Payement extends Model
         // updating
         static::updating(function ($model) {
             $model->updated_by = Auth::id();
+
+            if (request()->hasFile('paiement_receit')) {
+                $model->paiement_receit = $model->handlePaiementReceit();
+            } else {
+                unset($model->paiement_receit);
+            }
         });
     }
 }

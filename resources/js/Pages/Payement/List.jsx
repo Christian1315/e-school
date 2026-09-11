@@ -6,7 +6,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-import { cilUserX, cilLibraryAdd, cilList, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibAddthis, cibBuffer } from "@coreui/icons";
+import { cilCenterFocus, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibAddthis, cibBuffer } from "@coreui/icons";
 
 export default function List({ payements }) {
     const permissions = usePage().props.auth.permissions;
@@ -146,6 +146,7 @@ export default function List({ payements }) {
                                     <th scope="col">Montant versé</th>
                                     <th scope="col">Date de paiement </th>
                                     <th scope="col">Année scolaire</th>
+                                    <th scope="col">Justificatif du paiement</th>
                                     <th scope="col">Inséré par</th>
                                 </tr>
                             </thead>
@@ -204,10 +205,21 @@ export default function List({ payements }) {
                                             </td>
                                             <td className="text-center"><span className="badge bg-light border rounded text-dark">{paiement.numero}</span></td>
                                             <td><span className="badge bg-light text-dark border">  {`${paiement.school?.raison_sociale|| '---'}`}</span></td>
-                                            <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname}`}</span></td>
+                                            <td><span className="badge bg-light text-dark border">  {`${paiement.apprenant?.firstname} - ${paiement.apprenant?.lastname} | ${paiement.apprenant?.classe?.libelle} ${paiement.apprenant?.classe?.serie?.libelle} | Scolarité: ${paiement.apprenant?.classe?.scolarite}`}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.montant}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.date_paiement || '---'}</span></td>
                                             <td><span className="badge bg-light border rounded text-dark">{paiement.annee_scolaire}</span></td>
+                                            <td>
+                                                {paiement.paiement_receit ?
+                                                    <a
+                                                        target="__blank"
+                                                        href={paiement.paiement_receit}
+                                                        className="btn btn-sm btn-light border bg-hover shadow-sm"
+                                                    >
+                                                        <CIcon icon={cilCenterFocus} />
+                                                    </a> : '---'
+                                                }
+                                            </td>
                                             <td>{`${paiement.createdBy?.firstname} - ${paiement.createdBy?.lastname}`}</td>
                                         </tr>
                                     ))

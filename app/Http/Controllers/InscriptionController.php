@@ -45,7 +45,7 @@ class InscriptionController extends Controller
             $schoolQuery = School::query();
         }
         return Inertia::render('Inscription/Create', [
-            "apprenants" => $apprenantQuery->with("school")->get(),
+            "apprenants" => $apprenantQuery->with("school", "classe.serie")->get(),
             "schools" => $schoolQuery->get(),
         ]);
     }
@@ -58,16 +58,12 @@ class InscriptionController extends Controller
         Log::info("Les datas", ["data" => $request->all()]);
         try {
             $validated = $request->validate([
-                // "school_id"          => "required|integer",
                 "apprenant_id"       => "required|integer",
                 "numero_educ_master" => "required|string",
                 "frais_inscription"  => "required|numeric",
                 "annee_scolaire" => "required",
                 "dossier_transfert"  => "nullable|file|mimes:pdf,doc,docx|max:2048",
             ], [
-                // "school_id.required"      => "L'école est obligatoire.",
-                // "school_id.integer"       => "L'école doit être un identifiant valide.",
-
                 "apprenant_id.required"   => "L'apprenant est obligatoire.",
                 "apprenant_id.integer"    => "L'apprenant doit être un identifiant valide.",
 
@@ -117,7 +113,7 @@ class InscriptionController extends Controller
 
             return Inertia::render('Inscription/Update', [
                 'inscription' => $inscription,
-                "apprenants" => $apprenantQuery->with("school")->get(),
+                "apprenants" => $apprenantQuery->with("school", "classe.serie")->get(),
                 "schools" => $schoolQuery->get(),
             ]);
         } catch (\Exception $e) {
@@ -182,13 +178,14 @@ class InscriptionController extends Controller
      * Generate receit
      */
 
-    function generateReceit(Inscription $inscription, $reste)
+    function generateReceit(Inscription $inscription)
     {
         try {
             DB::beginTransaction();
 
-            $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
+            $inscription->load(["school", "apprenant.parent.detail", "apprenant.classe.serie"]);
             $logoPath = explode(env("APP_URL"), $inscription->school->logo);
+            $reste = ($inscription->apprenant->classe?->scolarite ?? 0) - $inscription->frais_inscription ?? 0;
 
             // return $logoPath;
             set_time_limit(0);

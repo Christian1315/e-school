@@ -88,10 +88,11 @@ Route::middleware('auth')->group(function () {
     // Inscriptions
     Route::resource("inscription", InscriptionController::class)->except("update");
     Route::post("inscription/update/{inscription}", [InscriptionController::class, "update"])->name("inscription.update");
-    Route::get("/inscription/generate-receit/{inscription}/{reste}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
+    Route::get("/inscription/generate-receit/{inscription}", [InscriptionController::class, "generateReceit"])->name("inscription.generate-receit");
 
     // Paiements scolarité
-    Route::resource("paiement", PayementController::class);
+    Route::resource("paiement", PayementController::class)->except("update");
+    Route::post("paiement/update/{paiement}", [PayementController::class, "update"])->name("paiement.update");
     Route::get("/paiement/generate-receit/{paiement}", [PayementController::class, "generateReceit"])->name("paiement.generate-receit");
 
     // Reglements factures

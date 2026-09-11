@@ -117,7 +117,7 @@
                         <td style="width: 50%; text-align: left; vertical-align: top;">
                             <p class="apprenant-name"><strong class="badge"> Nom & Prénom</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->firstname}} {{$paiement->apprenant?->lastname}}</strong></p>
                             <p class="apprenant-class"><strong class="badge"> Classe</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->classe?->libelle}}</strong></p>
-                            <p class="apprenant-class"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->serie?->libelle}}</strong></p>
+                            <p class="apprenant-class"><strong class="badge"> Série</strong> : <strong style="margin-left:20px;display:inline; border-bottom:1px dashed #000; width:100%;"> {{$paiement->apprenant?->classe?->serie?->libelle}}</strong></p>
                         </td>
 
                         <!-- Colonne droite -->

@@ -12,7 +12,6 @@ import Select from 'react-select'
 export default function Create({ apprenants, inscription }) {
     const authUser = usePage().props.auth;
     const permissions = usePage().props.auth.permissions;
-    console.log("Inscription concernée", inscription)
 
     const checkPermission = (name) => {
         return permissions.some(per => per.name == name);
@@ -32,6 +31,29 @@ export default function Create({ apprenants, inscription }) {
         dossier_transfert: "",
         annee_scolaire: inscription.annee_scolaire
     });
+
+    const handleFrais = (e) => {
+        const montant = e.target.value;
+        const apprenant = apprenants.find(
+            (item) => item.id === data.apprenant_id
+        );
+
+        if (montant === '') {
+            setData('frais_inscription', '');
+            return;
+        }
+
+        const montantNumber = Number(montant);
+        const scolarite = Number(apprenant?.classe?.scolarite);
+        if (!Number.isNaN(scolarite) && montantNumber > scolarite) {
+            Swal.fire({
+                text: `La valeur saisie ${montant} ne doit pas dépasser la scolarité ${scolarite} de la classe`,
+            });
+            return;
+        }
+
+        setData('frais_inscription', montant);
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -101,7 +123,7 @@ export default function Create({ apprenants, inscription }) {
                                                 className="mt-1 block w-full"
                                                 placeholder="50000"
                                                 value={data.frais_inscription}
-                                                onChange={(e) => setData('frais_inscription', e.target.value)}
+                                                onChange={handleFrais}
                                                 autoComplete="frais_inscription"
                                                 required
                                             />
@@ -141,15 +163,19 @@ export default function Create({ apprenants, inscription }) {
                                                 className="form-control mt-1 block w-full"
                                                 options={apprenants.map((apprenant) => ({
                                                     value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
+                                                    label: `${apprenant.firstname} ${apprenant.lastname} | ${apprenant?.classe?.libelle} ${apprenant.classe?.serie?.libelle} (Scolarité: ${apprenant?.classe?.scolarite}) ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                 }))}
                                                 value={apprenants
                                                     .map((apprenant) => ({
                                                         value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
+                                                        label: `${apprenant.firstname} ${apprenant.lastname} | ${apprenant?.classe?.libelle} ${apprenant.classe?.serie?.libelle} (Scolarité: ${apprenant?.classe?.scolarite}) ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
                                                     }))
                                                     .find((option) => option.value === data.apprenant_id)} // set selected option
-                                                onChange={(option) => setData('apprenant_id', option.value)} // update state with id
+                                                onChange={(option) => setData((currentData) => ({
+                                                    ...currentData,
+                                                    apprenant_id: option?.value ?? '',
+                                                    frais_inscription: '',
+                                                }))} // update state with id
                                             />
 
                                             <InputError className="mt-2" message={errors.apprenant_id} />

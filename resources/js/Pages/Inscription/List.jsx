@@ -3,11 +3,8 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import CIcon from '@coreui/icons-react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import Modal from '@/Components/Modal';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
-import InputError from '@/Components/InputError';
 import Swal from 'sweetalert2';
 import { cilCenterFocus, cilSave, cilMenu, cilPencil, cilDelete, cilCloudDownload, cibBuffer, cibAddthis } from "@coreui/icons";
 
@@ -22,7 +19,7 @@ export default function List({ inscriptions }) {
     const [currentInscription, setCurrentInscription] = useState(null);
 
     const { reset, setData, data, reste, errors, processing, delete: destroy } = useForm({
-        reste: null,
+        // reste: null,
     })
 
     const confirmShowModal = (e, inscription) => {
@@ -62,7 +59,7 @@ export default function List({ inscriptions }) {
                             <strong>le lien</strong> ci-dessous pour le récupérer :
                         </p>
                         <p>
-                            <a target="_blank"  href="${route('inscription.generate-receit', { inscription: currentInscription?.id, reste: data.reste })}">
+                            <a target="_blank"  href="${route('inscription.generate-receit', { inscription: currentInscription?.id })}">
                             📥 Télécharger le reçu
                             </a>
                         </p>
@@ -223,7 +220,6 @@ export default function List({ inscriptions }) {
                                             </td>
                                             <td><span className="badge bg-light border rounded text-dark">{inscription.frais_inscription}</span></td>
                                             <td>{`${inscription.createdBy?.firstname} - ${inscription.createdBy?.lastname}`}</td>
-
                                         </tr>
                                     ))
                                 }
@@ -232,7 +228,6 @@ export default function List({ inscriptions }) {
                     </div>
                 </div>
             </div>
-
 
             <Modal show={showModal} onClose={closeModal}>
                 <form onSubmit={generateReceit} className="p-6">
@@ -243,34 +238,6 @@ export default function List({ inscriptions }) {
                     <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                         Une fois le reçu generé, un lien vous est renvoyé via alert! Cliquez dessus pour télécharger le reçu.
                     </p>
-
-                    <div className="mt-6">
-                        <InputLabel
-                            htmlFor="reste"
-                            value="Reste à payer"
-                            className="sr-only"
-                        />
-
-                        <TextInput
-                            id="reste"
-                            type="number"
-                            name="reste"
-                            ref={reste}
-                            required
-                            value={data.reste}
-                            onChange={(e) =>
-                                setData('reste', e.target.value)
-                            }
-                            className="mt-1 block w-full"
-                            isFocused
-                            placeholder="Le reste"
-                        />
-
-                        <InputError
-                            message={errors.reste}
-                            className="mt-2"
-                        />
-                    </div>
 
                     <div className="mt-6 flex justify-end">
                         <SecondaryButton onClick={closeModal}>

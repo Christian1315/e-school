@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ApprenantResource;
 use App\Http\Resources\PayementResource;
 use App\Models\Apprenant;
 use App\Models\Payement;
@@ -40,7 +41,7 @@ class PayementController extends Controller
     {
         try {
             DB::beginTransaction();
-            $paiement->load(["school", "apprenant.parent.detail", "apprenant.classe"]);
+            $paiement->load(["school", "apprenant.parent.detail", "apprenant.classe.serie"]);
 
             $logoPath = explode(env("APP_URL"), $paiement->school->logo);
 
@@ -65,6 +66,7 @@ class PayementController extends Controller
             DB::commit();
             return $pdf->stream();
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->withErrors(["exception" => $e->getMessage()]);
         }
     }
@@ -74,10 +76,12 @@ class PayementController extends Controller
      */
     function create()
     {
+        $apprenants = Auth::user()->school_id ?
+            Apprenant::with("school", "classe.serie")->where("school_id", Auth::user()->school_id)->get() :
+            Apprenant::with("school", "classe.serie")->get();
+
         return Inertia::render('Payement/Create', [
-            "apprenants" => Auth::user()->school_id ?
-                Apprenant::with("school")->where("school_id", Auth::user()->school_id)->get() :
-                Apprenant::with("school")->get(),
+            "apprenantsData" => ApprenantResource::collection($apprenants),
             "schools" => Auth::user()->school_id ?
                 School::where("id", Auth::user()->school_id)->get() :
                 School::all(),
@@ -95,7 +99,7 @@ class PayementController extends Controller
                 "school_id"      => "nullable|integer|exists:schools,id",
                 "apprenant_id"      => "required|integer",
                 "montant"      => "required|numeric",
-                "paiement_receit"          => "nullable|file",
+                "paiement_receit"          => "nullable|file|mimes:pdf,jpg,jpeg,png|max:2048",
                 "date_paiement" => "required|date",
                 "annee_scolaire" => "required|integer|min:2000|max:2030",
             ], [
@@ -106,7 +110,8 @@ class PayementController extends Controller
                 "montant.numeric"  => "Le montant doit être un nombre valide.",
 
                 "paiement_receit.file"             => "Le fichier est invalide",
-                "paiement_receit.max"               => "La photo ne doit pas dépasser 2 Mo.",
+                "paiement_receit.mimes"              => "Le justificatif doit être un fichier PDF ou une image (pdf, jpg, jpeg, png).",
+                "paiement_receit.max"               => "Le justificatif ne doit pas dépasser 2 Mo.",
                 "annee_scolaire.required" => "L'année scolaire est obligatoire.",
                 "annee_scolaire.integer" => "L'année scolaire doit être un nombre valide.",
                 "annee_scolaire.min" => "L'année scolaire doit être comprise entre 2000 et 2030.",
@@ -138,11 +143,13 @@ class PayementController extends Controller
         try {
 
             $paiement->load(["school", "apprenant"]);
+            $apprenants = Auth::user()->school_id ?
+                Apprenant::with("school", "classe.serie")->where("school_id", Auth::user()->school_id)->get() :
+                Apprenant::with("school", "classe.serie")->get();
 
             return Inertia::render('Payement/Update', [
-                "apprenants" => Auth::user()->school_id ?
-                    Apprenant::with('school')->where("school_id", Auth::user()->school_id)->get() :
-                    Apprenant::with('school')->get(),
+                "apprenantsData" => ApprenantResource::collection($apprenants),
+
                 "schools" => Auth::user()->school_id ?
                     School::where("id", Auth::user()->school_id)->get() :
                     School::all(),
@@ -170,7 +177,8 @@ class PayementController extends Controller
                 "apprenant_id"      => "required|integer",
                 "date_paiement" => "required|date",
                 "montant"      => "required|numeric",
-                "paiement_receit"          => "nullable|file",
+                "paiement_receit"          => "nullable|file|mimes:pdf,jpg,jpeg,png|max:2048",
+                "annee_scolaire" => "required|integer|min:2000|max:2030",
             ], [
                 "apprenant_id.required"      => "L'apprenant est obligatoire.",
                 "apprenant_id.integer"       => "L'apprenant doit être un identifiant valide.",
@@ -182,12 +190,16 @@ class PayementController extends Controller
                 "montant.numeric"  => "Le montant doit être un nombre valide.",
 
                 "paiement_receit.file"             => "Le fichier est invalide",
-                "paiement_receit.max"               => "La photo ne doit pas dépasser 2 Mo.",
+                "paiement_receit.mimes"              => "Le justificatif doit être un fichier PDF ou une image (pdf, jpg, jpeg, png).",
+                "paiement_receit.max"               => "Le justificatif ne doit pas dépasser 2 Mo.",
+                "annee_scolaire.required" => "L'année scolaire est obligatoire.",
+                "annee_scolaire.integer" => "L'année scolaire doit être un nombre valide.",
+                "annee_scolaire.min" => "L'année scolaire doit être comprise entre 2000 et 2030.",
+                "annee_scolaire.max" => "L'année scolaire doit être comprise entre 2000 et 2030.",
             ]);
 
             DB::beginTransaction();
 
-            $validated["dossier_transfert"] = $paiement->handlePaiementReceit() ?? $paiement->paiement_receit;
             $paiement->update($validated);
 
             DB::commit();

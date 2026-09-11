@@ -32,6 +32,29 @@ export default function Create({ apprenants }) {
         annee_scolaire: new Date().getFullYear()
     });
 
+    const handleFrais = (e) => {
+        const montant = e.target.value;
+        const apprenant = apprenants.find(
+            (item) => item.id === data.apprenant_id
+        );
+
+        if (montant === '') {
+            setData('frais_inscription', '');
+            return;
+        }
+
+        const montantNumber = Number(montant);
+        const scolarite = Number(apprenant?.classe?.scolarite);
+        if (!Number.isNaN(scolarite) && montantNumber > scolarite) {
+            Swal.fire({
+                text: `La valeur saisie ${montant} ne doit pas dépasser la scolarité ${scolarite} de la classe`,
+            });
+            return
+        }
+
+        setData('frais_inscription', montant);
+    }
+
     const submit = (e) => {
         e.preventDefault();
 
@@ -90,20 +113,34 @@ export default function Create({ apprenants }) {
                             <form onSubmit={submit} className="mt-6 space-y-6">
                                 <div className="row">
                                     <div className="col-md-6">
-                                        {/* Frais */}
+                                        {/* Apprenant */}
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="frais_inscription" value="Frais d'inscription" ><span className="text-danger">*</span> </InputLabel>
-                                            <TextInput
-                                                id="frais_inscription"
-                                                type="number"
-                                                className="mt-1 block w-full"
-                                                placeholder="50000"
-                                                value={data.frais_inscription}
-                                                onChange={(e) => setData('frais_inscription', e.target.value)}
-                                                autoComplete="frais_inscription"
+                                            <InputLabel htmlFor="apprenant_id" value="Apprenant concerné" > <span className="text-danger">*</span> </InputLabel>
+
+                                            <Select
+                                                placeholder="Rechercher un apprenant ..."
+                                                name="apprenant_id"
+                                                id="apprenant_id"
                                                 required
+                                                className="form-control mt-1 block w-full"
+                                                options={apprenants.map((apprenant) => ({
+                                                    value: apprenant.id,
+                                                    label: `${apprenant.firstname} ${apprenant.lastname} | ${apprenant?.classe?.libelle} ${apprenant.classe?.serie?.libelle} (Soclarité: ${apprenant?.classe?.scolarite}) ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
+                                                }))}
+                                                value={apprenants
+                                                    .map((apprenant) => ({
+                                                        value: apprenant.id,
+                                                        label: `${apprenant.firstname} ${apprenant.lastname} | ${apprenant?.classe?.libelle} ${apprenant?.classe?.serie?.libelle} (Soclarité: ${apprenant?.classe?.scolarite})  ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
+                                                    }))
+                                                    .find((option) => option.value === data.apprenant_id)} // set selected option
+                                                onChange={(option) => setData((currentData) => ({
+                                                    ...currentData,
+                                                    apprenant_id: option?.value ?? '',
+                                                    frais_inscription: '',
+                                                }))} // update state with id
                                             />
-                                            <InputError className="mt-2" message={errors.frais_inscription} />
+
+                                            <InputError className="mt-2" message={errors.apprenant_id} />
                                         </div>
 
                                         {/* Dossier de transfert */}
@@ -127,30 +164,21 @@ export default function Create({ apprenants }) {
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        {/* Apprenant */}
+
+                                        {/* Frais */}
                                         <div className='mb-3'>
-                                            <InputLabel htmlFor="apprenant_id" value="Apprenant concerné" > <span className="text-danger">*</span> </InputLabel>
-
-                                            <Select
-                                                placeholder="Rechercher un apprenant ..."
-                                                name="apprenant_id"
-                                                id="apprenant_id"
+                                            <InputLabel htmlFor="frais_inscription" value="Frais d'inscription" ><span className="text-danger">*</span> </InputLabel>
+                                            <TextInput
+                                                id="frais_inscription"
+                                                type="number"
+                                                className="mt-1 block w-full"
+                                                placeholder="50000"
+                                                value={data.frais_inscription}
+                                                onChange={(e) => handleFrais(e)}
+                                                autoComplete="frais_inscription"
                                                 required
-                                                className="form-control mt-1 block w-full"
-                                                options={apprenants.map((apprenant) => ({
-                                                    value: apprenant.id,
-                                                    label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
-                                                }))}
-                                                value={apprenants
-                                                    .map((apprenant) => ({
-                                                        value: apprenant.id,
-                                                        label: `${apprenant.firstname} - ${apprenant.lastname} ${!authUser.school ? apprenant.school?.raison_sociale ?? '' : ''}`,
-                                                    }))
-                                                    .find((option) => option.value === data.apprenant_id)} // set selected option
-                                                onChange={(option) => setData('apprenant_id', option.value)} // update state with id
                                             />
-
-                                            <InputError className="mt-2" message={errors.apprenant_id} />
+                                            <InputError className="mt-2" message={errors.frais_inscription} />
                                         </div>
 
                                         {/* Numéro Educ Master */}
@@ -186,7 +214,6 @@ export default function Create({ apprenants }) {
                                             />
                                             <InputError className="mt-2" message={errors.annee_scolaire} />
                                         </div>
-
                                     </div>
                                 </div>
 

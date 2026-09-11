@@ -123,7 +123,7 @@ class Inscription extends Model
 
     protected function generateNumero()
     {
-        return "INS-" . date("y-m-d") . '-' . $this->id;
+        return "INS" . date("ymd"). $this->id;
     }
 
     /**

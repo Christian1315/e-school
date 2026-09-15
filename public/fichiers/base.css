@@ -19,7 +19,7 @@ p {
     display: flex !important;
     /* border-bottom: 3px solid #1b5a38!important; */
     font-size: 40px !important;
-    font-family: "Dancing Script", cursive;
+    /* font-family: "Dancing Script", cursive; */
     font-optical-sizing: auto;
     font-weight: 700;
     text-transform: uppercase;
@@ -28,7 +28,7 @@ p {
 }
 
 .panel-title {
-    font-family: "Dancing Script", cursive;
+    /* font-family: "Dancing Script", cursive; */
     font-optical-sizing: auto;
     font-weight: 700;
     text-transform: uppercase;
